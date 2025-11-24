@@ -1,42 +1,53 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: mytheme;
+};
+@plugin "daisyui/theme" {
+  name: "mytheme";
+  default: true; 
+  prefersdark: false; 
+  color-scheme: light;
+  
+  --color-base-100: rgba(255,255,255,1);
+  --color-base-200: rgba(250,250,250,1);
+  --color-base-300: rgba(245,245,245,1);
+  --color-base-content: rgba(0,0,0,1);
+  --color-primary: rgba(138,56,245,1);
+  --color-primary-content: rgba(255,255,255,1);
+  --color-secondary: rgba(206, 45, 79,1);
+  --color-secondary-content: rgba(0,0,0,1);
+  --color-accent: rgba(47, 156, 149, 1);
+  --color-accent-content: rgba(255,255,255,1);
+  --color-neutral: rgba(217, 217, 217, 1);
+  --color-neutral-content: rgba(0,0,0,1);
+  --color-info: oklch(86% 0.127 207.078);
+  --color-info-content: oklch(44% 0.11 240.79);
+  --color-success: oklch(76% 0.177 163.223);
+  --color-success-content: oklch(37% 0.077 168.94);
+  --color-warning: oklch(82% 0.189 84.429);
+  --color-warning-content: oklch(41% 0.112 45.904);
+  --color-error: oklch(71% 0.194 13.428);
+  --color-error-content: oklch(27% 0.105 12.094);
+
+  /* border radius */
+  --radius-selector: 1rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+
+  /* base sizes */
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+
+  /* border size */
+  --border: 1px;
+
+  /* effects */
+  --depth: 1;
+  --noise: 0;
+};
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  margin: 0;
+  padding: 0;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
