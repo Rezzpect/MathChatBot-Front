@@ -1,28 +1,31 @@
 import CourseCard from "../../components/CourseCard";
 import { useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { tempCourseData } from "./TempCourseData";
 
 export default function EnrolledCourse() {
     const [cardIndex, setCardIndex] = useState<number>(0);
-    const enrolledData = [
-        'bg-primary',
-        'bg-secondary',
-        'bg-accent',
-        'bg-black',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-    ];
+
+    const enrolledData = tempCourseData;
+    // const enrolledData = [
+    //     'bg-primary',
+    //     'bg-secondary',
+    //     'bg-accent',
+    //     'bg-black',
+    //     'bg-red-500',
+    //     'bg-red-500',
+    //     'bg-red-500',
+    //     'bg-red-500',
+    //     'bg-red-500',
+    //     'bg-red-500',
+    //     'bg-red-500',
+    //     'bg-red-500',
+    //     'bg-red-500',
+    //     'bg-red-500',
+    //     'bg-red-500',
+    //     'bg-red-500',
+    //     'bg-red-500',
+    // ];
 
     const goNext = () => {
         if (enrolledData.length-cardIndex>3){
@@ -47,7 +50,13 @@ export default function EnrolledCourse() {
                     }}
                 >
                     {enrolledData.map((data) => 
-                        <CourseCard color={data} />
+                        <CourseCard
+                            course_name={data.course_name}
+                            course_description={data.course_description}
+                            course_owner={data.course_owner}
+                            difficulty={data.difficulty}
+                            student_amount={data.student_amount}
+                        />
                     )}
                 </div>
                  <div className="absolute inset-y-0 right-0 w-50 bg-gradient-to-l from-base-100 z-50"></div>
