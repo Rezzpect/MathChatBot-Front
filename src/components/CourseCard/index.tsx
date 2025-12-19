@@ -1,16 +1,22 @@
 import { FaUser } from "react-icons/fa";
 import { FaClock } from "react-icons/fa";
 import type { CourseCardProp } from "../../@types/coursecard";
+import { useNavigate } from "react-router-dom";
 
 export default function CourseCard({
+    course_id,
     course_name,
     course_owner,
     difficulty,
     course_description,
     student_amount }
     : CourseCardProp) {
+
+    const navigate = useNavigate();
     return (
-        <div className={`card bg-primary text-neutral-content w-[300px] h-[250px] flex-shrink-0 card-sm shadow-sm`}>
+        <div className={`card hover:cursor-pointer bg-primary text-neutral-content w-[300px] h-[250px] flex-shrink-0 card-sm shadow-sm`}
+            onClick={()=>navigate(`/lesson/${course_id}`)}
+        >
             <div className="card-body text-primary-content p-5">
                 <header className="card-title text-2xl font-bold">{course_name}</header>
                 <p className="text-l">{course_owner}</p>

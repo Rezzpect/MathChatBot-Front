@@ -1,12 +1,33 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { IoIosArrowDown } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FaX } from "react-icons/fa6"
+import supabaseClient from "../../utils/SupabaseClient";
+import { useParams } from "react-router-dom";
+import type { QuestionDataProp } from "../../@types/question";
 
 export default function ExercisePage() {
-    const [getMode, setMode] = useState('Hint Mode');
-    const [isOpen, setIsOpen] = useState(false);
+    const [getMode, setMode] = useState<string>('Hint Mode');
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [questionData, setQuestionData] = useState<QuestionDataProp>();
     const mode = ['Hint Mode', 'Theory Mode'];
+    const params = useParams()
+
+    const fetchData = async () => {
+        const {data,error} = await supabaseClient.functions.invoke("question-detail", {
+            'body': {
+                "question_id": Number(params.questionId)
+            }
+        })
+        
+        if (data) {
+            console.log(data.data[0]);
+            setQuestionData(data.data[0]);
+        }
+        else {console.log(error)}
+    }
+
+    useEffect(()=>{fetchData()},[])
     return (
         <div className="flex flex-col">
             {isOpen && (
@@ -36,10 +57,10 @@ export default function ExercisePage() {
             </div>
 
             <div className="h-fit min-h-fit flex justify-center px-15 gap-15">
-                <div className="flex flex-col bg-white rounded-lg w-[60%] h-150 shadow-sm gap-2 border-4 border-neutral">
+                <div className="flex flex-col bg-white rounded-lg w-[60%] h-150 shadow-sm gap-2 border-4 border-neutral" >
                     <div className="m-5 h-full overflow-y-auto">
-                        <header className="font-bold text-2xl">โจทย์ปัญหาการบวก ลบระคน</header>
-                        <p>ธีรุสมีเงิน 10,000  บาท ซื้อกระเป๋า 3,450 บาท ซื้อชุดทำงาน 2,456 บาท ธีรุสเหลือเงินกี่บาท?</p>
+                        <header className="font-bold text-2xl">{questionData?.title}</header>
+                        <p>{questionData?.question}</p>
                         <div className="flex justify-center w-full">
                             <img className="flex w-50 h-50 justify-center" src="https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW1hZ2V8ZW58MHx8MHx8fDA%3D"></img>
                         </div>

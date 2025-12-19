@@ -9,6 +9,7 @@ import StudentProfile from "../pages/Profile";
 import LessonPage from "../pages/Lesson";
 import ProblemSelectionPage from "../pages/ProblemSelection";
 import ExercisePage from "../pages/Exercise";
+import EditExercise from "../pages/EditExercise";
 
 function Routes() {
     return useRoutes([
@@ -29,16 +30,20 @@ function Routes() {
                     element: <StudentProfile />
                 },
                 {
-                    path: '/lesson',
+                    path: '/lesson/:lessonId',
                     element: <LessonPage />
                 },
                 {
-                    path: '/problemselection',
+                    path: '/problemselection/:topicId',
                     element: <ProblemSelectionPage />
                 },
                 {
-                    path: '/exercise',
+                    path: '/exercise/:questionId',
                     element: <ExercisePage />
+                },
+                {
+                    path: '/editexercise',
+                    element: <EditExercise />
                 },
             ]
         },
