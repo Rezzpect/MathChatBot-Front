@@ -1,4 +1,4 @@
-import type { TableConfig } from '../../@types/table';
+import type { HintRowProp, TableConfig } from '../../@types/table';
 import type { TopicRowProp,SkeletonRowProp, ExerciseRowProp } from '../../@types/table';
 
 export const skeltonTableConfig: TableConfig<SkeletonRowProp> = {
@@ -34,5 +34,17 @@ export const exerciseTableConfig: TableConfig<ExerciseRowProp> = {
         { key: 'difficulty', header: 'คะแนน', display: true, width: '100px' },
         { key: 'question_id', header: 'สถานะ', display: true, },
         { key: 'is_completed', header: 'Description', display: false },
+    ]
+};
+
+export const hintTableConfig: TableConfig<HintRowProp> = {
+    title: "Hint",
+    rowIdKey: "้hint_id",
+    navDest: "",
+    editOption: true,
+    deleteOption: true,
+    columns: [
+        { key: 'example_question', header: 'ตัวอย่างคำถาม', display: true, width: '100px' },
+        { key: 'hint', header: 'คำใบ้', display: true },
     ]
 };

@@ -1,34 +1,35 @@
 import { useState, useEffect } from "react";
-import { exerciseTableConfig, skeltonTableConfig, topicTableConfig } from "./tableconfig";
+import { exerciseTableConfig, hintTableConfig, skeltonTableConfig, topicTableConfig } from "./tableconfig";
 import { useNavigate } from "react-router-dom";
 import supabaseClient from "../../utils/SupabaseClient";
 import type { TableConfig } from "../../@types/table";
 import type { PageReqWithId, IdKey, DataTableProps } from "../../@types/table";
 
-function BuildReqBody<K extends IdKey> (
+function BuildReqBody<K extends IdKey>(
     idKey: K,
     idValue: number,
     studentId: string,
-    currentPage:number,
-    pagesSize:number
-):PageReqWithId<K> {
+    currentPage: number,
+    pagesSize: number
+): PageReqWithId<K> {
     return {
-    [idKey]: idValue,
-    user_id:studentId,
-    current_page: currentPage,
-    page_size:pagesSize ,
-  } as PageReqWithId<K>
+        [idKey]: idValue,
+        user_id: studentId,
+        current_page: currentPage,
+        page_size: pagesSize,
+    } as PageReqWithId<K>
 }
 
 export default function DataTable<K extends IdKey>({
-     name,
-     id_key, 
-     data_id 
+    name,
+    id_key,
+    data_id,
+    underline = false,
 }: DataTableProps<K>) {
     const [getData, setData] = useState<Array<Record<string, any>>>();
     const [totalPages, setTotalPages] = useState<number>(1);
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [config, setConfig ] = useState<TableConfig<any>>(skeltonTableConfig);
+    const [config, setConfig] = useState<TableConfig<any>>(skeltonTableConfig);
     const itemsPerPage = 6;
 
     const handlePageChange = (page: number) => {
@@ -50,15 +51,26 @@ export default function DataTable<K extends IdKey>({
 
         const { data, error } = await supabaseClient.functions.invoke(name, {
             "body":
-            req_body
+                req_body
         });
 
         if (data) {
             console.log(data.data);
-            setData(data.data.items);
+            setData(hint_list);
             setTotalPages(data.data.total_pages);
         } else { console.log(error) }
     }
+
+    const hint_list = [
+        {
+            example_question: ['a', 'b', 'c'],
+            hint: 'lorem man'
+        },
+        {
+            example_question: ['a', 'b', 'c'],
+            hint: 'lorem man'
+        }
+    ];
 
     useEffect(() => {
         if (name === "topic-list-in-course") {
@@ -67,44 +79,79 @@ export default function DataTable<K extends IdKey>({
         } else if (name === "question-list-in-topic") {
             fetchData();
             setConfig(exerciseTableConfig);
+        } else if (name === "hint-list-in-question") {
+            setData(hint_list);
+            setTotalPages(10);
+            setConfig(hintTableConfig);
         };
 
 
     }, [currentPage])
 
-    const visibleCol = config?.columns.filter( col => col.display !== false)
+    const visibleCol = config?.columns.filter(col => col.display !== false)
     const navigate = useNavigate();
 
     return (
         <div>
-            <div className="flex flex-col flex-1 w-full h-full py-5 text-neutral-content">
-                <header className="text-xl font-bold pb-5">โจทย์ปัญหา</header>
+            <div className="flex flex-col flex-1 w-full h-[400px] py-5 text-neutral-content">
+                <div className="flex justify-between items-center mb-5">
+                    <header className="text-xl font-bold">{config.title}</header>
+                    <div>
+                        <button className="btn bg-primary text-primary-content rounded-full">Extra Button+</button>
+                    </div>
+                </div>
+                
                 <div className="overflow-x-auto">
                     <table className="table">
                         <thead>
                             <tr className="bg-base-300 text-base-content w-full">
-                                {visibleCol?.map((col, index) => {
-                                    return index === 0 ? (
-                                        <th className="rounded-l-xl" key={`header-${index}`}>{col.header}</th>
-                                    ) : index === (visibleCol.length - 1) ? (
-                                        <th className="rounded-r-xl" key={`header-${index}`}>{col.header}</th>
-                                    ) : (<th>{col.header}</th>)
-                                }
-                                )}
+                                    {visibleCol?.map((col, index) => {
+                                        return index === 0 ? (
+                                            <th className="rounded-l-xl" style={{ width: col.width }} key={`header-${index}`}>{col.header}</th>
+                                        ) : index === (visibleCol.length - 1) &&  !(config.deleteOption || config.editOption)? (
+                                            <th className="rounded-r-xl" style={{ width: col.width }} key={`header-${index}`}>{col.header}</th>
+                                        ) : (<th style={{ width: col.width }}>{col.header}</th>)
+                                    }
+                                    )}
+
+                                    {(config.deleteOption || config.editOption) && (
+                                        <th className="rounded-r-xl" style={{width: '100px'}}>
+                                            การจัดการ
+                                        </th>
+                                    )}
+                                
                             </tr>
                         </thead>
 
                         <tbody>
                             {getData?.map((row) =>
-                                <tr className="border-0 hover:rounded-lg hover:cursor-pointer hover:bg-base-300"
-                                    onClick={() => navigate(`${config?.navDest}${row[config?.rowIdKey]}`)}
-                                    key={`row-${row[config?.rowIdKey]}`}>
+                                <tr className={`border-0 hover:rounded-lg 
+                                    ${config?.navDest === '' ? 'hover:cursor-pointer hover:bg-base-300' : ''}`}
+
+                                    onClick={config?.navDest !== '' ? () => navigate(`${config?.navDest}${row[config?.rowIdKey]}`) : undefined}
+                                    key={`row-${row[config?.rowIdKey]}`}
+                                    style={underline ? { "borderBottom": "1px solid black" } : {}}
+                                >
                                     {
                                         visibleCol?.map((col) =>
-                                        <td>{row[col.key as string]}</td>
+                                            <td>{row[col.key as string]}</td>
                                         )
                                     }
+                                    <td className="flex">
+                                        {config.editOption && (
 
+                                            <div>
+                                                <button className="btn bg-primary text-primary-content">edit</button>
+                                            </div>
+                                        )}
+
+                                        {config.deleteOption && (
+                                            <div>
+                                                <button className="btn bg-primary text-primary-content">delete</button>
+                                            </div>
+
+                                        )}
+                                    </td>
                                 </tr>
                             )}
                         </tbody>
@@ -139,7 +186,7 @@ export default function DataTable<K extends IdKey>({
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages || totalPages === 1}
                     >»</button>
-                </div> 
+                </div>
             </div>
         </div>
     );

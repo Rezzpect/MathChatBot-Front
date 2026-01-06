@@ -7,40 +7,19 @@ import supabaseClient from "../../utils/SupabaseClient";
 export default function EnrolledCourse() {
     const [cardIndex, setCardIndex] = useState<number>(0);
     const [enrolledData, setEnrolledData] = useState<Array<CourseCardProp>>([])
+
     const fetchData = async () => {
         const {data,error} = await supabaseClient.functions.invoke('home-courses', {
             method: 'GET',
         })
         if (data) {
-        setEnrolledData(data.data.data);
+            setEnrolledData(data.data);
         }else {console.log(error)}
     }
-
 
     useEffect(() => {
         fetchData();
     }, [])
-
-    // const enrolledData = tempCourseData;
-    // const enrolledData = [
-    //     'bg-primary',
-    //     'bg-secondary',
-    //     'bg-accent',
-    //     'bg-black',
-    //     'bg-red-500',
-    //     'bg-red-500',
-    //     'bg-red-500',
-    //     'bg-red-500',
-    //     'bg-red-500',
-    //     'bg-red-500',
-    //     'bg-red-500',
-    //     'bg-red-500',
-    //     'bg-red-500',
-    //     'bg-red-500',
-    //     'bg-red-500',
-    //     'bg-red-500',
-    //     'bg-red-500',
-    // ];
 
     const goNext = () => {
         if (enrolledData.length - cardIndex > 3) {

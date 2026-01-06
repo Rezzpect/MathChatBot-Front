@@ -3,6 +3,7 @@ export interface ColumnConfig<T> {
     header: string;
     display?: boolean; // Whether to show in table
     sortable?: boolean;
+    islist?: boolean;
     width?: string;
     render?: (value: any, row: T) => React.ReactNode; // Custom renderer
 }
@@ -12,9 +13,11 @@ export interface TableConfig<T> {
     rowIdKey: string;
     title: string;
     navDest: string;
+    editOption?: boolean;
+    deleteOption?: boolean;
 }
 
-export type IdKey = "course_id" | "topic_id"
+export type IdKey = "course_id" | "topic_id" | "hint_id"
 
 type BasePageRequest = {
     user_id: string;
@@ -26,6 +29,7 @@ export type DataTableProps<K extends IdKey> = {
     name: string
     id_key: K
     data_id: number
+    underline?: boolean
 }
 
 export type PageReqWithId<K extends IdKey> = BasePageRequest & { [P in K]: number };
@@ -48,4 +52,9 @@ export interface ExerciseRowProp {
     difficulty : string,
     question_id : number,
     is_completed : boolean
+}
+
+export interface HintRowProp {
+    example_question: string[],
+    hint : string,
 }
