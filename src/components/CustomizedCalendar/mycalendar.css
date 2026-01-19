@@ -1,0 +1,25 @@
+
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: mytheme;
+};
+
+.rbc-header {
+    @apply bg-primary text-primary-content text-lg flex align-middle justify-center items-center h-[36px];
+}
+
+.rbc-allday-cell{
+    @apply hidden
+}
+
+.rbc-time-header-cell .rbc-today {
+    @apply bg-accent
+}
+
+.rbc-time-slot {
+    @apply text-black z-1
+}
+
+.rbc-time-slot:not(.rbc-today .rbc-time-slot) {
+    @apply bg-base-200
+}

@@ -10,6 +10,7 @@ import LessonPage from "../pages/Lesson";
 import ProblemSelectionPage from "../pages/ProblemSelection";
 import ExercisePage from "../pages/Exercise";
 import EditExercise from "../pages/EditExercise";
+import StudyPlanPage from "../pages/StudyPlan";
 
 function Routes() {
     return useRoutes([
@@ -44,6 +45,10 @@ function Routes() {
                 {
                     path: '/editexercise',
                     element: <EditExercise />
+                },
+                {
+                    path: '/studyplan',
+                    element: <StudyPlanPage />
                 },
             ]
         },
