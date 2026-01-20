@@ -1,44 +1,61 @@
-import YourCourses from "./YourCourses";
+import CourseProgressBar from "../../components/CourseProgressBar";
+import StudentStat from "./StudentStat";
+import WeeklyExerciseBar from "../../components/WeeklyExerciseChart";
 
 export default function StudentProfile() {
     return (
-        <div className="h-[calc(100vh-65px)] min-h-fit flex justify-center">
-            <div className="flex flex-col my-20 bg-base-300 rounded-lg w-[1100px] h-fit min-h-[500px] shadow-sm">
-                <div className="flex rounded-t-lg w-full h-[130px] bg-primary">
-                    <div className="relative avatar w-[25%] h-auto">
-                        <div className="absolute -top-15 left-15 w-40 rounded-full" >
-                            <img src="https://img.daisyui.com/images/profile/demo/yellingwoman@192.webp" />
+        <div className="min-h-fit flex justify-center">
+            <div className="flex flex-col my-10 w-full min-h-fit mx-25 gap-5">
+                <header className="font-bold text-2xl">โปรไฟล์ผู้ใช้</header>
+                <div className="flex w-full gap-20">
+
+                    {/* Left Column */}
+                    <div className="flex flex-col w-[30%] gap-5">
+                        <div className="h-fit bg-base-100 shadow-sm rounded-lg">
+                            {/* Banner Image */}
+                            <div className="flex justify-center rounded-t-lg w-full h-[130px] bg-primary">
+                                <div className="flex justify-center avatar h-full w-full">
+                                    {/* Profile Image */}
+                                    <div className="absolute w-25 top-10 rounded-full">
+                                        <img src="https://img.daisyui.com/images/profile/demo/yellingwoman@192.webp" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Name and Description */}
+                            <div className="flex flex-col gap-5 p-5 text-neutral-content">
+                                <div className="flex w-full justify-center">
+                                    <header className="font-bold text-lg">พลภัทร จินตธรรม</header>
+                                </div>
+
+                                <span className="text-sm">Student | Primary School | 📍Thailand | 📚 KMITL</span>
+                            </div>
+                        </div>
+
+                        <StudentStat/>
+                    </div>
+
+                    {/* Right Column */}
+                    <div className="flex flex-col gap-5 w-[70%]">
+                        <div className="flex flex-col w-full bg-base-100 shadow-sm rounded-lg p-10 gap-5">
+                            <header className="font-bold text-xl">คอร์สล่าสุด</header>
+                            <div className="flex flex-col gap-5">
+                                <CourseProgressBar />
+                                <CourseProgressBar />
+                                <CourseProgressBar />
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col justify-center rounded-lg shadow-sm bg-base-100 p-5 gap-5">
+                            <header className="font-bold text-xl">เวลาเรียนในสัปดาห์นี้</header>
+
+                            <WeeklyExerciseBar />
                         </div>
                     </div>
-                    <div className="flex flex-col gap-2 py-5 text-primary-content">
-                        <span className="font-bold text-2xl">พลภัทร จินตธรรม</span>
-                        <span className="text-sm">Student | Primary School | 📍Thailand | 📚 KMITL</span>
-                    </div>
+
+
                 </div>
 
-                <div className="flex flex-1 w-full h-full p-5">
-                    <div className="flex flex-col w-[25%] gap-2 px-5">
-                        <div className="bg-secondary w-full h-[60px] rounded-lg">
-
-                        </div>
-                        <div className="flex gap-2">
-                            <div className="bg-secondary w-[50%] h-[60px] rounded-lg">
-
-                            </div>
-                            <div className="bg-secondary w-[50%] h-[60px] rounded-lg">
-
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div className="divider divider-horizontal divider-grey-800"></div>
-
-                    <div className="w-[70%]">
-                        <header className="text-neutral-content text-2xl font-bold pb-5">หลักสูตรของฉัน</header>
-                        <YourCourses />
-                    </div>
-                </div>
             </div>
         </div>
     )
