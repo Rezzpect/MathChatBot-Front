@@ -39,10 +39,9 @@ export default function RecommendedCourse() {
     // ];
 
     return (
-        <div className="flex flex-col justify-center items-center gap-5">
-            <div className="grid grid-cols-3 gap-4 items-center">
+        <div className="flex flex-col justify-center items-center gap-5 border">
+            <div className="grid grid-cols-3 gap-4 items-center border border-red-500">
                 {recommendData?.map((data) =>
-                <div key={`card-key-${data.course_id}`}>
                     <CourseCard
                         course_id={data.course_id}
                         course_name={data.course_name}
@@ -50,8 +49,8 @@ export default function RecommendedCourse() {
                         course_owner={data.course_owner}
                         difficulty={data.difficulty}
                         student_amount={data.student_amount}
+                        key={`card-key-${data.course_id}`}
                     />
-                </div>
                 )}
             </div>
             <a className="font-bold text-primary cursor-pointer">READ MORE</a>

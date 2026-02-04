@@ -3,62 +3,69 @@ import { useState, useEffect } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import type { CourseCardProp } from "../../@types/coursecard";
 import supabaseClient from "../../utils/SupabaseClient";
+import { temp_course } from "./tempdata";
+import { useRef } from "react";
 
 export default function EnrolledCourse() {
-    const [cardIndex, setCardIndex] = useState<number>(0);
     const [enrolledData, setEnrolledData] = useState<Array<CourseCardProp>>([])
 
     const fetchData = async () => {
-        const {data,error} = await supabaseClient.functions.invoke('home-courses', {
+        const { data, error } = await supabaseClient.functions.invoke('home-courses', {
             method: 'GET',
         })
         if (data) {
             setEnrolledData(data.data);
-        }else {console.log(error)}
+        } else { console.log(error) }
     }
 
     useEffect(() => {
-        fetchData();
+        // fetchData();
+        setEnrolledData(temp_course)
     }, [])
 
-    const goNext = () => {
-        if (enrolledData.length - cardIndex > 3) {
-            setCardIndex((prev) => (prev + 1));
-        }
-        console.log(cardIndex);
-    }
-    const goPrev = () => {
-        if (cardIndex > 0) {
-            setCardIndex((prev) => (prev - 1));
-        }
-        console.log(cardIndex);
+    const containerRef = useRef<HTMLDivElement>(null)
+
+    const scroll = (direction: "left" | "right") => {
+        const container = containerRef.current
+        if (!container) return
+
+        const cardWidth = container.firstElementChild?.clientWidth ?? 0
+        const gap = 16 // gap-4 = 16px
+
+        container.scrollBy({
+            left: direction === "left"
+                ? -(cardWidth + gap)
+                : cardWidth + gap,
+            behavior: "smooth",
+        })
     }
 
     return (
-        <div className="flex w-full items-center">
-            <button className="text-3xl cursor-pointer" onClick={goPrev}><FaChevronLeft /></button>
-            <div className="relative overflow-hidden py-5 h-full">
-                <div className={`flex gap-4 transition-transform`}
-                    style={{
-                        transform: `translateX(-${cardIndex * 316}px)` // card + 4*(gap size)
-                    }}
-                >
-                    {enrolledData.map((data,) =>
-                        <div key={`card-key-${data.course_id}`}>
-                            <CourseCard
-                                course_id={data.course_id}
-                                course_name={data.course_name}
-                                course_description={data.course_description}
-                                course_owner={data.course_owner}
-                                difficulty={data.difficulty}
-                                student_amount={data.student_amount}
-                            />
-                        </div>
-                    )}
-                </div>
-                <div className="absolute inset-y-0 right-0 w-50 bg-gradient-to-l from-base-100 z-50"></div>
+        <div className="flex w-full items-center gap-5">
+            <button
+                className="bg-primary text-primary-content rounded-full p-2 text-3xl"
+                onClick={() => scroll("left")}
+            >
+                <FaChevronLeft />
+            </button>
+
+            <div
+                ref={containerRef}
+                className="flex w-full gap-4 overflow-x-hidden scroll-smooth py-5 px-1">
+                {enrolledData.map(data => (
+                    <CourseCard
+                        key={data.course_id}
+                        {...data}
+                    />
+                ))}
             </div>
-            <button className="border border-red-500 text-3xl cursor-pointer" onClick={goNext}><FaChevronRight /></button>
+
+            <button
+                className="bg-primary text-primary-content rounded-full p-2 text-3xl"
+                onClick={() => scroll("right")}
+            >
+                <FaChevronRight />
+            </button>
         </div>
     )
 }
