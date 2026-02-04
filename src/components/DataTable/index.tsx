@@ -56,7 +56,7 @@ export default function DataTable<K extends IdKey>({
 
         if (data) {
             console.log(data.data);
-            setData(hint_list);
+            setData(data.data.items);
             setTotalPages(data.data.total_pages);
         } else { console.log(error) }
     }
@@ -90,43 +90,47 @@ export default function DataTable<K extends IdKey>({
 
     const visibleCol = config?.columns.filter(col => col.display !== false)
     const navigate = useNavigate();
+    const showEdit = Boolean(config?.editOption)
+    const showDelete = Boolean(config?.deleteOption)
+    const showAction = config?.editOption || config?.deleteOption
+    const showExtra = Boolean(config?.extraOption)
 
     return (
         <div>
             <div className="flex flex-col flex-1 w-full h-[400px] py-5 text-neutral-content">
                 <div className="flex justify-between items-center mb-5">
                     <header className="text-xl font-bold">{config.title}</header>
-                    <div>
-                        <button className="btn bg-primary text-primary-content rounded-full">Extra Button+</button>
-                    </div>
+                    {showExtra &&
+                        <div>
+                            <button className="btn bg-primary text-primary-content rounded-full">Extra Button+</button>
+                        </div>}
                 </div>
-                
+
                 <div className="overflow-x-auto">
                     <table className="table">
                         <thead>
                             <tr className="bg-base-300 text-base-content w-full">
-                                    {visibleCol?.map((col, index) => {
-                                        return index === 0 ? (
-                                            <th className="rounded-l-xl" style={{ width: col.width }} key={`header-${index}`}>{col.header}</th>
-                                        ) : index === (visibleCol.length - 1) &&  !(config.deleteOption || config.editOption)? (
-                                            <th className="rounded-r-xl" style={{ width: col.width }} key={`header-${index}`}>{col.header}</th>
-                                        ) : (<th style={{ width: col.width }}>{col.header}</th>)
-                                    }
-                                    )}
+                                {visibleCol?.map((col, index) => {
+                                    return index === 0 ? (
+                                        <th className="rounded-l-xl" style={{ width: col.width }} key={`header-${index}`}>{col.header}</th>
+                                    ) : index === (visibleCol.length - 1) && !(config.deleteOption || config.editOption) ? (
+                                        <th className="rounded-r-xl" style={{ width: col.width }} key={`header-${index}`}>{col.header}</th>
+                                    ) : (<th style={{ width: col.width }}>{col.header}</th>)
+                                }
+                                )}
 
-                                    {(config.deleteOption || config.editOption) && (
-                                        <th className="rounded-r-xl" style={{width: '100px'}}>
-                                            การจัดการ
-                                        </th>
-                                    )}
-                                
+                                {showAction && (
+                                    <th className="rounded-r-xl" style={{ width: '100px' }}>
+                                        การจัดการ
+                                    </th>
+                                )}
+
                             </tr>
                         </thead>
 
                         <tbody>
                             {getData?.map((row) =>
-                                <tr className={`border-0 hover:rounded-lg 
-                                    ${config?.navDest === '' ? 'hover:cursor-pointer hover:bg-base-300' : ''}`}
+                                <tr className={` ${config?.navDest === '' ? '' : 'hover:cursor-pointer hover:bg-base-300'}`}
 
                                     onClick={config?.navDest !== '' ? () => navigate(`${config?.navDest}${row[config?.rowIdKey]}`) : undefined}
                                     key={`row-${row[config?.rowIdKey]}`}
@@ -137,21 +141,21 @@ export default function DataTable<K extends IdKey>({
                                             <td>{row[col.key as string]}</td>
                                         )
                                     }
-                                    <td className="flex">
-                                        {config.editOption && (
+                                    {showAction && <td className="flex">
+                                        {showEdit && (
 
                                             <div>
                                                 <button className="btn bg-primary text-primary-content">edit</button>
                                             </div>
                                         )}
 
-                                        {config.deleteOption && (
+                                        {showDelete && (
                                             <div>
                                                 <button className="btn bg-primary text-primary-content">delete</button>
                                             </div>
 
                                         )}
-                                    </td>
+                                    </td>}
                                 </tr>
                             )}
                         </tbody>

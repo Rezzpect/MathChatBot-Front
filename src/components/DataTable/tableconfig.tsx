@@ -43,6 +43,7 @@ export const hintTableConfig: TableConfig<HintRowProp> = {
     navDest: "",
     editOption: true,
     deleteOption: true,
+    extraOption:true,
     columns: [
         { key: 'example_question', header: 'ตัวอย่างคำถาม', display: true, width: '100px' },
         { key: 'hint', header: 'คำใบ้', display: true },

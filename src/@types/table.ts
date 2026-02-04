@@ -15,6 +15,7 @@ export interface TableConfig<T> {
     navDest: string;
     editOption?: boolean;
     deleteOption?: boolean;
+    extraOption?: boolean;
 }
 
 export type IdKey = "course_id" | "topic_id" | "hint_id"

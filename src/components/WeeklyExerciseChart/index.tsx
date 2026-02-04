@@ -9,7 +9,7 @@ import {
 } from 'chart.js';
 import { Bar } from "react-chartjs-2";
 
-import tempdata from './tempdata.json'
+import { weekstat } from './tempdata'
 
 ChartJS.register(
     CategoryScale,
@@ -25,11 +25,11 @@ export default function WeeklyExerciseBar() {
         <div className="w-full bg-base-300 rounded-lg p-5 items-center">
             <Bar
                 data={{
-                    labels: tempdata.map((data) => data.label),
+                    labels: weekstat.map((data) => data.label),
                     datasets: [
                         {
                             label: 'exerciseCount',
-                            data: tempdata.map((data) => data.value),
+                            data: weekstat.map((data) => data.value),
                             backgroundColor: ["rgba(138,56,245,1)"],
                             borderRadius: 10,
                             barThickness: 50
