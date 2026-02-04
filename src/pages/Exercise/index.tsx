@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react"
-import { IoIosArrowDown } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FaX } from "react-icons/fa6"
 import supabaseClient from "../../utils/SupabaseClient";
@@ -8,10 +7,8 @@ import type { QuestionDataProp } from "../../@types/question";
 import Chatbot from "../../components/ChatBot";
 
 export default function ExercisePage() {
-    const [getMode, setMode] = useState<string>('Hint Mode');
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [questionData, setQuestionData] = useState<QuestionDataProp>();
-    const mode = ['Hint Mode', 'Theory Mode'];
     const params = useParams()
 
     const fetchData = async () => {

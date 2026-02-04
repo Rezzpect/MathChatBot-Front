@@ -18,19 +18,19 @@ export default function Chatbot() {
             { message: message, role: 'user' }
         ])
         try {
-            const res = await sendMessage(message)
-            const reply = res.reply
+            const res = await sendMessage(message);
+            const reply = res.reply;
 
             setMessages((prev) => [
                 ...prev,
                 { message: reply, role: 'bot' }
 
-            ])
+            ]);
         } catch {
             setMessages((prev) => [
                 ...prev,
                 { message: "An Unexpected Error has occured", role: 'bot' }
-            ])
+            ]);
         }
 
         setUserInput('');
@@ -84,7 +84,10 @@ export default function Chatbot() {
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)} className="input rounded-full w-full focus:outline-none" />
                 <button
-                onClick={TestSendMessage} 
+                onClick={()=>{
+                    // handleSend(userInput)
+                    TestSendMessage()    
+                }} 
                 className="btn rounded-full btn-primary text-primary-content">Send</button>
             </div>
         </div>

@@ -1,10 +1,16 @@
 import CourseProgressBar from "../../components/CourseProgressBar";
 import StudentStat from "./StudentStat";
 import WeeklyExerciseBar from "../../components/WeeklyExerciseChart";
+import { useState } from "react";
+import EditProfileModal from "../../modals/EditProfile";
 
 export default function StudentProfile() {
+    const [isEditProf,setIsEditProf] = useState<boolean>(false);
+
     return (
-        <div className="min-h-fit flex justify-center">
+        <div className="flex justify-center">
+
+            {isEditProf && <EditProfileModal setOpen={setIsEditProf}/>}
             <div className="flex flex-col my-10 w-full min-h-fit mx-25 gap-5">
                 <header className="font-bold text-2xl">โปรไฟล์ผู้ใช้</header>
                 <div className="flex w-full gap-20">
@@ -13,26 +19,29 @@ export default function StudentProfile() {
                     <div className="flex flex-col w-[30%] gap-5">
                         <div className="h-fit bg-base-100 shadow-sm rounded-lg">
                             {/* Banner Image */}
-                            <div className="flex justify-center rounded-t-lg w-full h-[130px] bg-primary">
-                                <div className="flex justify-center avatar h-full w-full">
-                                    {/* Profile Image */}
-                                    <div className="absolute w-25 top-10 rounded-full">
+                            <div className="relative flex justify-center rounded-t-lg w-full h-[130px] bg-primary">
+                                {/* Profile Image */}
+                                <div className="flex justify-center avatar absolute w-[100px] bottom-[-30px] ">
+                                    <div className="rounded-full">
                                         <img src="https://img.daisyui.com/images/profile/demo/yellingwoman@192.webp" />
                                     </div>
                                 </div>
                             </div>
 
                             {/* Name and Description */}
-                            <div className="flex flex-col gap-5 p-5 text-neutral-content">
+                            <div className="flex flex-col gap-5 p-5 pt-10 text-neutral-content">
                                 <div className="flex w-full justify-center">
                                     <header className="font-bold text-lg">พลภัทร จินตธรรม</header>
                                 </div>
 
-                                <span className="text-sm">Student | Primary School | 📍Thailand | 📚 KMITL</span>
+                                <span className="text-sm break-words">Student | Primary School | 📍Thailand | 📚 KMITL</span>
+                                <div className="flex w-full justify-end">
+                                    <button onClick={()=>{setIsEditProf(true)}}className="rounded-full bg-primary text-primary-content hover:cursor-pointer p-2">Edit Profile</button>
+                                </div>
                             </div>
                         </div>
 
-                        <StudentStat/>
+                        <StudentStat />
                     </div>
 
                     {/* Right Column */}
