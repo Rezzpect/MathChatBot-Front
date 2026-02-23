@@ -1,11 +1,27 @@
 import { RiArrowGoBackFill } from "react-icons/ri";
 import { FaPlus } from "react-icons/fa";
 import DataTable from "../../components/DataTable";
-import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import supabaseClient from "../../utils/SupabaseClient";
+import type { QuestionRowProp } from "../../@types/table";
 
 export default function ProblemSelectionPage() {
-
     const params = useParams()
+    const navigate = useNavigate()
+    const [refreshTrigger,setRefreshTrigger] = useState<number>(0);
+
+    const deleteQuestion = async (question_id:string) => {
+        const {error} = await supabaseClient.functions.invoke('delete-question',{
+            method:'DELETE',
+            body : {
+                question_id: question_id
+            }
+        })
+
+        if (error) throw error
+        else setRefreshTrigger(refreshTrigger+1);
+    }
 
     return (
         <div className="h-[calc(100vh-65px)] min-h-fit flex flex-col justify-center items-center">
@@ -21,7 +37,15 @@ export default function ProblemSelectionPage() {
                     <button className="btn btn-primary rounded-full shadow-sm">ลงทะเบียน<FaPlus /></button>
                 </div>
 
-                <DataTable name="question-list-in-topic" id_key="topic_id" data_id={Number(params.topicId)} />
+                <DataTable
+                    name="question-list-in-topic"
+                    id_key="topic_id"
+                    data_id={Number(params.topicId)}
+                    editScript={(rowData:QuestionRowProp)=>navigate(`editquestion/${rowData.question_id}`)}
+                    deleteScript={deleteQuestion}
+                    extraScript={()=>navigate('editquestion')}
+                    refreshTrigger={refreshTrigger}
+                />
             </div>
         </div>
     )

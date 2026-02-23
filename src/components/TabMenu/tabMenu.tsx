@@ -36,7 +36,7 @@ export default function TabMenu({ tab_data }: TabMenuProps) {
             </div>
 
             {/* Tab Content */}
-            <div className="bg-base-100 rounded-b-lg rounded-r-lg w-full h-auto px-5 shadow-sm">
+            <div className="bg-base-100 rounded-b-lg rounded-r-lg w-full h-auto p-5 shadow-sm">
                 <div>
                     {
                         tab_data[tabIndex].content

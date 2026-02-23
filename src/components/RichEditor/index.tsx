@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import ReactQuill  from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 
@@ -18,9 +18,12 @@ const toolbarOptions = [
     ['clean']                                         // remove formatting button
 ];
 
-export default function RichEditor({ placeholder }: ReactQuill.ReactQuillProps) {
-    const [value, setValue] = useState("");
+export default function RichEditor({ placeholder,value,onChange }: ReactQuill.ReactQuillProps) {
     const quillRef = useRef<ReactQuill>(null);
+
+    useEffect(()=> {
+        console.log(value);
+    },[value]);
 
     return (
         <div className="text-editor border border-neutral rounded-lg [&>div]:flex [&>div]:flex-col-reverse">
@@ -28,7 +31,7 @@ export default function RichEditor({ placeholder }: ReactQuill.ReactQuillProps) 
             <ReactQuill
                 ref={quillRef}
                 value={value}
-                onChange={setValue}
+                onChange={onChange}
                 placeholder={placeholder}
                 modules={{
                     toolbar: toolbarOptions

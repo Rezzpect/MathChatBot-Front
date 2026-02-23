@@ -7,7 +7,7 @@ export default function ChatBubble({
 
     return (
         <div className={`chat ${role === 'user' ? 'chat-end' : 'chat-start'}`}>
-            <div className={`chat-bubble break-words ${role === 'user'? 
+            <div className={`chat-bubble break-words whitespace-pre-line ${role === 'user'? 
             'bg-primary text-primary-content'
         : 'bg-base-100} text-black'}`}>
                 {message}

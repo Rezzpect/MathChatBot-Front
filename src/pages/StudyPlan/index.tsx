@@ -13,7 +13,7 @@ import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 
 import './mycalendar.css'
 import EventModal from '../../modals/EventModal';
-import EditTopicModal from '../../modals/EditTopicModal';
+import EditTopicModal from '../../modals/TopicModal';
 
 const locales = { 'en-US': enUS, }
 
@@ -52,14 +52,14 @@ export default function StudyPlan() {
         if (currentView === 'week') {
             const start = startOfWeek(date);
             const end = endOfWeek(date);
-            return `${format(start, 'd MMMM yyyy')} to ${format(end, 'd MMMM yyyy')}`
+            return `${format(start, 'd MMMM yyyy')} - ${format(end, 'd MMMM yyyy')}`
         }
     }, [date, currentView])
 
     return (
         <div>
             {isOpen && <EditTopicModal setOpen={setIsOpen} />}
-            <div className='flex justify-between p-5'>
+            <div className='flex justify-between p-5 flex-col-reverse md:flex-row gap-5'>
                 {/* change date */}
                 <div className='flex gap-2 items-center'>
                     <div className='font-bold text-xl'>{dateText}</div>

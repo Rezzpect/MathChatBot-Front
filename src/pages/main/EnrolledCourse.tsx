@@ -5,22 +5,35 @@ import type { CourseCardProp } from "../../@types/coursecard";
 import supabaseClient from "../../utils/SupabaseClient";
 import { temp_course } from "./tempdata";
 import { useRef } from "react";
+import CourseCardSkeleton from "../../components/Skeletons/CourseCardSkeleton";
 
 export default function EnrolledCourse() {
     const [enrolledData, setEnrolledData] = useState<Array<CourseCardProp>>([])
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const fetchData = async () => {
-        const { data, error } = await supabaseClient.functions.invoke('home-courses', {
-            method: 'GET',
-        })
-        if (data) {
-            setEnrolledData(data.data);
-        } else { console.log(error) }
+        setIsLoading(true);
+        try {
+            const { data, error } = await supabaseClient.functions.invoke('home-courses', {
+                method: 'GET',
+            })
+            if (error) {
+                throw error
+            }
+
+            if (data) {
+                setEnrolledData(data.data);
+            }
+            
+        } catch (error) {
+            throw error
+        }
+        setIsLoading(false);
     }
 
     useEffect(() => {
-        // fetchData();
-        setEnrolledData(temp_course)
+        fetchData();
+        // setEnrolledData(temp_course)
     }, [])
 
     const containerRef = useRef<HTMLDivElement>(null)
@@ -49,16 +62,26 @@ export default function EnrolledCourse() {
                 <FaChevronLeft />
             </button>
 
-            <div
-                ref={containerRef}
-                className="flex w-full gap-4 overflow-x-hidden scroll-smooth py-5 px-1">
-                {enrolledData.map(data => (
-                    <CourseCard
-                        key={data.course_id}
-                        {...data}
-                    />
-                ))}
-            </div>
+            {isLoading ?
+                <div className="flex w-full gap-4 overflow-x-hidden scroll-smooth py-5 px-1">
+                    <CourseCardSkeleton />
+                    <CourseCardSkeleton />
+                    <CourseCardSkeleton />
+                    <CourseCardSkeleton />
+                    <CourseCardSkeleton />
+                </div>
+                : <div
+                    ref={containerRef}
+                    className="flex w-full gap-4 overflow-x-hidden scroll-smooth py-5 px-1">
+                    {enrolledData.map(data => (
+                        <CourseCard
+                            key={data.course_id}
+                            {...data}
+                        />
+                    ))}
+                </div>
+
+            }
 
             <button
                 className="bg-primary text-primary-content rounded-full p-2 text-3xl"

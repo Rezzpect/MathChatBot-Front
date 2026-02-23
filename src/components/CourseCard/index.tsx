@@ -19,7 +19,7 @@ export default function CourseCard({
         >
             <div className="flex flex-col justify-between align-middle card-body text-primary-content p-5">
                 <header className="card-title text-2xl font-bold h-full line-clamp-2 max-h-[60px]">{course_name}</header>
-                <p className="text-l">{course_owner}</p>
+                <p className="text-sm">{course_owner}</p>
             </div>
             <div className="bg-white rounded-b-lg h-[120px] flex flex-col text-2xl p-2">
                 <div className="badge badge-soft badge-primary">{difficulty}</div>

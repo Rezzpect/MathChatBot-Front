@@ -1,4 +1,4 @@
-import { BrowserRouter, useRoutes } from "react-router-dom";
+import { BrowserRouter, Navigate, useNavigate, useRoutes } from "react-router-dom";
 import MainLayout from "../layouts/main";
 import App from "../App";
 import HomePage from "../pages/main";
@@ -11,6 +11,30 @@ import ProblemSelectionPage from "../pages/ProblemSelection";
 import ExercisePage from "../pages/Exercise";
 import EditExercise from "../pages/EditExercise";
 import StudyPlanPage from "../pages/StudyPlan";
+import { useContext, type JSX } from "react";
+import { AuthContext } from "../contexts/authContext";
+import { ROLE_NO } from "../@types/rolenumber";
+
+function AllowedRoles({ allowed_role, children }: {
+    allowed_role: string[],
+    children: JSX.Element
+}) {
+    const { authData,isLoadingAuth } = useContext(AuthContext);
+    const user_role = authData?.role_name
+
+    if (isLoadingAuth === true){
+        console.log(isLoadingAuth)
+        return <div>IS LOADING</div>
+    }
+
+    if(!user_role){
+        return <Navigate to={'/login'} replace />
+    }
+    
+    if(allowed_role.includes(user_role)){
+        return children
+    }else return <Navigate to={'/'} replace />
+}
 
 function Routes() {
     return useRoutes([
@@ -20,35 +44,60 @@ function Routes() {
             children: [
                 {
                     path: '/',
-                    element: <HomePage />
+                    element:
+                        <HomePage />
                 },
                 {
                     path: '/search',
-                    element: <SearchPage />
+                    element:
+                        <SearchPage />
                 },
                 {
                     path: '/profile',
-                    element: <StudentProfile />
+                    element:
+                        <AllowedRoles allowed_role={['student','teacher','experiment']}>
+                            <StudentProfile />
+                        </AllowedRoles>
                 },
                 {
                     path: '/lesson/:lessonId',
-                    element: <LessonPage />
+                    element:
+                        <LessonPage />
                 },
                 {
                     path: '/problemselection/:topicId',
-                    element: <ProblemSelectionPage />
+                    element:
+                        <AllowedRoles allowed_role={['student','teacher','experiment']}>
+                            <ProblemSelectionPage />
+                        </AllowedRoles>
                 },
                 {
-                    path: '/exercise/:questionId',
-                    element: <ExercisePage />
+                    path: '/problemselection/:topicId/question/:questionId',
+                    element:
+                        <AllowedRoles allowed_role={['student','teacher','experiment']}>
+                            <ExercisePage />
+                        </AllowedRoles>
                 },
                 {
-                    path: '/editexercise',
-                    element: <EditExercise />
+                    path: '/problemselection/:topicId/editquestion',
+                    element:
+                        <AllowedRoles allowed_role={['teacher','experiment']}>
+                            <EditExercise />
+                        </AllowedRoles>
+                },
+                {
+                    path: '/problemselection/:topicId/editquestion/:questionId',
+                    element:
+                        <AllowedRoles allowed_role={['teacher','experiment']}>
+                            <EditExercise />
+                        </AllowedRoles>
                 },
                 {
                     path: '/studyplan',
-                    element: <StudyPlanPage />
+                    element:
+                        <AllowedRoles allowed_role={['student','experiment']}>
+                            <StudyPlanPage />
+                        </AllowedRoles>
                 },
             ]
         },
@@ -66,7 +115,7 @@ function Routes() {
 export default function AppRouter() {
     return (
         <BrowserRouter>
-            <Routes />
+                <Routes />
         </BrowserRouter>
     )
 }
