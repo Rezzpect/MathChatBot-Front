@@ -110,7 +110,7 @@ export default function ExercisePage() {
             </div>
 
             <div className="h-fit min-h-fit flex justify-center px-15 gap-15">
-                <div className="hidden md:flex bg-white rounded-lg w-[70%] h-[82vh] shadow-sm gap-2 border-4 border-neutral" >
+                <div className="hidden md:flex rounded-lg w-[70%] h-[82vh] shadow-sm gap-2 border-4 border-neutral" >
                     <QuestionPanel
                         question_id={questionData?.question_id}
                         title={questionData?.title}

@@ -11,13 +11,13 @@ export interface ProfileModalProps extends ModalProps {
 }
 
 export interface topicModalProps extends ModalProps {
-    modalData: TopicRowProp | undefined;
+    modalData?: TopicRowProp;
     refreshSubmit: React.Dispatch<React.SetStateAction<number>>;
     options: string;
 }
 
 export interface HintModalProps extends ModalProps {
-    modalData: HintRowProp | undefined;
+    modalData?: HintRowProp;
     refreshSubmit: React.Dispatch<React.SetStateAction<number>>;
     options: string;
 }

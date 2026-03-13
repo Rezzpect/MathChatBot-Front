@@ -78,12 +78,8 @@ export default function LoginPage() {
                             value={formData.password}
                             onChange={handleInputChange}
                         />
-                        <div className="flex justify-between text-sm w-full">
-                            <div className="flex items-center gap-1">
-                                <input type="checkbox" />
-                                <label>Remember me</label>
-                            </div>
-                            <a>forgot your password</a>
+                        <div className="flex justify-end text-sm w-full">
+                            <a className="text-primary">forgot your password</a>
                         </div>
                     </div>
 

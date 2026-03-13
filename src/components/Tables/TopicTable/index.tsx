@@ -1,6 +1,5 @@
 import { useState } from "react"
 import DataTable from "../../Table/DataTable"
-import supabaseClient from "../../../utils/SupabaseClient";
 import type { TopicRowProp } from "../../../@types/table";
 import TopicModal from "../../../modals/TopicModal";
 import DeleteModal from "../../../modals/DeleteModal";
@@ -14,38 +13,24 @@ export default function TopicTable({
 }) {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
     const [modalData, setModalData] = useState<TopicRowProp | undefined>(undefined);
-    const [modalOption, setModalOption] = useState<string>('edit');
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const [isDeleteModal,setIsDeleteModal] = useState<boolean>(false);
-    const [topicId,setTopicId] = useState<string>('');
+    const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
+    const [isCreateOpen,setIsCreateOpen] = useState<boolean>(false);
+    const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
+    const [topicId, setTopicId] = useState<string>('');
 
-    const onOpenModal = (topicData: TopicRowProp) => {
-        setModalOption('edit');
+    const openEditModal = (topicData: TopicRowProp) => {
         setModalData(topicData);
-        setIsModalOpen(true);
+        setIsEditOpen(true);
     };
 
     const openCreateModal = () => {
-        setModalOption('create');
-        setIsModalOpen(true);
-    }
-
-    const deleteTopic = async (topic_id: string) => {
-        const result = await supabaseClient.functions.invoke('delete-topic', {
-            method: 'DELETE',
-            body: {
-                "topic_id": topic_id
-            }
-        })
-        console.log(result);
+        setIsCreateOpen(true);
     }
 
     const handleDelete = async (topic_id: string) => {
         setTopicId(topic_id);
         setIsDeleteModal(true);
     }
-
-
 
     return (
         <div>
@@ -60,11 +45,18 @@ export default function TopicTable({
                     setRefresh={setRefreshTrigger}
                 />
             }
-            {edit_permission && isModalOpen &&
+            {edit_permission && isEditOpen &&
                 <TopicModal
                     modalData={modalData}
-                    setOpen={setIsModalOpen}
-                    options={modalOption}
+                    setOpen={setIsEditOpen}
+                    options={'edit'}
+                    refreshSubmit={setRefreshTrigger}
+                />}
+            
+            {edit_permission && isCreateOpen &&
+                <TopicModal
+                    setOpen={setIsCreateOpen}
+                    options={'create'}
                     refreshSubmit={setRefreshTrigger}
                 />}
 
@@ -72,7 +64,7 @@ export default function TopicTable({
                 name="topic-list-in-course"
                 id_key="course_id"
                 data_id={Number(course_id)}
-                editScript={onOpenModal}
+                editScript={openEditModal}
                 deleteScript={handleDelete}
                 extraScript={openCreateModal}
                 refreshTrigger={refreshTrigger}

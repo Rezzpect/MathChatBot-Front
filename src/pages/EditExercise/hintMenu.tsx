@@ -10,23 +10,21 @@ import DeleteModal from "../../modals/DeleteModal";
 
 export default function HintMenu() {
     const { questionId } = useParams();
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
+    const [isCreateOpen,setIsCreateOpen] = useState<boolean>(false);
     const [modalData, setModalData] = useState<HintRowProp | undefined>(undefined);
-    const [modalOption, setModalOption] = useState<string>('edit');
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
     const [hintId,setHintId] = useState<string>('');
     const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
     const isEdit = useMemo(() => { return Boolean(questionId) }, [])
 
     const onEditModal = (hintData: HintRowProp) => {
-        setModalOption('edit');
         setModalData(hintData)
-        setIsModalOpen(true);
+        setIsEditOpen(true);
     };
 
     const openCreateModal = () => {
-        setModalOption('create');
-        setIsModalOpen(true);
+        setIsCreateOpen(true);
     }
 
     const handleDelete = async (hint_id: string) => {
@@ -47,10 +45,15 @@ export default function HintMenu() {
                     setRefresh={setRefreshTrigger}
                 />
             }
-            {isEdit && isModalOpen && <HintModal
+            {isEdit && isEditOpen && <HintModal
                 modalData={modalData}
-                setOpen={setIsModalOpen}
-                options={modalOption}
+                setOpen={setIsEditOpen}
+                options={'edit'}
+                refreshSubmit={setRefreshTrigger} />
+            }
+            {isEdit && isCreateOpen && <HintModal
+                setOpen={setIsCreateOpen}
+                options={'create'}
                 refreshSubmit={setRefreshTrigger} />
             }
             <HintTable

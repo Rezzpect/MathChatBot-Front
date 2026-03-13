@@ -20,7 +20,7 @@ export default function TopicPage() {
         course_owner_id: '',
         created_date: '',
         edit_permission: false,
-        topic_description: 'string',
+        topic_description: '',
         topic_id: 0,
         topic_name: '',
         updated_date: '',

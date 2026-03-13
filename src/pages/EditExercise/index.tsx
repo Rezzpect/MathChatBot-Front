@@ -21,40 +21,6 @@ export default function EditExercise() {
     // const handleSave = () => {
     //     setShowAlert(true);
     // };
-    const checkPermission = async () => {
-        setIsLoading(true);
-        try {
-            const { data, error } = await supabaseClient.functions.invoke('topic-detail', {
-                method: 'POST',
-                body: {
-                    topic_id: params.topicId
-                }
-            })
-
-            if (error) {
-                navigate('/', { replace: true });
-                return
-            }
-
-            if (data.data.length === 0) {
-                navigate('/', { replace: true });
-                return
-            }
-
-            if (data.data.length !== 0) {
-                const topic_data = data.data[0]
-                console.log(topic_data)
-                setCourseId(topic_data.course_id);
-                if (topic_data.course_owner_id !== authData?.user_id && authData?.role_name !== 'admin') navigate('/', { replace: true });
-            }
-
-        } catch (error) {
-            throw error
-        } finally {
-            setIsLoading(false);
-        }
-
-    }
 
     const tab_data = [
         {
@@ -66,8 +32,6 @@ export default function EditExercise() {
                 <HintMenu />
         }
     ]
-
-    // useEffect(() => { checkPermission(); }, [])
 
     return (
         <>{

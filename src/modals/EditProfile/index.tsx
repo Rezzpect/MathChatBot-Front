@@ -178,7 +178,7 @@ export default function EditProfileModal(
                         <div className="rounded-full">
                             <img src={imageUrl || formData.picture_url} />
                         </div>
-                        <label className="absolute bottom-0 right-0 p-1 shadow-sm hover:cursor-pointer bg-primary text-primary-content rounded-full h-fit w-fit">
+                        <label className="absolute bottom-0 right-0 p-1 shadow-sm btn btn-primary text-primary-content rounded-full h-fit w-fit">
                             <MdEdit className="text-lg" />
                             <input type='file' max={1} onChange={insertNewImg} className="hidden" />
                         </label>
@@ -189,7 +189,7 @@ export default function EditProfileModal(
                 {/* Name and Description */}
                 <div className="flex flex-col gap-10 p-5 pt-10 text-neutral-content">
                     <form className="flex flex-col gap-2" onSubmit={handleSave}>
-                        <div className="flex gap-5 w-full">
+                        {/* <div className="flex gap-5 w-full"> */}
                             <InputForm
                                 name='First Name'
                                 error={formError['first_name']}
@@ -208,25 +208,25 @@ export default function EditProfileModal(
                                 onChange={handleInputChange}
                             />
 
-                        </div>
+                        {/* </div> */}
 
-                        <InputForm
+                        {/* <InputForm
                             name='Email'
                             error={formError['email']}
                             id='email'
                             type='email'
                             value={formData.email}
                             onChange={handleInputChange}
-                        />
+                        /> */}
                     </form>
                     <div className="flex w-full justify-end gap-2">
                         <button
                             onClick={() => setOpen(false)}
-                            className="hover:cursor-pointer rounded-full bg-white border border-black text-black font-bold text-lg py-2 px-5">Cancel</button>
+                            className="btn btn-white rounded-full border border-black text-black font-bold text-lg py-2 px-5">Cancel</button>
 
                         <button
                             onClick={handleSave}
-                            className="hover:cursor-pointer rounded-full bg-primary text-primary-content font-bold text-lg py-2 px-5">Save</button>
+                            className="btn btn-primary rounded-full text-primary-content font-bold text-lg py-2 px-5">Save</button>
                     </div>
                 </div>
 

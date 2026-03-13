@@ -15,8 +15,8 @@ type tagRecord = {
     tag_name: string
 }
 
-export default function ExerciseForm({course_id}:{course_id:string}) {
-    const {topicId, questionId } = useParams();
+export default function ExerciseForm({ course_id }: { course_id: string }) {
+    const { topicId, questionId } = useParams();
     const navigate = useNavigate();
     const [tagsList, setTagsList] = useState<tagRecord[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -110,11 +110,10 @@ export default function ExerciseForm({course_id}:{course_id:string}) {
                     "question_id": questionId
                 }
             })
+            if (question_error) navigate('/', { replace: true })
 
-            if (question_error) navigate('/',{replace:true})
-
-            if(question_data.data.length === 0){
-                navigate('/',{replace:true})
+            if (question_data.data[0].length === 0) {
+                navigate('/', { replace: true })
             }
 
             if (question_data) {
@@ -186,7 +185,7 @@ export default function ExerciseForm({course_id}:{course_id:string}) {
     }
 
     const RemoveExistingImage = async () => {
-        if (Object.keys(existingImages).length === 0 )return;
+        if (Object.keys(existingImages).length === 0) return;
 
         const current_url = extractImageUrls(questionForm.question);
         const remove_exist_img = existingImages.filter((img) => !current_url.includes(img.url));
@@ -231,7 +230,7 @@ export default function ExerciseForm({course_id}:{course_id:string}) {
             final_content = final_content.replace(img.url, publicUrl);
             URL.revokeObjectURL(img.url);
         }
-        setQuestionForm((prev)=>({...prev,question:final_content}));
+        setQuestionForm((prev) => ({ ...prev, question: final_content }));
         return final_content
     }
 
@@ -254,7 +253,7 @@ export default function ExerciseForm({course_id}:{course_id:string}) {
 
             if (!isEdit) {
                 const question_id = await createQuestion(questionForm.question)
-                const {data} = await supabaseClient.functions.invoke('')
+                const { data } = await supabaseClient.functions.invoke('')
                 final_content = await ChangeUrl(question_id);
                 await editQuestion(final_content, question_id);
                 navigate(`/topic/${topicId}`);
@@ -262,7 +261,7 @@ export default function ExerciseForm({course_id}:{course_id:string}) {
                 final_content = await ChangeUrl();
                 await editQuestion(final_content);
             }
-            setQuestionForm((prev)=>({...prev,question:final_content}));
+            setQuestionForm((prev) => ({ ...prev, question: final_content }));
             toast.success('Question saved sucessfully!');
         } catch (error) {
             ErrorCleanup();
@@ -293,7 +292,6 @@ export default function ExerciseForm({course_id}:{course_id:string}) {
         if (isEdit) {
             getQuestionData()
         }
-
     }, [])
 
     useEffect(() => {
