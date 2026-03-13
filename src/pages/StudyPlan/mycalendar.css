@@ -1,0 +1,78 @@
+
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: mytheme;
+};
+
+.rbc-header {
+    @apply bg-primary text-primary-content text-lg flex align-middle justify-center items-center h-[36px]!;
+}
+
+.rbc-allday-cell{
+    @apply h-full!
+}
+
+.rbc-time-header-cell .rbc-today {
+    @apply bg-accent
+}
+
+.rbc-time-slot {
+    @apply text-black z-1 hidden!
+}
+
+.rbc-time-slot:not(.rbc-today .rbc-time-slot) {
+    @apply bg-base-200
+}
+
+.rbc-event,
+.rbc-background-event {
+    z-index: 2;
+    padding: 0 !important;
+    border: none !important;
+    background-color: transparent !important;
+}
+
+.rbc-event-label {
+    display: none !important;
+}
+
+.rbc-events-container {
+    width: 100% !important;
+}
+
+.rbc-timeslot-group {
+  border-bottom: none !important;
+}
+
+.rbc-day-slot .rbc-time-slot:after {
+  content: "";
+  width: 100%;
+  border-top: 1px solid #dfdfdf;
+  display: block;
+}
+
+.rbc-time-gutter {
+  display: none !important;
+}
+
+.rbc-time-content {
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+.rbc-current-time-indicator {
+  display: none;
+}
+
+.rbc-time-header-gutter {
+  display: none !important
+}
+
+.rbc-allday-cell .rbc-event {
+  position: relative !important;
+  width: 100% !important;
+}
+
+.rbc-allday-cell {
+  z-index: -1 !important;
+}

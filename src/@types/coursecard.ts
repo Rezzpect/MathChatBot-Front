@@ -1,3 +1,10 @@
 export type CourseCardProp = {
-    color: string,
+    course_id: number,
+    course_name: string,
+    course_owner: string,
+    difficulty: string,
+    course_description: string,
+    student_amount: number,
+    banner_picture:string | null,
+    is_pubished:boolean
 }

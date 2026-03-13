@@ -1,31 +1,107 @@
+import { RiArrowGoBackFill } from "react-icons/ri";
+import { FaPlus } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import supabaseClient from "../../utils/SupabaseClient";
+import type { TopicData } from "../../@types/topic";
+import QuestionTable from "../../components/Tables/QuestionTable";
+import LoadingPage from "../Loading";
+
 export default function ProblemSelectionPage() {
-    const exercise_title = "โจทย์ปัญหาบวก ลบ คูณ หาร"
-    const exercise_count = [
-        1,2,3,4,5,6,7,8,9,10,
-        11,12,13,14,15,16,17,18,19,20
-    ]
+    const params = useParams()
+    const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [bannerUrl, setBannerUrl] = useState<string>('');
+    const [topicData, setTopicData] = useState<TopicData>({
+        course_id: 0,
+        course_name: '',
+        course_owner: '',
+        course_owner_id: '',
+        created_date: '',
+        edit_permission: false,
+        topic_description: 'string',
+        topic_id: 0,
+        topic_name: '',
+        updated_date: '',
+    })
+
+    const getFile = async (course_id:string,banner_name: string) => {
+        const { data } = supabaseClient.storage.from('course_banner').getPublicUrl(course_id + banner_name);
+
+        if (data) {
+            setBannerUrl(data.publicUrl);
+        }
+    }
+
+    const fetchData = async () => {
+        setIsLoading(true);
+        try {
+            const { data, error } = await supabaseClient.functions.invoke('topic-detail', {
+                method: 'POST',
+                body: {
+                    topic_id: params.topicId
+                }
+            })
+
+            if (error) throw error;
+
+            if (data) {
+                const topic_data = data.data[0]
+                console.log(topic_data)
+                const banner_name = topic_data.course_banner_picture;
+                if (banner_name) getFile(topic_data.course_id,banner_name);
+                setTopicData(data.data[0]);
+            }
+        } catch (error) {
+            throw error
+        } finally {
+            setIsLoading(false);
+        }
+
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [])
+
     return (
-        <div className="h-[calc(100vh-65px)] min-h-fit flex justify-center">
-            <div className="flex flex-col my-20 bg-base-300 rounded-lg w-[1100px] h-fit min-h-[500px] shadow-sm">
-                <div className="flex flex-col text-primary-content rounded-t-lg w-full h-[130px] bg-primary p-5 gap-2">
-                    <header className="text-3xl font-bold">คณิตสอบแข่ง</header>
-                    <header className="text-lg">Wuttipat Rojpetipongsakorn</header>
-                </div>
+        <>{
+            isLoading
+                ? <LoadingPage />
+                : <div className="h-[calc(100vh-65px)] min-h-fit flex flex-col justify-center items-center">
 
-                <div className="flex flex-col flex-1 w-full h-full py-5 px-15 text-neutral-content">
-                    <header className="text-xl font-bold pb-10">{exercise_title} ({exercise_count.length} ข้อ)</header>
-                    <div className="grid grid-cols-9 gap-5 px-5">
-                        {
-                            exercise_count.map((ex_id)=>
-                                <div className="flex items-center justify-center text-neutral-content w-12 h-12 rounded-full bg-neutral hover:bg-primary hover:text-primary-content hover:cursor-pointer">
-                                    <span className="font-bold">{ex_id}</span>
-                                </div>
-                            )
-                        }
+                    <div className="flex flex-col lg:px-50 md:px-20 px-5 w-full h-fit min-h-[500px]">
+                        <div className="relative rounded-b-lg w-full h-[12rem] bg-primary overflow-hidden">
+                            {
+                                bannerUrl && <img src={bannerUrl} className=" absolute h-full w-full" />
+                            }
+                            <button
+                                onClick={() => navigate('/lesson/' + topicData.course_id)}
+                                className="absolute m-5 btn btn-black btn-outline bg-white rounded-full shadow-sm">
+                                ย้อนกลับ <RiArrowGoBackFill />
+                            </button>
+                        </div>
+                        <div className="flex justify-between items-end">
+                            <div className="flex flex-col text-primary my-8 gap-3">
+                                <header className="text-xl font-bold text-shadow-lg">{topicData.course_name}</header>
+                                <header className="text-5xl font-bold text-shadow-lg">{topicData.topic_name}</header>
+                                <header className="text-xl font-bold text-shadow-lg">{topicData.course_owner}</header>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col bg-base-300 rounded-lg shadow-sm text-base p-5 my-5">
+                            <header className="text-xl font-bold">{topicData.topic_name}</header>
+                            <span className="px-10 py-5 w-full">{topicData.topic_description}</span>
+                        </div>
+
+                        <QuestionTable
+                            topic_id={params.topicId}
+                            edit_permission={topicData.edit_permission}
+                        />
                     </div>
-
                 </div>
-            </div>
-        </div>
+        }
+        </>
+
     )
 }

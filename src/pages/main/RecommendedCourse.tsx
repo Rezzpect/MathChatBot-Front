@@ -1,35 +1,93 @@
 import CourseCard from "../../components/CourseCard";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import supabaseClient from "../../utils/SupabaseClient";
+import type { CourseCardProp } from "../../@types/coursecard";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import CourseCardSkeleton from "../../components/Skeletons/CourseCardSkeleton";
 
 export default function RecommendedCourse() {
-    const enrolledData = [
-        'bg-primary',
-        'bg-secondary',
-        'bg-accent',
-        'bg-black',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-        'bg-red-500',
-    ];
+    const [enrolledData, setEnrolledData] = useState<Array<CourseCardProp>>([])
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const fetchData = async () => {
+        setIsLoading(true);
+        try {
+            const { data, error } = await supabaseClient.functions.invoke('home-courses', {
+                method: 'GET',
+            })
+            if (error) {
+                throw error
+            }
+
+            if (data) {
+                console.log(data.data)
+                setEnrolledData(data.data);
+            }
+
+        } catch (error) {
+            throw error
+        }
+        setIsLoading(false);
+    }
+
+    useEffect(() => {
+        fetchData();
+        // setEnrolledData(temp_course)
+    }, [])
+
+    const containerRef = useRef<HTMLDivElement>(null)
+
+    const scroll = (direction: "left" | "right") => {
+        const container = containerRef.current
+        if (!container) return
+
+        const cardWidth = container.firstElementChild?.clientWidth ?? 0
+        const gap = 16 // gap-4 = 16px
+
+        container.scrollBy({
+            left: direction === "left"
+                ? -(cardWidth + gap)
+                : cardWidth + gap,
+            behavior: "smooth",
+        })
+    }
 
     return (
-        <div className="flex flex-col justify-center items-center gap-5">
-            <div className="grid grid-cols-3 gap-4 items-center">
-                    {enrolledData.map((data) =>
-                        <CourseCard color={data} />
-                    )}
-            </div>
-            <a className="font-bold text-primary cursor-pointer">READ MORE</a>
+        <div className="flex w-full items-center gap-5">
+            <button
+                className="bg-primary text-primary-content rounded-full p-2 text-3xl"
+                onClick={() => scroll("left")}
+            >
+                <FaChevronLeft />
+            </button>
+
+            {isLoading ?
+                <div className="flex w-full gap-4 overflow-x-hidden scroll-smooth py-5 px-1">
+                    <CourseCardSkeleton />
+                    <CourseCardSkeleton />
+                    <CourseCardSkeleton />
+                    <CourseCardSkeleton />
+                    <CourseCardSkeleton />
+                </div>
+                : <div
+                    ref={containerRef}
+                    className="flex w-full gap-4 overflow-x-hidden scroll-smooth py-5 px-1">
+                    {enrolledData.map(data => (
+                        <CourseCard
+                            key={data.course_id}
+                            {...data}
+                        />
+                    ))}
+                </div>
+
+            }
+
+            <button
+                className="bg-primary text-primary-content rounded-full p-2 text-3xl"
+                onClick={() => scroll("right")}
+            >
+                <FaChevronRight />
+            </button>
         </div>
     )
 }

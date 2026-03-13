@@ -1,95 +1,217 @@
 import { RiArrowGoBackFill } from "react-icons/ri";
-import { FaPlus } from "react-icons/fa";
+import { FaBook, FaBookOpen, FaMinus, FaPlus } from "react-icons/fa";
+import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import supabaseClient from "../../utils/SupabaseClient";
+import type { CourseData } from "../../@types/courseData";
+import CourseModal from "../../modals/CourseModal";
+import TabMenu from "../../components/TabMenu/tabMenu";
+import DocumentTable from "../../components/Tables/DocumentInCourseTable";
+import StudentListTable from "../../components/Tables/StudentInCourseTable";
+import TopicTable from "../../components/Tables/TopicTable";
+import { AuthContext } from "../../contexts/authContext";
+import LoadingPage from "../Loading";
 
 export default function LessonPage() {
-    const data = [
-        {
-            title: "โจทย์ปัญหาการคูณ",
-            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            exerciseCount: "23 ข้อ",
-            status: "เสร็จ"
-        },
-        {
-            title: "โจทย์ปัญหาการบวก",
-            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            exerciseCount: "15 ข้อ",
-            status: "กำลังทำ"
-        },
-        {
-            title: "โจทย์ปัญหาการลบ",
-            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            exerciseCount: "30 ข้อ",
-            status: "ยังไม่เริ่ม"
-        },
-        {
-            title: "โจทย์ปัญหาการหาร",
-            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            exerciseCount: "18 ข้อ",
-            status: "เสร็จ"
-        },
-        {
-            title: "โจทย์ปัญหาการแก้สมการง่ายๆ",
-            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            exerciseCount: "12 ข้อ",
-            status: "กำลังทำ"
+    const params = useParams();
+    const navigate = useNavigate();
+    const { authData } = useContext(AuthContext);
+    const [isCourseModal, setIsCourseModal] = useState<boolean>(false);
+    const [isUploadModal, setIsUploadModal] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [enrollStatus, setEnrollStatus] = useState<boolean>(false);
+
+    const [refreshPage, setRefreshPage] = useState<number>(0);
+
+    const [bannerUrl, setBannerUrl] = useState<string>('https://img.freepik.com/premium-photo/purple-background-simple-empty-backdrop-various-design-works-with-copy-space-text-images_7954-57975.jpg');
+
+    const [courseData, setCourseData] = useState<CourseData>({
+        "course_id": 0,
+        "course_name": "",
+        "course_owner_id": "",
+        "course_owner": "",
+        "difficulty": "",
+        "course_description": null,
+        "edit_permission": false,
+        "is_published": false,
+        "student_amount": 0,
+        "created_date": "",
+        "updated_date": "",
+        "banner_picture": null
+    })
+
+    const getEnrolledStatus = async () => {
+        const { data, error } = await supabaseClient.functions.invoke('can-enroll', {
+            method: 'POST',
+            body: {
+                course_id: params.lessonId
+            }
+        });
+
+        if (error) throw error
+        if (data) {
+            setEnrollStatus(data.data);
         }
-    ];
-    return (
-        <div className="h-[calc(100vh-65px)] min-h-fit flex flex-col justify-center items-center">
-            <div className="flex rounded-b-lg w-full h-[157px] bg-primary">
-                <button className=" m-5 btn btn-black btn-outline bg-white rounded-full shadow-sm">ย้อนกลับ <RiArrowGoBackFill /></button>
-            </div>
-            <div className="flex flex-col w-[965px] h-fit min-h-[500px]">
-                <div className="flex justify-between items-end">
-                    <div className="flex flex-col text-primary my-8 gap-3">
-                        <header className="text-5xl font-bold text-shadow-lg">คณิตสอบแข่ง</header>
-                        <header className="text-xl font-bold text-shadow-lg">Wuttipat Rojpetipongsakorn</header>
+    }
+
+
+    const fetchData = async () => {
+        setIsLoading(true);
+        try {
+            const { data, error } = await supabaseClient.functions.invoke("course-detail", {
+                'body': {
+                    "course_id": params.lessonId
+                }
+            })
+
+            if (error) { throw error }
+
+            if (data) {
+                setCourseData(data.data[0]);
+
+                const banner_name = data.data[0].banner_picture;
+                if (banner_name) getFile(banner_name);
+                await getEnrolledStatus();
+            }
+
+
+        } catch (error) {
+            throw error
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const getFile = async (banner_name: string) => {
+        const { data } = supabaseClient.storage.from('course_banner').getPublicUrl(params.lessonId + banner_name);
+
+        if (data) {
+            setBannerUrl(data.publicUrl);
+        }
+    }
+
+    const enrollCourse = async () => {
+        const { data, error } = await supabaseClient.functions.invoke('enroll-course', {
+            method: 'POST',
+            body: {
+                course_id: params.lessonId
+            }
+        }
+        )
+
+        if (error) throw error
+        if (data) {
+            console.log(data);
+            await getEnrolledStatus();
+        }
+    }
+
+    const tab_data = [
+        {
+            label: "รายการหัวข้อ",
+            content:
+                <TopicTable
+                    course_id={params.lessonId}
+                    edit_permission={courseData.edit_permission}
+                />
+        },
+        {
+            label: "รายชื่อนักเรียน",
+            content:
+                <StudentListTable course_id={params.lessonId} />
+
+        },
+        {
+            label: "Document",
+            content:
+                <DocumentTable
+                    course_id={params.lessonId}
+                    isModal={isUploadModal}
+                    setModal={setIsUploadModal}
+                    edit_permission={courseData.edit_permission}
+                />
+
+        }
+    ]
+
+    useEffect(() => {
+        fetchData();
+    }, [refreshPage]);
+
+    useEffect(() => {
+        getEnrolledStatus();
+    }, [])
+
+    return (<>
+        {isLoading ?
+            <LoadingPage />
+            : <div className="min-h-fit flex flex-col justify-center w-full items-center">
+                {courseData.edit_permission && isCourseModal && <CourseModal
+                    modalData={courseData}
+                    setOpen={setIsCourseModal}
+                    refreshSubmit={setRefreshPage}
+                    bannerUrl={bannerUrl}
+                />}
+
+                <div className="flex flex-col lg:px-50 md:px-20 px-5 w-full h-fit min-h-[500px]">
+                    <div className="relative rounded-b-lg w-full h-[12rem] bg-primary overflow-hidden">
+                        {
+                            bannerUrl && <img src={bannerUrl} className=" absolute h-full w-full" />
+                        }
+                        <button
+                            onClick={() => navigate('/')}
+                            className="absolute m-5 btn btn-black btn-outline bg-white rounded-full shadow-sm">
+                            ย้อนกลับ <RiArrowGoBackFill />
+                        </button>
                     </div>
-                    <button className="btn btn-primary rounded-full shadow-sm">ลงทะเบียน<FaPlus /></button>
-                </div>
+                    <div className="flex justify-between items-end">
+                        <div className="flex flex-col text-primary my-8 gap-3">
+                            <div className="flex gap-2 items-baseline">
+                                <header className="md:text-5xl text-4xl font-bold text-shadow-lg">{courseData.course_name}</header>
+                                {/* {courseData.is_published && <FaBookOpen/>} */}
+                            </div>
+                            <header className="md:text-xl text-lg font-bold text-shadow-lg">{courseData.course_owner}</header>
+                        </div>
 
-                <div className="flex flex-col bg-base-300 rounded-lg shadow-sm text-base p-5 my-5">
-                    <header className="text-2xl font-bold">เกี่ยวกับคอร์ส</header>
-                    <span className="px-10 py-5 w-full">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tempus placerat sodales. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Duis vel massa magna. Fusce erat mauris, feugiat in eleifend vel, lacinia et sapien. Sed gravida quis eros euismod molestie. Proin fringilla, urna quis dapibus luctus, nisl purus porta nisl, ut lacinia nisl sapien sed lorem. Aliquam bibendum, nulla ut pretium porttitor, metus nunc eleifend nunc, ac fermentum magna magna a massa. Quisque venenatis lorem vitae arcu finibus, nec commodo odio efficitur. In in sollicitudin dui, ac volutpat magna. Nulla nec luctus turpis. Nam gravida imperdiet molestie.</span>
-                </div>
-
-                <div className="flex flex-col flex-1 w-full h-full py-5 text-neutral-content">
-                    <header className="text-xl font-bold pb-5">{data.length} หัวข้อ</header>
-                    <div className="overflow-x-auto">
-                        <table className="table">
-                            <thead>
-                                <tr className="bg-base-300 text-base-content w-full">
-                                    <th className="rounded-l-xl">ชื่อหัวข้อ</th>
-                                    <th>description</th>
-                                    <th>จำนวนแบบฝึกหัด</th>
-                                    <th className="rounded-r-xl">สถานะ</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {data.map((course) =>
-                                    <tr className="border-0">
-                                        <td>{course.title}</td>
-                                        <td>{course.description}</td>
-                                        <td>{course.exerciseCount}</td>
-                                        <td>{course.status}</td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
                     </div>
-                </div>
 
-                <div className="flex items-center justify-center mb-5">
-                    <div className="flex join justify-center items-center gap-2 font-bold">
-                        <button className="join-item w-fit h-fit hover:cursor-pointer p-3">«</button>
-                        <button className="join-item text-xs bg-primary text-primary-content  rounded-lg h-7 w-7">1</button>
-                        <button className="join-item text-xs hover:cursor-pointer hover:bg-primary hover:text-primary-content rounded-lg h-7 w-7">2</button>
-                        <button className="join-item text-xs hover:cursor-pointer hover:bg-primary hover:text-primary-content rounded-lg h-7 w-7">3</button>
-                        <button className="join-item w-fit h-fit hover:cursor-pointer p-3">»</button>
+                    <div className="w-full h-fit flex flex-col">
+
+
+                        {authData &&
+                            <div className="w-full flex justify-end gap-2">
+                                {courseData.edit_permission
+                                    ? <>
+                                        <button className="btn btn-primary rounded-full shadow-sm" onClick={() => setIsCourseModal(true)}>EDIT</button>
+                                        <button className="btn btn-primary rounded-full shadow-sm" onClick={() => navigate('./planlists')}>StudyPlan</button>
+                                    </>
+                                    :authData.role_name === 'student'
+                                    ? <>
+                                        {enrollStatus
+                                            ? <button className="btn btn-primary rounded-full shadow-sm" onClick={() => enrollCourse()}>ลงทะเบียน<FaPlus /></button>
+                                            : <button className="btn btn-primary rounded-full shadow-sm" onClick={getEnrolledStatus}>ถอนลงทะเบียน<FaMinus /></button>
+
+                                        }
+                                    </>
+                                    :<></>
+                                }
+                            </div>
+                        }
+
+                        <div className="flex flex-col bg-base-300 rounded-lg shadow-sm text-base p-5 my-5">
+                            <header className="md:text-2xl text-lg font-bold">เกี่ยวกับคอร์ส</header>
+                            <span className="px-10 py-5 w-full">{courseData.course_description}</span>
+                        </div>
                     </div>
+
+                    {
+                        courseData.edit_permission
+                            ? <TabMenu tab_data={tab_data} />
+                            : <TabMenu tab_data={[tab_data[0]]} />
+                    }
+
                 </div>
-            </div>
-        </div>
+            </div >}
+    </>
     )
 }

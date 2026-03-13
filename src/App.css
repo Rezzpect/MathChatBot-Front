@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+Thai:wght@100..900&display=swap');
 @import "tailwindcss";
 @plugin "daisyui" {
   themes: mytheme;
@@ -51,3 +53,9 @@
   padding: 0;
 }
 
+@layer base {
+  input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px white inset;
+    -webkit-text-fill-color: rgba(47, 156, 149, 1);;
+  }
+}

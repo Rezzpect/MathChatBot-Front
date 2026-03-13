@@ -1,29 +1,135 @@
+import { useState, useEffect } from "react"
+import { GiHamburgerMenu } from "react-icons/gi";
+import { FaX } from "react-icons/fa6"
+import supabaseClient from "../../utils/SupabaseClient";
+import { useNavigate, useParams } from "react-router-dom";
+import type { QuestionData } from "../../@types/question";
+import Chatbot from "../../components/ChatBot";
+import TabMenu from "../../components/TabMenu/tabMenu";
+import QuestionPanel from "./QuestionPanel";
+
+import CompleteModal from "../../modals/CompleteModal";
+import WrongModal from "../../modals/WrongModal";
+import type { ChatMessage } from "../../@types/chatbot";
+
 export default function ExercisePage() {
-    return (
-        <div className="h-[calc(100vh-65px)] min-h-fit flex justify-center items-center py-10 px-15 gap-15">
-            <div className="flex flex-col bg-neutral rounded-lg w-[60%] h-full shadow-sm p-5 gap-2">
-                <header className="font-bold text-2xl">โจทย์ปัญหาการบวก ลบระคน</header>
-                <p>ธีรุสมีเงิน 10,000  บาท ซื้อกระเป๋า 3,450 บาท ซื้อชุดทำงาน 2,456 บาท ธีรุสเหลือเงินกี่บาท?</p>
-                <div className="flex justify-center w-full">
-                    <img className="flex w-50 h-50 justify-center" src="https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW1hZ2V8ZW58MHx8MHx8fDA%3D"></img>
+    const [isTabOpen, setIsTabOpen] = useState<boolean>(false);
+    const [questionData, setQuestionData] = useState<QuestionData>();
+    const [isCompleteOpen, setIsCompleteOpen] = useState<boolean>(false);
+    const [isWrongOpen, setIsWrongOpen] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const params = useParams();
+    const navigate = useNavigate();
+
+    const fetchData = async () => {
+        setIsLoading(true);
+        try {
+            const { data, error } = await supabaseClient.functions.invoke("question-detail", {
+                'body': {
+                    "question_id": Number(params.questionId)
+                }
+            })
+
+            if (error) {
+                throw error
+            }
+
+            if (data) {
+                console.log(data.data[0]);
+                setQuestionData(data.data[0]);
+            }
+        }
+        catch (error) {
+            throw error
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    useEffect(() => { fetchData() }, [])
+
+    const tab_data = [
+        {
+            label: "Topic 1", content:
+                <div className="w-full border-4 rounded-lg h-[82vh] border-neutral">
+                    <QuestionPanel
+                        question_id={questionData?.question_id}
+                        title={questionData?.title}
+                        question={questionData?.question}
+                        setWrongModal={setIsWrongOpen}
+                        setCompleteModal={setIsCompleteOpen}
+                        isLoadingQuestion={isLoading}
+                    />
                 </div>
-                
-                <div className="bg-white rounded-lg w-auto h-full mt-2 mx-5">
-                    <textarea className="textarea focus:outline-none w-full h-[80%]" placeholder="write your answer here"></textarea>
-                    <div className="flex justify-end items-center px-5 w-full h-[20%]">
-                        <div className="btn bg-primary text-primary-content rounded-full">ส่งคำตอบ</div>
+
+        },
+        {
+            label: "Topic 2", content:
+                <div className="flex flex-col items-center bg-neutral rounded-lg h-[82vh] shadow-sm">
+                    <Chatbot messages={messages} setMessages={setMessages} />
+                </div>
+
+        }
+    ]
+    return (
+        <div className="flex flex-col h-full w-full justify-center pb-5">
+            {isWrongOpen && <WrongModal setOpen={setIsWrongOpen} />}
+            {isCompleteOpen && <CompleteModal setOpen={setIsCompleteOpen} />}
+            {isTabOpen && (
+                <div
+                    className="fixed w-full top-[0px] h-full bg-black/50 z-40"
+                    onClick={() => setIsTabOpen(false)}
+                />
+            )}
+
+            <div className="flex h-[50px] py-5 px-15 items-center">
+                <div className="flex items-center w-50">
+                    <input type="checkbox" checked={isTabOpen} onChange={() => setIsTabOpen(true)} id="exercise_list" className="hidden peer" />
+                    <label htmlFor="exercise_list" className="flex items-center gap-5 text-xl font-bold text-black hover:text-primary hover:cursor-pointer"><GiHamburgerMenu />แบบฝึกหัด</label>
+                    <div className="absolute bg-white shadow-sm h-full w-100 top-[0px] -left-full peer-checked:left-0 transition-all z-50">
+                        <ul className="flex flex-col justify-center w-full gap-2 px-5 overflow-x-auto">
+                            <li className="flex items-center text-2xl font-bold justify-between w-full h-[50px] px-5 border-b">
+                                <header> แบบฝึกหัด</header>
+                                <input type="checkbox" checked={isTabOpen} onChange={() => setIsTabOpen(false)} id="exercise_list_2" className="hidden peer" />
+                                <label htmlFor="exercise_list_2" className="flex items-center gap-5 text-xl font-bold text-black hover:text-primary hover:cursor-pointer"><FaX /></label>
+                            </li>
+                            <div className="w-full h-full overflow-y-scroll">
+                                <li className="hover:bg-neutral rounded-lg w-full p-3">Exercise 1</li>
+                                <li className="hover:bg-neutral rounded-lg w-full p-3">Exercise 2</li>
+                                <li className="hover:bg-neutral rounded-lg w-full p-3">Exercise 3</li>
+                            </div>
+
+                        </ul>
                     </div>
                 </div>
-            </div>
-            <div className="flex flex-col items-center bg-neutral rounded-lg w-[40%] h-full shadow-sm px-10">
-                <header>AI Agent Math Chatbot</header>
-                <div className="bg-white rounded-lg h-[80%] w-full border-1 border-black">
 
+                <div className="flex justify-end gap-2 w-full">
+                    <button className="btn bg-white text-black border border-black rounded-full" onClick={() => { navigate(`/problemselection/${questionData?.topic_id}`) }}>ย้อนกลับ</button>
                 </div>
-                <div className="flex justify-center mt-5 h-[6%] w-full gap-2 px-2">
-                    <input type="text" placeholder="Type here" className="input rounded-xl w-full focus:outline-none" />
-                    <button className="btn rounded-xl bg-primary text-primary-content">Send</button>
+            </div>
+
+            <div className="h-fit min-h-fit flex justify-center px-15 gap-15">
+                <div className="hidden md:flex bg-white rounded-lg w-[70%] h-[82vh] shadow-sm gap-2 border-4 border-neutral" >
+                    <QuestionPanel
+                        question_id={questionData?.question_id}
+                        title={questionData?.title}
+                        question={questionData?.question}
+                        setWrongModal={setIsWrongOpen}
+                        setCompleteModal={setIsCompleteOpen}
+                        isLoadingQuestion={isLoading}
+                    />
                 </div>
+
+
+                <div className="hidden md:flex flex-col items-center bg-neutral rounded-lg w-[40%] h-[82vh] shadow-sm">
+                    <Chatbot messages={messages} setMessages={setMessages} />
+                </div>
+
+                <div className="md:hidden flex w-full">
+                    <TabMenu tab_data={tab_data} />
+                </div>
+
             </div>
         </div>
     )
