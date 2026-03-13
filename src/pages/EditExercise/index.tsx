@@ -67,7 +67,7 @@ export default function EditExercise() {
         }
     ]
 
-    useEffect(() => { checkPermission(); }, [])
+    // useEffect(() => { checkPermission(); }, [])
 
     return (
         <>{
@@ -83,7 +83,7 @@ export default function EditExercise() {
                     </div>
 
                     <div className="flex justify-end gap-2 w-full">
-                        <button className="btn bg-white text-black border border-black rounded-full" onClick={() => { navigate(`/problemselection/${topicId}`) }}>ย้อนกลับ</button>
+                        <button className="btn bg-white text-black border border-black rounded-full" onClick={() => { navigate(`/topic/${topicId}`) }}>ย้อนกลับ</button>
                     </div>
                 </div>
                 {/* {showAlert && <ShowAlert message={'test'} type="success"/>} */}

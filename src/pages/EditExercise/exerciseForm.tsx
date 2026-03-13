@@ -111,7 +111,7 @@ export default function ExerciseForm({course_id}:{course_id:string}) {
                 }
             })
 
-            if (answer_error || question_error) navigate('/',{replace:true})
+            if (question_error) navigate('/',{replace:true})
 
             if(question_data.data.length === 0){
                 navigate('/',{replace:true})
@@ -257,7 +257,7 @@ export default function ExerciseForm({course_id}:{course_id:string}) {
                 const {data} = await supabaseClient.functions.invoke('')
                 final_content = await ChangeUrl(question_id);
                 await editQuestion(final_content, question_id);
-                navigate(`/problemselection/${topicId}`);
+                navigate(`/topic/${topicId}`);
             } else {
                 final_content = await ChangeUrl();
                 await editQuestion(final_content);

@@ -23,7 +23,7 @@ export default function CourseModal(
     const [imageUrl, setImageUrl] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [newImage, setNewImage] = useState<File | undefined>(undefined)
-    const { lessonId } = useParams();
+    const { courseId } = useParams();
 
     const difficulty_list = ['Easy', 'Normal', 'Hard'];
 
@@ -87,9 +87,9 @@ export default function CourseModal(
     }
 
     const uploadImage = async (new_image: File, filename: string, course_id?: string) => {
-        const { error } = await supabaseClient.storage.from('course_banner').upload(lessonId ?? course_id + filename, new_image);
+        const { error } = await supabaseClient.storage.from('course_banner').upload(courseId ?? course_id + filename, new_image);
         if (modalData?.banner_picture) {
-            const { error } = await supabaseClient.storage.from('course_banner').remove([lessonId ?? course_id + modalData.banner_picture]);
+            const { error } = await supabaseClient.storage.from('course_banner').remove([courseId ?? course_id + modalData.banner_picture]);
 
             if (error) {
                 toast.error(error.message);

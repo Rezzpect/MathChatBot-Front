@@ -12,7 +12,7 @@ export const skeltonTableConfig: TableConfig<SkeletonRowProp> = {
 export const topicTableConfig: TableConfig<TopicRowProp> = {
     title: "โจทย์ปัญหา",
     rowIdKey: "topic_id",
-    navDest: "/problemselection/",
+    navDest: "/topic/",
     columns: [
         { key: 'topic_id', header: 'ID', display: false },
         { key: 'topic_name', header: 'ชื่อหัวข้อ', display: true },
@@ -48,7 +48,7 @@ export const hintTableConfig: TableConfig<HintRowProp> = {
 export const teacherCourseTableConfig: TableConfig<CourseRowProp> = {
     title: "คอร์สของฉัน",
     rowIdKey: "course_id",
-    navDest: "/lesson/",
+    navDest: "/course/",
     columns: [
         { key: 'course_id', header: 'Course id', display: false, width: '100px' },
         { key: 'course_name', header: 'คอร์ส', display: true },
@@ -63,7 +63,7 @@ export const teacherCourseTableConfig: TableConfig<CourseRowProp> = {
 export const studentCourseTableConfig: TableConfig<EnrolledRowProp> = {
     title: "คอร์สของฉัน",
     rowIdKey: "course_id",
-    navDest: "/lesson/",
+    navDest: "/course/",
     columns: [
         { key: 'course_id', header: 'Course id', display: false, width: '100px' },
         { key: 'course_name', header: 'คอร์ส', display: true },

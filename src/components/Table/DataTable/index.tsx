@@ -133,9 +133,9 @@ export default function DataTable<K extends IdKey>({
     const extractFileUrl = async (name: string) => {
         const file_surname = name.split('.').pop()?.toLocaleLowerCase()
 
-        if (!bucketName || !params.lessonId || !file_surname) return;
+        if (!bucketName || !params.courseId || !file_surname) return;
 
-        const { data, error } = await supabaseClient.storage.from(bucketName).createSignedUrl(`${params.lessonId}/${name}`, 600)
+        const { data, error } = await supabaseClient.storage.from(bucketName).createSignedUrl(`${params.courseId}/${name}`, 600)
 
         if (error || !data) {
             console.error('Failed to get signed URL:', error);

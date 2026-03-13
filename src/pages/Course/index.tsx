@@ -11,14 +11,16 @@ import StudentListTable from "../../components/Tables/StudentInCourseTable";
 import TopicTable from "../../components/Tables/TopicTable";
 import { AuthContext } from "../../contexts/authContext";
 import LoadingPage from "../Loading";
+import toast from "react-hot-toast";
 
-export default function LessonPage() {
+export default function CoursePage() {
     const params = useParams();
     const navigate = useNavigate();
     const { authData } = useContext(AuthContext);
     const [isCourseModal, setIsCourseModal] = useState<boolean>(false);
     const [isUploadModal, setIsUploadModal] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isEnrolling, setIsEnrolling] = useState<boolean>(false);
     const [enrollStatus, setEnrollStatus] = useState<boolean>(false);
 
     const [refreshPage, setRefreshPage] = useState<number>(0);
@@ -44,7 +46,7 @@ export default function LessonPage() {
         const { data, error } = await supabaseClient.functions.invoke('can-enroll', {
             method: 'POST',
             body: {
-                course_id: params.lessonId
+                course_id: params.courseId
             }
         });
 
@@ -60,11 +62,11 @@ export default function LessonPage() {
         try {
             const { data, error } = await supabaseClient.functions.invoke("course-detail", {
                 'body': {
-                    "course_id": params.lessonId
+                    "course_id": params.courseId
                 }
             })
 
-            if (error) { throw error }
+            if (error || data.data[0].length === 0) { throw error }
 
             if (data) {
                 setCourseData(data.data[0]);
@@ -74,16 +76,15 @@ export default function LessonPage() {
                 await getEnrolledStatus();
             }
 
-
-        } catch (error) {
-            throw error
-        } finally {
             setIsLoading(false)
+        } catch (error) {
+            navigate('/', { replace: true })
+            throw error
         }
     }
 
     const getFile = async (banner_name: string) => {
-        const { data } = supabaseClient.storage.from('course_banner').getPublicUrl(params.lessonId + banner_name);
+        const { data } = supabaseClient.storage.from('course_banner').getPublicUrl(params.courseId + banner_name);
 
         if (data) {
             setBannerUrl(data.publicUrl);
@@ -91,18 +92,51 @@ export default function LessonPage() {
     }
 
     const enrollCourse = async () => {
-        const { data, error } = await supabaseClient.functions.invoke('enroll-course', {
-            method: 'POST',
-            body: {
-                course_id: params.lessonId
+        setIsEnrolling(true);
+        try {
+            const { data, error } = await supabaseClient.functions.invoke('enroll-course', {
+                method: 'POST',
+                body: {
+                    course_id: params.courseId
+                }
             }
-        }
-        )
+            )
 
-        if (error) throw error
-        if (data) {
-            console.log(data);
-            await getEnrolledStatus();
+            if (error) throw error
+            if (data) {
+                console.log(data);
+                await getEnrolledStatus();
+                toast.success('Enroll successfully');
+            }
+        } catch (error) {
+            toast.error('Failed to enroll course');
+        } finally {
+            setIsEnrolling(false);
+        }
+
+    }
+
+    const unEnrollCourse = async () => {
+        setIsEnrolling(true);
+        try {
+            const { data, error } = await supabaseClient.functions.invoke('unenroll-course', {
+                method: 'DELETE',
+                body: {
+                    course_id: params.courseId
+                }
+            }
+            )
+
+            if (error) throw error
+            if (data) {
+                console.log(data);
+                await getEnrolledStatus();
+                toast.success('Unenroll successfully');
+            }
+        } catch (error) {
+            toast.error('Failed to unenroll course');
+        } finally {
+            setIsEnrolling(false);
         }
     }
 
@@ -111,21 +145,21 @@ export default function LessonPage() {
             label: "รายการหัวข้อ",
             content:
                 <TopicTable
-                    course_id={params.lessonId}
+                    course_id={params.courseId}
                     edit_permission={courseData.edit_permission}
                 />
         },
         {
             label: "รายชื่อนักเรียน",
             content:
-                <StudentListTable course_id={params.lessonId} />
+                <StudentListTable course_id={params.courseId} />
 
         },
         {
             label: "Document",
             content:
                 <DocumentTable
-                    course_id={params.lessonId}
+                    course_id={params.courseId}
                     isModal={isUploadModal}
                     setModal={setIsUploadModal}
                     edit_permission={courseData.edit_permission}
@@ -185,15 +219,30 @@ export default function LessonPage() {
                                         <button className="btn btn-primary rounded-full shadow-sm" onClick={() => setIsCourseModal(true)}>EDIT</button>
                                         <button className="btn btn-primary rounded-full shadow-sm" onClick={() => navigate('./planlists')}>StudyPlan</button>
                                     </>
-                                    :authData.role_name === 'student'
-                                    ? <>
-                                        {enrollStatus
-                                            ? <button className="btn btn-primary rounded-full shadow-sm" onClick={() => enrollCourse()}>ลงทะเบียน<FaPlus /></button>
-                                            : <button className="btn btn-primary rounded-full shadow-sm" onClick={getEnrolledStatus}>ถอนลงทะเบียน<FaMinus /></button>
+                                    : authData.role_name === 'student'
+                                        ? <>
+                                            {enrollStatus
+                                                ? <button className="btn btn-primary rounded-full shadow-sm"
+                                                    disabled={isEnrolling}
+                                                    onClick={() => enrollCourse()}>
+                                                    {isEnrolling
+                                                        ? <span className="loading loading-spin" />
+                                                        : <>ลงทะเบียน<FaPlus /></>
+                                                    }
 
-                                        }
-                                    </>
-                                    :<></>
+                                                </button>
+                                                : <button className="btn btn-primary rounded-full shadow-sm"
+                                                    disabled={isEnrolling}
+                                                    onClick={() => unEnrollCourse()}>
+                                                    {isEnrolling
+                                                        ? <span className="loading loading-spin" />
+                                                        : <>ถอนลงทะเบียน<FaMinus /></>
+                                                    }
+                                                </button>
+
+                                            }
+                                        </>
+                                        : <></>
                                 }
                             </div>
                         }

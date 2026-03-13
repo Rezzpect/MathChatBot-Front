@@ -6,8 +6,9 @@ import supabaseClient from "../../utils/SupabaseClient";
 import type { TopicData } from "../../@types/topic";
 import QuestionTable from "../../components/Tables/QuestionTable";
 import LoadingPage from "../Loading";
+import toast from "react-hot-toast";
 
-export default function ProblemSelectionPage() {
+export default function TopicPage() {
     const params = useParams()
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -42,26 +43,27 @@ export default function ProblemSelectionPage() {
                     topic_id: params.topicId
                 }
             })
-
-            if (error) throw error;
+            if (error || data.data[0].length===0) throw error;
+            
 
             if (data) {
                 const topic_data = data.data[0]
-                console.log(topic_data)
+                console.log(topic_data);
                 const banner_name = topic_data.course_banner_picture;
                 if (banner_name) getFile(topic_data.course_id,banner_name);
                 setTopicData(data.data[0]);
             }
-        } catch (error) {
-            throw error
-        } finally {
+            
             setIsLoading(false);
+        } catch (error) {
+            navigate('/',{replace:true})
+            throw error
         }
 
     }
 
     useEffect(() => {
-        fetchData()
+        fetchData();
     }, [])
 
     return (
@@ -76,7 +78,7 @@ export default function ProblemSelectionPage() {
                                 bannerUrl && <img src={bannerUrl} className=" absolute h-full w-full" />
                             }
                             <button
-                                onClick={() => navigate('/lesson/' + topicData.course_id)}
+                                onClick={() => navigate('/course/' + topicData.course_id)}
                                 className="absolute m-5 btn btn-black btn-outline bg-white rounded-full shadow-sm">
                                 ย้อนกลับ <RiArrowGoBackFill />
                             </button>

@@ -105,7 +105,7 @@ export default function ExercisePage() {
                 </div>
 
                 <div className="flex justify-end gap-2 w-full">
-                    <button className="btn bg-white text-black border border-black rounded-full" onClick={() => { navigate(`/problemselection/${questionData?.topic_id}`) }}>ย้อนกลับ</button>
+                    <button className="btn bg-white text-black border border-black rounded-full" onClick={() => { navigate(`/topic/${questionData?.topic_id}`) }}>ย้อนกลับ</button>
                 </div>
             </div>
 

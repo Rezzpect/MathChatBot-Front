@@ -36,7 +36,7 @@ export default function CourseCard({
 
     return (
         <div className={`card hover:cursor-pointer hover:translate-y-[-4px] overflow-hidden bg-white primary text-neutral-content w-[300px] h-[250px] flex-shrink-0 card-sm shadow-sm`}
-            onClick={() => navigate(`/lesson/${course_id}`)}
+            onClick={() => navigate(`/course/${course_id}`)}
         >
             <div className="flex flex-col relative bg-primary justify-between align-middle card-body text-primary-content p-5 overflow-hidden">
 

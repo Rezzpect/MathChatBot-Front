@@ -73,7 +73,7 @@ const tempData: NewEventItems[] = [
 
 export default function PlanListPage({ }
 ) {
-    const { lessonId } = useParams();
+    const { courseId } = useParams();
     const navigate = useNavigate();
     const [isPlanListModal, setIsPlanListModal] = useState<boolean>(false);
     const [bannerUrl, setBannerUrl] = useState<string>('https://img.freepik.com/premium-photo/purple-background-simple-empty-backdrop-various-design-works-with-copy-space-text-images_7954-57975.jpg');
@@ -96,7 +96,7 @@ export default function PlanListPage({ }
         try {
             const { data, error } = await supabaseClient.functions.invoke("course-detail", {
                 'body': {
-                    "course_id": lessonId
+                    "course_id": courseId
                 }
             })
 
@@ -119,7 +119,7 @@ export default function PlanListPage({ }
     }
 
     const getFile = async (banner_name: string) => {
-        const { data } = supabaseClient.storage.from('course_banner').getPublicUrl(lessonId + banner_name);
+        const { data } = supabaseClient.storage.from('course_banner').getPublicUrl(courseId + banner_name);
 
         if (data) {
             setBannerUrl(data.publicUrl);
@@ -139,7 +139,7 @@ export default function PlanListPage({ }
                         bannerUrl && <img src={bannerUrl} className=" absolute h-full w-full" />
                     }
                     <button
-                        onClick={() => navigate('/lesson/'+lessonId)}
+                        onClick={() => navigate('/course/'+ courseId)}
                         className="absolute m-5 btn btn-black btn-outline bg-white rounded-full shadow-sm">
                         ย้อนกลับ <RiArrowGoBackFill />
                     </button>

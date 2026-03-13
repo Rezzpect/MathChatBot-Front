@@ -9,12 +9,12 @@ import { useParams } from "react-router-dom";
 export default function TopicModal(
     { modalData, setOpen, options,refreshSubmit }: topicModalProps
 ) {
-    const { lessonId } = useParams();
+    const { courseId } = useParams();
     const [formData, setFormData] = useState<TopicForm>({
         topic_name: '',
         topic_description: '',
         topic_id: '',
-        course_id: lessonId
+        course_id: courseId
     })
     const [formError, setFormError] = useState<Partial<TopicForm>>({});
 

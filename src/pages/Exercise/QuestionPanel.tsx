@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import type { QuestionPanelProp } from "../../@types/question"
 import supabaseClient from "../../utils/SupabaseClient";
 import { useParams } from "react-router-dom";
 import ReactQuill from "react-quill-new";
+import { AuthContext } from "../../contexts/authContext";
 
 export default function QuestionPanel({
     question_id,
@@ -13,6 +14,7 @@ export default function QuestionPanel({
     isLoadingQuestion
 }: QuestionPanelProp) {
     const { questionId } = useParams();
+    const {authData} = useContext(AuthContext);
     const [answer, setAnswer] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     // const [ isCompleteOpen,setIsCompleteOpen] = useState<boolean>(false);
@@ -74,7 +76,7 @@ export default function QuestionPanel({
                 }}>
                 <input className="input focus:outline-none rounded-full w-full"
                     placeholder="write your answer here"
-                    disabled={isLoading || isLoadingQuestion}
+                    disabled={isLoading || isLoadingQuestion || authData?.role_name==='teacher'}
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
                 ></input>
