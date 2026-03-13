@@ -1,37 +1,63 @@
 import { MdEdit } from "react-icons/md";
-import type { EditModalProps } from "../../@types/modal";
-import { useEffect, useState } from "react";
+import type { ProfileModalProps } from "../../@types/modal";
+import { useContext, useEffect, useState } from "react";
 import supabaseClient from "../../utils/SupabaseClient";
 import InputForm from "../../components/Form/inputForm";
+import type { UserFormData } from "../../@types/authdata";
+import { AuthContext } from "../../contexts/authContext";
+import toast from "react-hot-toast";
 
-type editProfileForm = {
-    first_name: string,
-    last_name: string,
-    email: string
-}
 
 export default function EditProfileModal(
-    { userData, onSubmit, setOpen }: EditModalProps
+    { pictureUrl, setOpen }: ProfileModalProps
 ) {
-    const [formData, setFormData] = useState<editProfileForm>({
+    const [formData, setFormData] = useState<UserFormData>({
         first_name: '',
         last_name: '',
-        email: ''
+        email: '',
+        profile_picture: '',
+        picture_url: '',
+        user_id: ''
     })
-    const [formError, setFormError] = useState<Partial<editProfileForm>>({})
+    const { authData, refreshAuthData } = useContext(AuthContext);
+    const [formError, setFormError] = useState<Partial<UserFormData>>({})
+    const [newImage, setNewImage] = useState<File | undefined>(undefined);
+    const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+
+    const insertNewImg = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(e.target.files)
+        const input_file = e.target.files?.[0];
+
+        if (!input_file) return;
+
+        const preview_url = URL.createObjectURL(input_file);
+
+        if (imageUrl) URL.revokeObjectURL(imageUrl);
+        setNewImage(input_file);
+        setImageUrl(preview_url);
+    }
 
     useEffect(() => {
-        if (userData) {
-            setFormData({
-                first_name: userData.first_name,
-                last_name: userData.last_name,
-                email: userData.email
-            })
-        }
+        if (!authData) return
+
+        setFormData({
+            first_name: authData.first_name,
+            last_name: authData.last_name,
+            email: authData.email,
+            profile_picture: authData.profile_picture,
+            picture_url: pictureUrl,
+            user_id: authData.user_id
+        })
+
+        return () => {
+            if (imageUrl) {
+                URL.revokeObjectURL(imageUrl)
+            };
+        };
     }, []);
 
     const validate = () => {
-        const rules: Array<{ key: keyof editProfileForm, condition: boolean, message: string }> = [
+        const rules: Array<{ key: keyof UserFormData, condition: boolean, message: string }> = [
             {
                 key: 'first_name',
                 condition: (!formData.first_name),
@@ -52,26 +78,95 @@ export default function EditProfileModal(
         const result = rules.reduce((errors, { key, condition, message }) => {
             if (condition) errors[key] = message;
             return errors;
-        }, {} as Partial<editProfileForm>);
+        }, {} as Partial<UserFormData>);
 
         if (Object.keys(result).length !== 0) return result
     };
 
+    const uploadImage = async (new_image: File, filename:string) => {
+        if (!authData) return
+
+        const{error:UploadError} = await supabaseClient.storage.from('profile_image').upload(authData.user_id + filename, new_image);
+        
+        if (UploadError) {
+            toast.error('failed to upload profile image')
+            throw UploadError;
+        }
+        
+        if (formData?.profile_picture) {
+            const { error } = await supabaseClient.storage.from('course_banner').remove([authData.user_id + formData.profile_picture]);
+
+            if (error) {
+                toast.error(error.message);
+                throw error
+            }
+        }
+    }
+
+    const EditProfile = async (first_name: string, last_name: string) => {
+        const filename =`/profile${Date.now()}`;
+        try {
+
+            if (!authData) return
+
+            const { error } = await supabaseClient.functions.invoke('edit-profile-detail', {
+                method: 'PUT',
+                body: {
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "picture_name": newImage? filename : formData.profile_picture
+                }
+            })
+
+            if (error){
+                toast.error('Failed to update profile');
+                throw error
+            }
+
+            if(newImage){
+                await uploadImage(newImage,filename);
+            }
+            refreshAuthData();
+        } catch (error) {
+            toast.error('Something went wrong');
+            throw error 
+        };
+    }
+
     const handleSave = async (e: React.FormEvent) => {
-        e.preventDefault()
-        const error = validate()
+        e.preventDefault();
 
-        if (!error) {
-            onSubmit(formData.first_name, formData.last_name);
+        if (formData.first_name === authData?.first_name
+            && formData.last_name === authData.last_name
+            && !newImage) {
             setOpen(false);
-        }else setFormError({...error})
+            return
+        }
 
+        const error = validate();
+
+        if (error) {
+            setFormError({ ...error });
+            toast.error('Invalid Profile')
+            return
+        }else setFormError({})
+
+        await EditProfile(formData.first_name, formData.last_name); //edit-profile
+        setOpen(false);
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value, id } = e.target;
         setFormData((prev) => ({ ...prev, [id]: value }))
     }
+    
+    useEffect(() => {
+        document.body.classList.add('overflow-hidden')
+
+        return () => {
+            document.body.classList.remove('overflow-hidden')
+        }
+    }, [])
 
     return (
         <div className="fixed w-full h-full bg-black/50 top-0  flex justify-center items-center z-100">
@@ -81,9 +176,13 @@ export default function EditProfileModal(
                     {/* Profile Image */}
                     <div className="flex justify-center avatar absolute w-[100px] bottom-[-30px]">
                         <div className="rounded-full">
-                            <img src="https://img.daisyui.com/images/profile/demo/yellingwoman@192.webp" />
+                            <img src={imageUrl || formData.picture_url} />
                         </div>
-                        <button className="absolute bottom-0 right-0 p-1 shadow-sm hover:cursor-pointer text-lg bg-primary text-primary-content rounded-full"><MdEdit /></button>
+                        <label className="absolute bottom-0 right-0 p-1 shadow-sm hover:cursor-pointer bg-primary text-primary-content rounded-full h-fit w-fit">
+                            <MdEdit className="text-lg" />
+                            <input type='file' max={1} onChange={insertNewImg} className="hidden" />
+                        </label>
+
                     </div>
                 </div>
 

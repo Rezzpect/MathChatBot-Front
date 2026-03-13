@@ -5,11 +5,12 @@ type InputFormProps = {
     type: string;
     name: string;
     placeholder?: string;
+    readOnly?:boolean;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 
 }
 
-export default function InputForm({ value, error, id, type, name, placeholder = '', onChange }: InputFormProps) {
+export default function InputForm({ value, error, id, type, name, placeholder = '',readOnly=false, onChange }: InputFormProps) {
     return (
         <div className="flex flex-col gap-1 w-full">
             <label className="font-bold" htmlFor={id}>{name}</label>
@@ -18,6 +19,7 @@ export default function InputForm({ value, error, id, type, name, placeholder = 
                     }`}
                 type={type}
                 id={id}
+                disabled={readOnly}
                 value={value}
                 placeholder={placeholder}
                 onChange={onChange} />

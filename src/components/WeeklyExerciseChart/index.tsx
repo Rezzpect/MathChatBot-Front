@@ -22,7 +22,7 @@ ChartJS.register(
 
 export default function WeeklyExerciseBar() {
     return (
-        <div className="w-full h-full bg-base-300 rounded-lg p-5 items-center relative">
+        <div className="w-full h-100 bg-base-300 rounded-lg p-5 items-center relative">
             <Bar
                 data={{
                     labels: weekstat.map((data) => data.label),

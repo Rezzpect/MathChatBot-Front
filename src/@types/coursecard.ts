@@ -5,4 +5,6 @@ export type CourseCardProp = {
     difficulty: string,
     course_description: string,
     student_amount: number,
+    banner_picture:string | null,
+    is_pubished:boolean
 }

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FaX } from "react-icons/fa6"
 import supabaseClient from "../../utils/SupabaseClient";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { QuestionData } from "../../@types/question";
 import Chatbot from "../../components/ChatBot";
 import TabMenu from "../../components/TabMenu/tabMenu";
@@ -10,15 +10,20 @@ import QuestionPanel from "./QuestionPanel";
 
 import CompleteModal from "../../modals/CompleteModal";
 import WrongModal from "../../modals/WrongModal";
+import type { ChatMessage } from "../../@types/chatbot";
 
 export default function ExercisePage() {
     const [isTabOpen, setIsTabOpen] = useState<boolean>(false);
     const [questionData, setQuestionData] = useState<QuestionData>();
-    const [ isCompleteOpen,setIsCompleteOpen] = useState<boolean>(false);
-    const [ isWrongOpen,setIsWrongOpen] = useState<boolean>(false);
-    const params = useParams()
+    const [isCompleteOpen, setIsCompleteOpen] = useState<boolean>(false);
+    const [isWrongOpen, setIsWrongOpen] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const params = useParams();
+    const navigate = useNavigate();
 
     const fetchData = async () => {
+        setIsLoading(true);
         try {
             const { data, error } = await supabaseClient.functions.invoke("question-detail", {
                 'body': {
@@ -37,6 +42,8 @@ export default function ExercisePage() {
         }
         catch (error) {
             throw error
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -52,22 +59,23 @@ export default function ExercisePage() {
                         question={questionData?.question}
                         setWrongModal={setIsWrongOpen}
                         setCompleteModal={setIsCompleteOpen}
+                        isLoadingQuestion={isLoading}
                     />
                 </div>
 
         },
         {
             label: "Topic 2", content:
-            <div className="flex flex-col items-center h-fit bg-neutral rounded-lg w-full shadow-sm">
-                <Chatbot />
-            </div>
-                
+                <div className="flex flex-col items-center bg-neutral rounded-lg h-[82vh] shadow-sm">
+                    <Chatbot messages={messages} setMessages={setMessages} />
+                </div>
+
         }
     ]
     return (
-        <div className="flex flex-col">
-            { isWrongOpen && <WrongModal setOpen={setIsWrongOpen}/>}
-            { isCompleteOpen && <CompleteModal setOpen={setIsCompleteOpen}/>}
+        <div className="flex flex-col h-full w-full justify-center pb-5">
+            {isWrongOpen && <WrongModal setOpen={setIsWrongOpen} />}
+            {isCompleteOpen && <CompleteModal setOpen={setIsCompleteOpen} />}
             {isTabOpen && (
                 <div
                     className="fixed w-full top-[0px] h-full bg-black/50 z-40"
@@ -75,7 +83,7 @@ export default function ExercisePage() {
                 />
             )}
 
-            <div className="flex h-[50px] px-5">
+            <div className="flex h-[50px] py-5 px-15 items-center">
                 <div className="flex items-center w-50">
                     <input type="checkbox" checked={isTabOpen} onChange={() => setIsTabOpen(true)} id="exercise_list" className="hidden peer" />
                     <label htmlFor="exercise_list" className="flex items-center gap-5 text-xl font-bold text-black hover:text-primary hover:cursor-pointer"><GiHamburgerMenu />แบบฝึกหัด</label>
@@ -95,6 +103,10 @@ export default function ExercisePage() {
                         </ul>
                     </div>
                 </div>
+
+                <div className="flex justify-end gap-2 w-full">
+                    <button className="btn bg-white text-black border border-black rounded-full" onClick={() => { navigate(`/problemselection/${questionData?.topic_id}`) }}>ย้อนกลับ</button>
+                </div>
             </div>
 
             <div className="h-fit min-h-fit flex justify-center px-15 gap-15">
@@ -105,12 +117,13 @@ export default function ExercisePage() {
                         question={questionData?.question}
                         setWrongModal={setIsWrongOpen}
                         setCompleteModal={setIsCompleteOpen}
+                        isLoadingQuestion={isLoading}
                     />
                 </div>
 
 
                 <div className="hidden md:flex flex-col items-center bg-neutral rounded-lg w-[40%] h-[82vh] shadow-sm">
-                    <Chatbot />
+                    <Chatbot messages={messages} setMessages={setMessages} />
                 </div>
 
                 <div className="md:hidden flex w-full">

@@ -1,6 +1,5 @@
 import { useContext, useState } from "react"
 import { AuthContext } from "../../contexts/authContext"
-import { useNavigate } from "react-router-dom"
 import AuthInputForm from "../../components/Form/authInputForm";
 
 type InputLoginForm = {

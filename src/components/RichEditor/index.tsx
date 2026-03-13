@@ -1,16 +1,16 @@
-import { useState, useRef, useEffect } from "react";
-import ReactQuill  from "react-quill-new";
+import { useRef, useEffect, useMemo } from "react";
+import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
+import "./quill-fix.css"
+import type { EditorProps } from "../../@types/richeditor";
 
 const toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
     ['blockquote', 'code-block'],
     ['link', 'image', 'formula'],
-    [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'list': 'check' }],
+    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
 
     [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-
     [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
     [{ 'font': [] }],
     [{ 'align': [] }],
@@ -18,23 +18,87 @@ const toolbarOptions = [
     ['clean']                                         // remove formatting button
 ];
 
-export default function RichEditor({ placeholder,value,onChange }: ReactQuill.ReactQuillProps) {
+const Image = Quill.import('formats/image') as any;
+
+class CustomImage extends Image {
+  static create(value: string) {
+    const node = super.create(value);
+    // Allow blob URLs and regular URLs through without sanitization
+    node.setAttribute('src', value);
+    return node;
+  }
+
+  static value(node: HTMLElement) {
+    return node.getAttribute('src');
+  }
+
+  static sanitize(url: string) {
+    // Bypass Quill's built-in URL sanitizer entirely
+    return url;
+  }
+}
+
+CustomImage.blotName = 'image';
+CustomImage.tagName = 'IMG';
+
+Quill.register(CustomImage, true);
+
+export default function RichEditor({ setImagesToUpload,placeholder, value, onChange, readOnly }:  EditorProps) {
     const quillRef = useRef<ReactQuill>(null);
 
-    useEffect(()=> {
+    useEffect(() => {
         console.log(value);
-    },[value]);
+    }, [value]);
+
+    const imageHandler = async () => {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.click();
+
+        input.onchange = async () => {
+            const file = input.files?.[0];
+            if (!file) return;
+
+            const blob_url = URL.createObjectURL(file);
+            console.log(blob_url);
+            setImagesToUpload((prev) => ([...prev, { url: blob_url, file: file }]));
+
+            const quill = quillRef.current?.getEditor();
+            if (!quill) return;
+
+            const range = quill.getSelection(true);
+            quill.insertEmbed(range.index, 'image', blob_url);
+            quill.setSelection(range.index + 1);
+        }
+    }
+
+    const modulesOption = useMemo(() => (
+        {
+            toolbar: toolbarOptions,
+            handlers: {
+                image: imageHandler,
+            }
+
+        }
+    ), []);
 
     return (
         <div className="text-editor border border-neutral rounded-lg [&>div]:flex [&>div]:flex-col-reverse">
 
             <ReactQuill
+                readOnly={readOnly}
                 ref={quillRef}
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
                 modules={{
-                    toolbar: toolbarOptions
+                    toolbar: {
+                        container: toolbarOptions,
+                        handlers: {
+                            image: imageHandler,
+                        }
+                    }
                 }}
 
                 className="

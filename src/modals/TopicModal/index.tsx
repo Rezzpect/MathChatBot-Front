@@ -62,6 +62,7 @@ export default function TopicModal(
                 message: "Please fill in the topic name"
             }
         ]
+        
         const result = rules.reduce((errors, { key, condition, message }) => {
             if (condition) errors[key] = message;
             return errors;
@@ -93,10 +94,16 @@ export default function TopicModal(
         setFormData((prev) => ({ ...prev, [id]: value }))
     }
 
+    useEffect(() => {
+        document.body.classList.add('overflow-hidden')
 
+        return () => {
+            document.body.classList.remove('overflow-hidden')
+        }
+    }, [])
 
     return (
-        <div className="fixed w-full h-full bg-black/50 top-0  flex justify-center items-center z-100">
+        <div className="fixed w-full h-full bg-black/50 top-0 left-0 flex justify-center items-center z-100">
             <div className="h-fit bg-base-100 shadow-sm rounded-lg w-120">
                 <div className="flex flex-col gap-5 p-5 pt-5 text-neutral-content">
                     <h1 className="font-bold text-xl">{ options === 'create' ? 'Create Topic' : 'Edit Topic'}</h1>

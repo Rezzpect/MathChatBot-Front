@@ -1,6 +1,6 @@
 type AuthInputFormProps = {
     value:string;
-    error:string | null;
+    error:string | undefined;
     id:string;
     type:string;
     name:string;

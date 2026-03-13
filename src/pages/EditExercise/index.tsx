@@ -1,176 +1,94 @@
 import { useNavigate, useParams } from "react-router-dom";
-import type { editQuestionForm } from "../../@types/question";
 import TabMenu from "../../components/TabMenu/tabMenu";
 import ExerciseForm from "./exerciseForm";
-import DataTable from "../../components/DataTable";
-import { useEffect, useState } from "react";
+import HintMenu from "./hintMenu";
 import supabaseClient from "../../utils/SupabaseClient";
-import type { HintRowProp } from "../../@types/table";
-import HintModal from "../../modals/HintModal";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../contexts/authContext";
+import LoadingPage from "../Loading";
 
 export default function EditExercise() {
     const navigate = useNavigate();
-    const { questionId, topicId } = useParams();
+    const params = useParams();
+    const { authData } = useContext(AuthContext);
+    const { questionId, topicId} = useParams();
+    const [courseId,setCourseId] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const isEdit = questionId ? true : false
 
-    //########## HINT SECTION ########################
+    // const [showAlert, setShowAlert] = useState(false);
 
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const [modalData, setModalData] = useState<HintRowProp | undefined>(undefined);
-    const [modalOption, setModalOption] = useState<string>('edit');
-    const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
+    // const handleSave = () => {
+    //     setShowAlert(true);
+    // };
+    const checkPermission = async () => {
+        setIsLoading(true);
+        try {
+            const { data, error } = await supabaseClient.functions.invoke('topic-detail', {
+                method: 'POST',
+                body: {
+                    topic_id: params.topicId
+                }
+            })
 
-    const onEditModal = (hintData: HintRowProp) => {
-        setModalOption('edit');
-        setModalData(hintData)
-        setIsModalOpen(true);
-    };
-
-    const openCreateModal = () => {
-        setModalOption('create');
-        setIsModalOpen(true);
-    }
-
-    const deleteHint = async (hint_id:string) => {
-        console.log(typeof(hint_id));
-        const { error } = await supabaseClient.functions.invoke('delete-hint',{
-            method:'DELETE',
-            body:{
-                hint_id:hint_id
+            if (error) {
+                navigate('/', { replace: true });
+                return
             }
-        })
 
-        setRefreshTrigger(refreshTrigger+1);
-    }
-
-    //########## QUESTION SECTION ########################
-
-    const [questionForm, setQuestionForm] = useState<editQuestionForm>({
-        title: '',
-        question: '',
-        answer: ''
-    });
-
-    const createQuestion = async () => {
-        const { error } = await supabaseClient.functions.invoke('create-question', {
-            method: 'POST',
-            body: {
-                "topic_id": topicId,
-                "title": questionForm.title,
-                "question": questionForm.question,
-                "answer": questionForm.answer,
-                "difficulty": "Easy",
-                "is_published": true,
-                "tags": ["1", "2"]
+            if (data.data.length === 0) {
+                navigate('/', { replace: true });
+                return
             }
-        })
 
-        if (error) throw error
-    }
-
-    const editQuestion = async () => {
-        const { error } = await supabaseClient.functions.invoke('edit-question', {
-            method: 'PUT',
-            body: {
-                "question_id": questionId,
-                "title": questionForm.title,
-                "question": questionForm.question,
-                "answer": questionForm.answer,
-                "difficulty": "Easy",
-                "is_published": true,
-                "new_tags": [
-                    "1",
-                    "2"
-                ]
+            if (data.data.length !== 0) {
+                const topic_data = data.data[0]
+                console.log(topic_data)
+                setCourseId(topic_data.course_id);
+                if (topic_data.course_owner_id !== authData?.user_id && authData?.role_name !== 'admin') navigate('/', { replace: true });
             }
-        })
 
-        if (error) throw error
-    }
-
-    const getQuestionData = async () => {
-        const { data: question_data, error: question_error } = await supabaseClient.functions.invoke('question-detail', {
-            method: 'POST',
-            body: {
-                "question_id": questionId
-            }
-        })
-
-        const { data: answer, error: answer_error } = await supabaseClient.functions.invoke('question-answer', {
-            method: 'POST',
-            body: {
-                "question_id": questionId
-            }
-        })
-
-        if (answer_error | question_error) navigate('/')
-        if (question_data) {
-            const QuestionData = question_data.data[0]
-            setQuestionForm((prev) => ({
-                ...prev,
-                title: QuestionData.title,
-                question: QuestionData.question,
-                answer: answer.data[0].answer
-            }))
+        } catch (error) {
+            throw error
+        } finally {
+            setIsLoading(false);
         }
-    }
 
-    const handleSubmit = () => {
-        if (isEdit) {
-            editQuestion();
-        } else createQuestion();
-        navigate(`/problemselection/${topicId}`);
     }
-
-    useEffect(() => {
-        if (isEdit) {
-            getQuestionData()
-        }
-    }, [])
 
     const tab_data = [
         {
-            label: "Topic 1", content:
-                <ExerciseForm
-                    questionForm={questionForm}
-                    setForm={setQuestionForm}
-                />
+            label: "คำถาม", content:
+                <ExerciseForm course_id={courseId}/>
         },
         {
-            label: "Topic 2", content:
-                <div className='py-5 min-h-[400px]'>
-                    <DataTable
-                        name="hint-list-in-question"
-                        id_key="question_id"
-                        data_id={Number(questionId)}
-                        underline={true}
-                        editScript={onEditModal}
-                        deleteScript={deleteHint}
-                        extraScript={openCreateModal}
-                        refreshTrigger={refreshTrigger}
-                    />
-                </div>
+            label: "ตัวอย่างการใบ้", content:
+                <HintMenu />
         }
     ]
 
+    useEffect(() => { checkPermission(); }, [])
+
     return (
-        <div className="flex flex-col items-center justify-center w-full h-full">
-            {isModalOpen && <HintModal
-                modalData={modalData}
-                setOpen={setIsModalOpen}
-                options={modalOption}
-                refreshSubmit={setRefreshTrigger} />}
-            <div className="flex flex-col gap-10 w-[60%] m-10">
-                <div className="h-fit">
-                    <TabMenu tab_data={tab_data} />
-                </div>
+        <>{
+            isLoading
+            ? <LoadingPage/>
+            : <div className="flex flex-col items-center justify-center w-full h-full">
+                <div className="flex flex-col gap-10 w-[60%] m-10">
+                    <div className="h-fit">
+                        {isEdit
+                            ? <TabMenu tab_data={tab_data} />
+                            : <TabMenu tab_data={[tab_data[0]]} />
+                        }
+                    </div>
 
-                <div className="flex justify-end gap-2 w-full">
-                    <button className="btn bg-primary text-primary-content rounded-full">เผยแผร่</button>
-                    <button className="btn bg-primary text-primary-content rounded-full" onClick={handleSubmit}>บันทึก</button>
+                    <div className="flex justify-end gap-2 w-full">
+                        <button className="btn bg-white text-black border border-black rounded-full" onClick={() => { navigate(`/problemselection/${topicId}`) }}>ย้อนกลับ</button>
+                    </div>
                 </div>
+                {/* {showAlert && <ShowAlert message={'test'} type="success"/>} */}
             </div>
-
-        </div>
+        }
+        </>
     );
 };

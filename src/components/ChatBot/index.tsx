@@ -1,15 +1,28 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ChatMessage, ChatMode } from "../../@types/chatbot";
-import sendMessage from "../../services/sendChatMessage";
-import ChatBubble from "../ChatBubble";
+import MessageBubble from "../ChatBubble/MessageBubble";
 import { ChatModeType } from "../../@types/chatbot";
 import { IoIosArrowDown } from "react-icons/io";
 import supabaseClient from "../../utils/SupabaseClient";
+import { useParams } from "react-router-dom";
+import LoadBubble from "../ChatBubble/LoadBubble";
 
-export default function Chatbot() {
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
+export default function Chatbot({
+    messages,
+    setMessages
+}:{messages:ChatMessage[],setMessages:React.Dispatch<React.SetStateAction<ChatMessage[]>>}) {
     const [userInput, setUserInput] = useState<string>('');
-    const [getMode, setMode] = useState<ChatMode>(ChatModeType.HINT_MODE);
+    const [getMode, setMode] = useState<ChatMode>(ChatModeType.QUESTION_MODE);
+    const [sessionId,setSessionId] = useState<string|null>(null);
+    const [isThinking,setIsThinking] = useState<boolean>(false);
+    const chatbotRef = useRef<HTMLDivElement>(null);
+    const params = useParams();
+
+    useEffect(()=>{
+        if (chatbotRef.current){
+           chatbotRef.current.scrollTo({top: chatbotRef.current.scrollHeight}) 
+        }
+    },[messages])
 
     const handleSend = async (message: string) => {
         if (!userInput) return
@@ -18,30 +31,37 @@ export default function Chatbot() {
             ...prev,
             { message: message, role: 'user' }
         ])
+        
+        setUserInput('');
+
+        setIsThinking(true);
         try {
             const { data, error } = await supabaseClient.functions.invoke('chat-handler', {
-                method:'POST',
+                method: 'POST',
                 body: {
                     // mode: question or theory
                     mode: 'question',
                     message: message,
                     // questionResult will return session_id after first call
-                    session_id: null,
+                    session_id: sessionId,
                     // question mode need id to not be null
-                    question_id: 1
+                    question_id: params.questionId
                 }
             })
 
-            if (error){
+            if (error) {
                 console.log(error);
                 setMessages((prev) => [
-                ...prev,
-                { message: "An Unexpected Error has occured", role: 'bot' }
-            ]);
+                    ...prev,
+                    { message: "An Unexpected Error has occurred", role: 'bot' }
+                ]);
             };
 
             if (data) {
-                console.log(data);
+                console.log(data.session_id)
+                if (!sessionId && data.session_id){
+                    setSessionId(data.session_id)
+                }
                 const reply = data.message;
                 setMessages((prev) => [
                     ...prev,
@@ -49,15 +69,15 @@ export default function Chatbot() {
 
                 ]);
             }
-        } catch(error) {
+        } catch (error) {
             console.log(error);
             setMessages((prev) => [
                 ...prev,
-                { message: "An Unexpected Error has occured", role: 'bot' }
+                { message: "An Unexpected Error has occurred", role: 'bot' }
             ]);
+        } finally{
+            setIsThinking(false);
         }
-
-        setUserInput('');
     }
 
     const TestSendMessage = () => {
@@ -77,11 +97,11 @@ export default function Chatbot() {
     }
 
     return (
-        <div className="h-full w-full">
-            <div className="flex justify-between my-1 px-2 w-full items-center">
+        <div className="flex flex-col h-full w-full">
+            <div className="flex justify-between my-1 px-2 w-full items-center shrink-0">
                 <div className="dropdown dropdown-start">
 
-                    <div tabIndex={0} role="button" className="flex font-bold items-center gap-2 m-1 hover:cursor-pointer hover:bg-base-300 p-2 rounded-lg">
+                    <div tabIndex={0} role="button" className="flex font-bold items-center gap-2 m-1 bg-base-300 hover:cursor-pointer p-2 rounded-lg">
                         <header>{getMode}</header><IoIosArrowDown />
                     </div>
                     <ul tabIndex={-1} className="dropdown-content font-bold menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
@@ -93,28 +113,32 @@ export default function Chatbot() {
                 <header className="font-bold">Math Chatbot</header>
             </div>
 
-            <div className="bg-white rounded-lg max-h-[80%] h-full w-full border-1 border-neutral">
-                <div className="w-full h-full overflow-y-scroll p-5">
+            <div className="flex flex-col flex-1 bg-white rounded-lg border border-neutral overflow-hidden">
+                <div ref={chatbotRef} className="flex-1 overflow-y-auto p-5">
                     {messages.map((chat) =>
-                        <ChatBubble message={chat.message} role={chat.role} />
+                        <MessageBubble message={chat.message} role={chat.role} />
                     )}
+                    {isThinking && <LoadBubble/>}
                 </div>
 
             </div>
 
-            <div className="flex items-center h-[10%] w-full gap-2 p-2 border border-red-500">
+            <form className="flex items-center gap-2 p-2 shrink-0"
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSend(userInput);
+                    // TestSendMessage()
+                }}
+            >
                 <input type="text"
                     placeholder="Type here"
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
                     className="input rounded-full w-full focus:outline-none" />
                 <button
-                    onClick={() => {
-                        handleSend(userInput)
-                        // TestSendMessage()
-                    }}
+                    type='submit'
                     className="btn rounded-full btn-primary text-primary-content">Send</button>
-            </div>
+            </form>
         </div>
     )
 }

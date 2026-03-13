@@ -2,7 +2,6 @@ import { BrowserRouter, Navigate, useNavigate, useRoutes } from "react-router-do
 import MainLayout from "../layouts/main";
 import App from "../App";
 import HomePage from "../pages/main";
-import SearchPage from "../pages/Search";
 import LoginPage from "../pages/Login";
 import RegisterPage from "../pages/Register";
 import StudentProfile from "../pages/Profile";
@@ -14,6 +13,8 @@ import StudyPlanPage from "../pages/StudyPlan";
 import { useContext, type JSX } from "react";
 import { AuthContext } from "../contexts/authContext";
 import { ROLE_NO } from "../@types/rolenumber";
+import PlanListPage from "../pages/PlanList";
+import LoadingPage from "../pages/Loading";
 
 function AllowedRoles({ allowed_role, children }: {
     allowed_role: string[],
@@ -24,7 +25,7 @@ function AllowedRoles({ allowed_role, children }: {
 
     if (isLoadingAuth === true){
         console.log(isLoadingAuth)
-        return <div>IS LOADING</div>
+        return <LoadingPage/>
     }
 
     if(!user_role){
@@ -48,14 +49,9 @@ function Routes() {
                         <HomePage />
                 },
                 {
-                    path: '/search',
-                    element:
-                        <SearchPage />
-                },
-                {
                     path: '/profile',
                     element:
-                        <AllowedRoles allowed_role={['student','teacher','experiment']}>
+                        <AllowedRoles allowed_role={['student','teacher','admin']}>
                             <StudentProfile />
                         </AllowedRoles>
                 },
@@ -65,37 +61,35 @@ function Routes() {
                         <LessonPage />
                 },
                 {
+                    path: '/lesson/:lessonId/planlists',
+                    element:
+                        <PlanListPage/>
+                },
+                {
                     path: '/problemselection/:topicId',
                     element:
-                        <AllowedRoles allowed_role={['student','teacher','experiment']}>
+                        <AllowedRoles allowed_role={['student','teacher','admin']}>
                             <ProblemSelectionPage />
                         </AllowedRoles>
                 },
                 {
-                    path: '/problemselection/:topicId/question/:questionId',
+                    path: '/question/:questionId',
                     element:
-                        <AllowedRoles allowed_role={['student','teacher','experiment']}>
+                        <AllowedRoles allowed_role={['student','teacher','admin']}>
                             <ExercisePage />
                         </AllowedRoles>
                 },
                 {
-                    path: '/problemselection/:topicId/editquestion',
+                    path: '/problemselection/:topicId/editquestion/:questionId?',
                     element:
-                        <AllowedRoles allowed_role={['teacher','experiment']}>
-                            <EditExercise />
-                        </AllowedRoles>
-                },
-                {
-                    path: '/problemselection/:topicId/editquestion/:questionId',
-                    element:
-                        <AllowedRoles allowed_role={['teacher','experiment']}>
+                        <AllowedRoles allowed_role={['teacher','admin']}>
                             <EditExercise />
                         </AllowedRoles>
                 },
                 {
                     path: '/studyplan',
                     element:
-                        <AllowedRoles allowed_role={['student','experiment']}>
+                        <AllowedRoles allowed_role={['student','admin']}>
                             <StudyPlanPage />
                         </AllowedRoles>
                 },

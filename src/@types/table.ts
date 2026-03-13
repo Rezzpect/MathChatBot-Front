@@ -12,10 +12,8 @@ export interface TableConfig<T> {
     columns: ColumnConfig<T>[];
     rowIdKey: string;
     title: string;
-    navDest: string;
-    editOption?: boolean;
-    deleteOption?: boolean;
-    extraOption?: boolean;
+    navDest?: string;
+    isFile?: boolean;
 }
 
 export type IdKey = "course_id" | "topic_id" | "question_id" | "user_id"
@@ -29,16 +27,28 @@ export type DataTableProps<K extends IdKey> = {
     name: string,
     id_key: K,
     data_id: number | string,
-    editScript?: (item:any)=>void,
-    deleteScript?: (item:any)=>void,
-    extraScript?: (item:any)=>void,
-    refreshTrigger?:number,
+    editScript?: (item: any) => void,
+    deleteScript?: (item: any) => void,
+    extraScript?: (item: any) => void,
+    bucketName?: string,
+    showAction?: boolean,
+    refreshTrigger?: number,
     underline?: boolean
+}
+
+export type hintTableProps = {
+    data_id: number | string,
+    editScript?: (item: any) => void,
+    deleteScript?: (item: any) => void,
+    extraScript?: (item: any) => void,
+    refreshTrigger?: number,
+    showAction?: boolean,
+    underline?: boolean,
 }
 
 export type PageReqWithId<K extends IdKey> = BasePageRequest & { [P in K]: number };
 
-export interface SkeletonRowProp{
+export interface SkeletonRowProp {
     loading: string;
 }
 export interface TopicRowProp {
@@ -51,14 +61,15 @@ export interface TopicRowProp {
 export interface QuestionRowProp {
     title: string,
     tag_names: string[],
-    difficulty : string,
-    question_id : number,
-    is_completed : boolean
+    difficulty: string,
+    question_id: number,
+    is_completed: boolean
 }
 
 export interface HintRowProp {
-    hint_content:string,
-    hint_id : number,
+    hint_content: string,
+    hint_id: number,
+    hint_title: string,
 }
 
 export interface CourseRowProp {
@@ -67,6 +78,23 @@ export interface CourseRowProp {
     course_name: string,
     course_owner: string,
     student_amount: number,
-    course_description:string | undefined
+    is_published: boolean,
+    course_description: string | undefined
+}
+
+export interface EnrolledRowProp extends CourseRowProp {
+    is_completed: boolean
+}
+
+export interface FileRowProp {
+    name: string,
+}
+
+export interface StudentRowProp {
+    user_id: string,
+    is_completed: boolean,
+    public_email: string,
+    student_name: string,
+    profile_picture: string
 }
 

@@ -4,8 +4,8 @@ export interface ChatMessage {
 }
 
 export const ChatModeType = {
-    HINT_MODE:'Hint Mode', 
-    THEORY_MODE:'Theory Mode'
+    QUESTION_MODE:'question', 
+    THEORY_MODE:'theory'
 }
 
 export type ChatMode = (typeof ChatModeType)[keyof typeof ChatModeType]

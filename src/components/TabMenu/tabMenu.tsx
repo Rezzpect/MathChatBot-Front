@@ -14,9 +14,9 @@ export default function TabMenu({ tab_data }: TabMenuProps) {
     // const tab_list = ["Tab 1", "Tab 2", "Tab 3"]
 
     return (
-        <div className="h-auto w-full text-neutral-content">
+        <div className="flex flex-col h-full min-h-0 w-full text-neutral-content">
             {/* Tab menu */}
-            <div className="flex">
+            <div className="flex shrink-0">
                 {
                     tab_data.map((tab, index) =>
                         <div className={`font-bold text-xl min-w-50 p-2 rounded-lg"
@@ -36,8 +36,8 @@ export default function TabMenu({ tab_data }: TabMenuProps) {
             </div>
 
             {/* Tab Content */}
-            <div className="bg-base-100 rounded-b-lg rounded-r-lg w-full h-auto p-5 shadow-sm">
-                <div>
+            <div className="flex flex-col bg-base-100 rounded-b-lg rounded-r-lg w-full p-5 shadow-sm">
+                <div className="flex-1 min-h-0">
                     {
                         tab_data[tabIndex].content
                     }

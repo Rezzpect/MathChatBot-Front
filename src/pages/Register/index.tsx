@@ -8,7 +8,7 @@ type InputRegisterForm = {
     email: string;
     password: string;
     confirm_password: string;
-    role?: string;
+    role_id: string;
 }
 
 export default function RegisterPage() {
@@ -18,6 +18,7 @@ export default function RegisterPage() {
         email: '',
         password: '',
         confirm_password: '',
+        role_id:'1'
     });
     const [formError, setFormError] = useState<Partial<InputRegisterForm>>({});
 
@@ -31,7 +32,7 @@ export default function RegisterPage() {
                         data: {
                             first_name: formData.first_name,
                             last_name: formData.last_name,
-                            role_id: '2'
+                            role_id: formData.role_id
                         },
                         emailRedirectTo: 'https://example.com/welcome'
                     }
@@ -72,7 +73,7 @@ export default function RegisterPage() {
             {
                 key: 'confirm_password',
                 condition: (formData.password !== formData.confirm_password),
-                message: 'Aassword does not match'
+                message: 'Password does not match'
             },
             {
                 key: 'password',
@@ -102,6 +103,11 @@ export default function RegisterPage() {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value, id } = e.target;
         setFormData((prev) => ({ ...prev, [id]: value }));
+    }
+
+    const handleChangeRole = (e:React.ChangeEvent<HTMLSelectElement>) => {
+        const {value} = e.target;
+        setFormData((prev)=>({...prev,role_id:value}))
     }
 
     return (
@@ -153,10 +159,16 @@ export default function RegisterPage() {
                             name='Confirm Password'
                             error={formError['confirm_password']}
                             id='confirm_password'
-                            type='confirm_password'
+                            type='password'
                             value={formData.confirm_password}
                             onChange={handleInputChange}
                         />
+
+                        <select onChange={(handleChangeRole)} className="select w-full border-neutral focus:outline-none focus:border-primary">
+                            <option disabled={true}>เลือกบทบาทที่ต้องการ</option>
+                            <option value='1'>Student</option>
+                            <option value='2'>Teacher</option>
+                        </select>
                     </div>
 
                     <button className="btn bg-primary text-primary-content w-full">Create account</button>

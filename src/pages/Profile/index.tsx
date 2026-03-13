@@ -1,54 +1,90 @@
 import CourseProgressBar from "../../components/CourseProgressBar";
 import StudentStat from "./StudentStat";
 import WeeklyExerciseBar from "../../components/WeeklyExerciseChart";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import EditProfileModal from "../../modals/EditProfile";
 import { AuthContext } from "../../contexts/authContext";
 import supabaseClient from "../../utils/SupabaseClient";
-import DataTable from "../../components/DataTable";
+import DataTable from "../../components/Table/DataTable";
 import CourseModal from "../../modals/CourseModal";
 import type { CourseRowProp } from "../../@types/table";
+import toast from "react-hot-toast";
+import type { CourseProgress } from "../../@types/courseData";
+import DeleteModal from "../../modals/DeleteModal";
 
 export default function StudentProfile() {
     const [isEditProf, setIsEditProf] = useState<boolean>(false);
     const [isCourseModal, setIsCourseModal] = useState<boolean>(false);
-    const { authData, refreshAuthData, isLoadingAuth } = useContext(AuthContext);
-    const [refreshTrigger,setRefreshTrigger] = useState<number>(0)
-    const [modalData, setModalData] = useState<CourseRowProp | undefined>(undefined);
+    const { authData, isLoadingAuth } = useContext(AuthContext);
+    const [refreshTrigger, setRefreshTrigger] = useState<number>(0)
+    const [profilePicture, setProfilePicture] = useState<string>('');
+    const [courseProgress, setCourseProgress] = useState<CourseProgress[]>([]);
+    const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
+    const [courseId, setCourseId] = useState<string>('');
 
     const onClickCreate = () => {
         setIsCourseModal(true);
     }
 
-    const EditProfile = async (first_name: string, last_name: string) => {
-        try {
-            const { error } = await supabaseClient.functions.invoke('edit-profile-detail', {
-                method: 'PUT',
-                body: {
-                    "first_name": first_name,
-                    "last_name": last_name
-                }
-            })
-            if (error) throw error
-
-            refreshAuthData();
-        } catch (error) { throw error };
+    const handleDelete = async (course_id: string) => {
+        setCourseId(course_id);
+        setIsDeleteModal(true);
     }
 
-    const deleteCourse = async(course_id:string) => {
-        const {error} = await supabaseClient.functions.invoke('delete-soft-course',{
-            method:'DELETE',
-            body:{
-                course_id:course_id.toString()
+    const getFile = async () => {
+        if (authData) {
+            const { data } = supabaseClient.storage.from('profile_image').getPublicUrl(authData?.user_id + authData?.profile_picture)
+
+            console.log(data.publicUrl)
+            if (data.publicUrl.length > 0)
+                setProfilePicture(data.publicUrl);
+        }
+
+    }
+
+    const getCourseProgress = async () => {
+        const { data, error } = await supabaseClient.functions.invoke('course-completion-status', {
+            method: 'POST',
+            body: {
+                user_id: authData?.user_id,
+                max_size: 3
             }
         })
+
+        if (error) {
+            toast.error('Failed to get student statistic')
+            throw error
+        }
+
+        if (data) {
+            console.log(data.data);
+            setCourseProgress(data.data);
+        }
     }
+
+    useEffect(() => {
+        getFile()
+        getCourseProgress();
+    }, [])
 
     return (
         <div className="flex justify-center ">
-            {isCourseModal && <CourseModal modalData={modalData} setOpen={setIsCourseModal} refreshSubmit={setRefreshTrigger} options="create"/>}
+            {
+                isDeleteModal &&
+                <DeleteModal
+                    idName="course_id"
+                    id={courseId}
+                    method="PUT"
+                    funcName="delete-soft-course"
+                    message="หากดำเนินการต่อ ข้อมูลต่างที่อยู่ในคอร์สจะถูกลบและไม่สามารถกู้คืนได้"
+                    setOpen={setIsDeleteModal}
+                    setRefresh={setRefreshTrigger}
+                />
+            }
 
-            {isEditProf && <EditProfileModal userData={authData} onSubmit={EditProfile} setOpen={setIsEditProf} />}
+            {isCourseModal && <CourseModal setOpen={setIsCourseModal} refreshSubmit={setRefreshTrigger} />}
+
+            {isEditProf && <EditProfileModal pictureUrl={profilePicture} setOpen={setIsEditProf} />}
             <div className="flex flex-col my-10 w-full min-h-fit mx-25 gap-5">
                 <header className="font-bold text-2xl">โปรไฟล์ผู้ใช้</header>
                 <div className="flex md:flex-row flex-col w-full gap-20">
@@ -61,7 +97,10 @@ export default function StudentProfile() {
                                 {/* Profile Image */}
                                 <div className="flex justify-center avatar absolute w-[100px] bottom-[-30px] ">
                                     <div className="rounded-full">
-                                        <img src="https://img.daisyui.com/images/profile/demo/yellingwoman@192.webp" />
+                                        <img
+                                            src={profilePicture}
+                                            onError={(e) => e.currentTarget.src = '/anonymous-user.png'}
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -79,33 +118,57 @@ export default function StudentProfile() {
                             </div>
                         </div>
 
-                        <StudentStat />
+                        {/* <StudentStat /> */}
                     </div>
 
                     {/* Right Column */}
                     <div className="flex flex-col gap-5 md:w-[70%] w-full">
-                        <div className="flex flex-col w-full bg-base-100 shadow-sm rounded-lg p-10 gap-5 h-100">
-                            <header className="font-bold text-xl">คอร์สล่าสุด</header>
-                            <div className="flex flex-col gap-5">
-                                <CourseProgressBar />
-                                <CourseProgressBar />
-                                <CourseProgressBar />
-                            </div>
-                        </div>
+                        {authData?.role_name === 'student' &&
+                            <>
+                                <div className="flex flex-col w-full bg-base-100 shadow-sm rounded-lg p-10 gap-5 h-fit">
+                                    <header className="font-bold text-xl">คอร์สล่าสุด</header>
+                                    <div className="flex flex-col gap-5">
+                                        {
+                                            (courseProgress.length !== 0) &&
+                                            courseProgress.map((course) => (
+                                                <>
+                                                    <CourseProgressBar
+                                                        course_name={course.course_name}
+                                                        progress={course.completion_percentage}
+                                                    />
+                                                </>
+                                            ))
+                                        }
+                                    </div>
+                                </div>
 
-                        <div className="flex flex-col align-middle rounded-lg shadow-sm bg-base-100 p-10 gap-5 w-full h-100">
-                            <header className="font-bold text-xl">เวลาเรียนในสัปดาห์นี้</header>
+                                <div className="flex flex-col align-middle rounded-lg shadow-sm bg-base-100 p-10 gap-5 w-full h-fit">
+                                    <header className="font-bold text-xl">เวลาเรียนในสัปดาห์นี้</header>
 
-                            <WeeklyExerciseBar />
-                        </div>
-                        <div className="flex flex-col align-middle rounded-lg shadow-sm bg-base-100 p-10 gap-5 w-full h-100">
-                            <DataTable
-                                name='teacher-course-list'
-                                id_key='user_id'
-                                data_id={authData?.user_id ?? ''}
-                                extraScript={onClickCreate}
-                                deleteScript={deleteCourse}
-                            />
+                                    <WeeklyExerciseBar />
+                                </div>
+                            </>
+                        }
+                        <div className="flex flex-col align-middle rounded-lg shadow-sm bg-base-100 p-10 gap-5 w-full h-fit">
+                            {
+                                (authData?.role_name === 'student')
+                                    ? <DataTable
+                                        name='delete-soft-course'
+                                        id_key='user_id'
+                                        data_id={authData?.user_id ?? ''}
+                                        refreshTrigger={refreshTrigger}
+                                    />
+                                    : <DataTable
+                                        name='teacher-course-list'
+                                        id_key='user_id'
+                                        data_id={authData?.user_id ?? ''}
+                                        extraScript={onClickCreate}
+                                        deleteScript={handleDelete}
+                                        showAction={(authData?.role_name === 'teacher' || authData?.role_name === 'admin')}
+                                        refreshTrigger={refreshTrigger}
+                                    />
+                            }
+
                         </div>
                     </div>
 
