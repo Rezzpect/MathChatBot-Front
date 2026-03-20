@@ -234,8 +234,7 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
         return final_content
     }
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
 
         setIsLoading(true);
         try {
@@ -316,7 +315,7 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
 
     return (
         <div className='py-5 min-h-[400px]'>
-            <form className='flex flex-col gap-5 w-full' onSubmit={handleSubmit}>
+            <div className='flex flex-col gap-5 w-full' onSubmit={handleSubmit}>
                 <InputForm
                     name='Question Title'
                     error={formError['title']}
@@ -388,10 +387,10 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
                 </div>
 
                 <div className="flex justify-end gap-2 w-full mt-10">
-                    <button className="btn bg-primary text-primary-content rounded-full" type='submit' disabled={isLoading}>{isLoading ? <span className='loading loading-spin' /> : <>บันทึก<FaSave /></>}</button>
+                    <button className="btn bg-primary text-primary-content rounded-full" type='button' onClick={handleSubmit} disabled={isLoading}>{isLoading ? <span className='loading loading-spin' /> : <>บันทึก<FaSave /></>}</button>
                 </div>
 
-            </form >
+            </div >
 
         </div >
     )

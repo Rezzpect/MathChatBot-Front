@@ -4,7 +4,7 @@ import supabaseClient from "../../utils/SupabaseClient";
 import { AuthContext } from "../../contexts/authContext";
 import type { ModalProps, PlanlistModalProps } from "../../@types/modal";
 import { useParams } from "react-router-dom";
-import type { PlanData } from "../../@types/studyplan";
+import type { PlanData, PlanForm, PlanValidate } from "../../@types/studyplan";
 import toast from "react-hot-toast";
 
 type TopicSelections = {
@@ -21,12 +21,13 @@ export default function PlanListModal({
     const params = useParams();
     const [topicList, setTopicList] = useState<TopicSelections[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [formData, setFormData] = useState<Partial<PlanData>>({
+    const [formData, setFormData] = useState<PlanForm>({
         course_id: Number(params.courseId),
         topic_id: 0,
-        start_day: 0,
-        day_todo: 0,
+        start_day: 1,
+        day_todo: 1,
     })
+    const [formError, setFormError] = useState<Partial<PlanValidate>>({})
 
     useEffect(() => {
         if (modalData) {
@@ -94,6 +95,34 @@ export default function PlanListModal({
         }
     }
 
+    const validate = () => {
+        const rules: Array<{ key: keyof PlanForm, condition: boolean, message: string }> = [
+            {
+                key: 'topic_id',
+                condition: (formData.topic_id === 0),
+                message: "กรูณาเลือกหัวข้อที่ต้องการ"
+            },
+            {
+                key: 'start_day',
+                condition: (formData.start_day === 0),
+                message: "วันไม่สามารถมีค่าเป็น 0 ได้"
+            },
+            {
+                key: 'day_todo',
+                condition: (formData.day_todo === 0),
+                message: "วันไม่สามารถมีค่าเป็น 0 ได้"
+            }
+        ]
+
+        const result = rules.reduce((errors, { key, condition, message }) => {
+            if (condition) errors[key] = message;
+            return errors;
+        }, {} as Partial<PlanValidate>);
+
+        if (Object.keys(result).length !== 0) return result
+    };
+
+
     const editPlan = async () => {
         setIsLoading(true);
         try {
@@ -103,7 +132,7 @@ export default function PlanListModal({
                     course_id: formData.course_id,
                     old_topic_id: modalData?.topic_id,
                     new_topic_id: formData.topic_id !== modalData?.topic_id ? formData.topic_id : null,
-                    start_day: formData.start_day,
+                    start_day: formData.start_day ? formData.start_day + 1 : null,
                     day_todo: formData.day_todo
                 }
             })
@@ -112,12 +141,12 @@ export default function PlanListModal({
 
             if (data) {
                 console.log('edit', data);
-                toast.success("Created study plan successfully")
+                toast.success("สร้างแผนการเรียนเสร็จสมบูรณ์")
                 setRefresh((prev) => prev + 1)
                 setOpen(false);
             };
         } catch (error) {
-            toast.error('Failed to create study plan')
+            toast.error('เกิดข้อผิดพลาดในการสร้าง')
         } finally {
             setIsLoading(false);
         }
@@ -131,8 +160,14 @@ export default function PlanListModal({
         }
     }, [])
 
-    const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const handleSave = () => {
+        const error = validate()
+        if (error) {
+            setFormError({ ...error });
+            toast.error('กรุณากรอกข้อมูลให้ครบถ้วนและถูกต้อง');
+            return;
+        }
+
         if (modalData) {
             editPlan();
         } else createPlan();
@@ -143,64 +178,70 @@ export default function PlanListModal({
             <div className="h-fit w-full max-w-120 bg-base-100 shadow-sm rounded-lg">
                 <div className="flex flex-col gap-5 p-5 pt-10 text-neutral-content">
                     <header className="font-bold text-2xl">{modalData ? 'แก้ไข' : 'สร้าง'}แผนการเรียน</header>
-                    <form className="flex flex-col w-full h-fit gap-2" onSubmit={handleSave}>
-                        <label htmlFor="course-select">หัวข้อ</label>
-                        <select
-                            id="course-select"
-                            onChange={(e) => handleSelectCourse(e)}
-                            value={formData.topic_id}
-                            disabled={isLoading}
-                            className="select outline-none! w-full select-neutral rounded-lg focus:select-primary">
-                            <option disabled={true} value={0}>เลือกคอร์สที่ต้องการ</option>
-                            {
-                                modalData &&
-                                <option
-                                    disabled={true}
-                                    id={`option-${modalData.topic_id}`}
-                                    value={modalData.topic_id}>
-                                    {modalData.topic_name}
-                                </option>
-                            }
-                            {
-                                topicList && topicList.map((topic) => (
+                    <div className="flex flex-col w-full h-fit gap-2" >
+                        <div className="flex flex-col gap-2">
+                            <label htmlFor="course-select">หัวข้อ</label>
+                            <select
+                                id="course-select"
+                                onChange={(e) => handleSelectCourse(e)}
+                                value={formData.topic_id}
+                                disabled={isLoading}
+                                className={`select outline-none! w-full ${formError.topic_id ? 'select-secondary' : 'select-neutral'} rounded-lg focus:select-primary`}>
+                                <option disabled={true} value={0}>เลือกคอร์สที่ต้องการ</option>
+                                {
+                                    modalData &&
                                     <option
-                                        id={`option-${topic.topic_id}`}
-                                        value={topic.topic_id}
-                                    >
-                                        {topic.topic_name}
+                                        disabled={true}
+                                        id={`option-${modalData.topic_id}`}
+                                        value={modalData.topic_id}>
+                                        {modalData.topic_name}
                                     </option>
-                                ))
-                            }
-                        </select>
-                        <div className="flex flex-col">
+                                }
+                                {
+                                    topicList && topicList.map((topic) => (
+                                        <option
+                                            id={`option-${topic.topic_id}`}
+                                            value={topic.topic_id}
+                                        >
+                                            {topic.topic_name}
+                                        </option>
+                                    ))
+                                }
+                            </select>
+                            {formError.topic_id && <p className="text-sm text-red-500">{formError.topic_id}</p>}
+                        </div>
+                        
+                        <div className="flex flex-col gap-2">
                             <label htmlFor="exercise-todo">วันที่จะให้เริ่มหลังจากลงทะเบียน</label>
-                            <input className='[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none 
-                                border border-neutral h-full w-full p-2 rounded-lg bg-white outline-none
-                                focus:border focus:border-primary'
-                                value={formData.start_day === 0 ? '' : formData.start_day}
-                                min={0}
+                            <input className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none 
+                                border ${formError.start_day?'border-red-500':'border-neutral'} h-full w-full p-2 rounded-lg bg-white outline-none
+                                focus:border focus:border-primary`}
+                                value={formData.start_day === 1 ? '' : formData.start_day}
+                                min={1}
                                 max={99}
-                                placeholder="-"
+                                placeholder="วันแรกที่ลงทะเบียน"
                                 onChange={(e) => setFormData((prev) => ({ ...prev, start_day: parseInt(e.target.value) || 0 }))}
                                 id="exercise-todo"
                                 type='number'
                                 disabled={isLoading}
                             />
+                            {formError.start_day && <p className="text-sm text-red-500">{formError.start_day}</p>}
                         </div>
-                        <div>
+                        <div className="flex flex-col gap-2">
                             <label htmlFor="exercise-todo">จำนวนวันก่อนหมดเขต</label>
-                            <input className='[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none 
-                                border border-neutral h-full w-full p-2 rounded-lg bg-white outline-none
-                                focus:border focus:border-primary'
-                                value={formData.day_todo === 0 ? '' : formData.day_todo}
-                                min={0}
+                            <input className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none 
+                                border ${formError.start_day?'border-red-500':'border-neutral'} h-full w-full p-2 rounded-lg bg-white outline-none
+                                focus:border focus:border-primary`}
+                                value={formData.day_todo === 1 ? '' : formData.day_todo}
+                                min={1}
                                 max={99}
-                                placeholder="-"
+                                placeholder="1"
                                 onChange={(e) => setFormData((prev) => ({ ...prev, day_todo: parseInt(e.target.value) || 0 }))}
                                 id="exercise-todo"
                                 type='number'
                                 disabled={isLoading}
                             />
+                            {formError.day_todo && <p className="text-sm text-red-500">{formError.day_todo}</p>}
                         </div>
                         <div className="w-full flex justify-end gap-2 pt-3">
                             <button
@@ -209,12 +250,13 @@ export default function PlanListModal({
                                 className="btn btn-white border border-black rounded-full text-black font-bold text-lg py-2 px-5">Close
                             </button>
                             <button
-                                type='submit'
+                                type='button'
+                                onClick={handleSave}
                                 disabled={isLoading}
                                 className="btn btn-primary rounded-full text-primary-content font-bold text-lg py-2 px-5">{isLoading ? <span className="loading loading-spinner text-primary-content" /> : <>Save</>}
                             </button>
                         </div>
-                    </form>
+                    </div>
 
 
 

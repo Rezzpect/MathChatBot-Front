@@ -21,7 +21,6 @@ export default function EventModal({
     const { authData } = useContext(AuthContext)
     const [courseList, setCourseList] = useState<CourseSelections[]>([]);
     const [disableEdit, setDisableEdit] = useState<boolean>(modalData ? true : false);
-    const [unFinishedNumber, setUnFinishedNumber] = useState<number>(0);
     const [formData, setFormData] = useState<EventItems>({
         course_id: 0,
         title: "",
@@ -56,16 +55,6 @@ export default function EventModal({
         if (data) console.log(data); setCourseList(data.data);
     }
 
-    const handleSelectCourse = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const { value } = e.target
-        const target_course = courseList.find((course) => course.course_name === value);
-
-        if (!target_course) return;
-
-        setUnFinishedNumber(target_course?.unfinished_question ?? 0);
-        setFormData((prev) => ({ ...prev, course_id: target_course?.course_id, title: value }))
-    }
-
     useEffect(() => {
         document.body.classList.add('overflow-hidden')
 
@@ -83,7 +72,7 @@ export default function EventModal({
                         <header className="text-lg">{formData.topic_name}</header>
                     </div>
 
-                    <form className="flex md:flex-row flex-col gap-2 w-full">
+                    <div className="flex md:flex-row flex-col gap-2 w-full">
                         <div className="flex flex-col w-full">
                             <label htmlFor="start-time">Start Time</label>
                             <input className='border border-neutral outline-none focus:border-primary rounded-lg p-2 w-full h-fit'
@@ -108,7 +97,7 @@ export default function EventModal({
                                 min={format(addMinutes(formData.start, 30), "yyyy-MM-dd'T'HH:mm")}
                             />
                         </div>
-                    </form>
+                    </div>
 
                     <div className="flex flex-col rounded-lg bg-neutral gap-5 p-5">
                         <div className="flex justify-between">

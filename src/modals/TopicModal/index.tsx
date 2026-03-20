@@ -93,8 +93,7 @@ export default function TopicModal(
         if (Object.keys(result).length !== 0) return result
     };
 
-    const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const handleSave = () => {
         const error = validate();
 
         if (error) {
@@ -128,7 +127,7 @@ export default function TopicModal(
             <div className="h-fit bg-base-100 shadow-sm rounded-lg w-120">
                 <div className="flex flex-col gap-5 p-5 pt-5 text-neutral-content">
                     <h1 className="font-bold text-xl">{options === 'create' ? 'Create Topic' : 'Edit Topic'}</h1>
-                    <form onSubmit={handleSave} className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2">
                         <InputForm
                             name='Topic Name'
                             error={formError['topic_name']}
@@ -147,19 +146,20 @@ export default function TopicModal(
                             onChange={handleInputChange}
                             readOnly={isLoading}
                         />
-                        <div className="flex w-full justify-end gap-2 pt-3">
-                            <button
-                                onClick={() => setOpen(false)}
-                                disabled={isLoading}
-                                className="btn btn-white rounded-full border-black text-black font-bold text-lg py-2 px-5">Cancel</button>
 
-                            <button
-                                type='submit'
-                                disabled={isLoading}
-                                className="btn btn-primary rounded-full text-primary-content font-bold text-lg py-2 px-5">{isLoading ? <span className="loading loading-spinner text-primary-content" /> : <>Save</>}</button>
-                        </div>
-                    </form>
+                    </div>
+                    <div className="flex w-full justify-end gap-2 pt-3">
+                        <button
+                            onClick={() => setOpen(false)}
+                            disabled={isLoading}
+                            className="btn btn-white rounded-full border-black text-black font-bold text-lg py-2 px-5">Cancel</button>
 
+                        <button
+                            type='button'
+                            onClick={handleSave}
+                            disabled={isLoading}
+                            className="btn btn-primary rounded-full text-primary-content font-bold text-lg py-2 px-5">{isLoading ? <span className="loading loading-spinner text-primary-content" /> : <>Save</>}</button>
+                    </div>
                 </div>
 
 

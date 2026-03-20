@@ -138,9 +138,7 @@ export default function EditProfileModal(
         };
     }
 
-    const handleSave = async (e: React.FormEvent) => {
-        e.preventDefault();
-
+    const handleSave = async () => {
         if (formData.first_name === authData?.first_name
             && formData.last_name === authData.last_name
             && !newImage) {
@@ -198,7 +196,7 @@ export default function EditProfileModal(
 
                 {/* Name and Description */}
                 <div className="flex flex-col gap-10 p-5 pt-10 text-neutral-content">
-                    <form className="flex flex-col gap-2" onSubmit={handleSave}>
+                    <div className="flex flex-col gap-2" >
                         {/* <div className="flex gap-5 w-full"> */}
                         <InputForm
                             name='First Name'
@@ -230,7 +228,7 @@ export default function EditProfileModal(
                             value={formData.email}
                             onChange={handleInputChange}
                         /> */}
-                    </form>
+                    </div>
                     <div className="flex w-full justify-end gap-2">
                         <button
                             onClick={() => setOpen(false)}

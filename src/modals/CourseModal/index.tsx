@@ -200,7 +200,7 @@ export default function CourseModal(
 
                 <div className="flex flex-col gap-5 p-5 pt-5 text-neutral-content">
                     <h1 className="font-bold text-xl">{modalData ? 'Edit Course':'Create Course' }</h1>
-                    <form className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2">
                         <InputForm
                             name='Course Name'
                             error={formError['course_name']}
@@ -217,7 +217,7 @@ export default function CourseModal(
                             value={formData.course_description}
                             onChange={handleInputChange}
                         />
-                    </form>
+                    </div>
 
                     <div className="dropdown border border-neutral rounded-lg">
                         <div tabIndex={0} role="button" className="flex justify-between font-bold items-center gap-2 hover:cursor-pointer hover:bg-base-300 p-2 rounded-lg">
