@@ -37,8 +37,7 @@ export default function HintMenu() {
             {
                 isDeleteModal &&
                 <DeleteModal
-                    idName="hint_id"
-                    id={hintId}
+                    body={{hint_id:hintId}}
                     funcName="delete-hint"
                     message="หากดำเนินการต่อ ตัวอย่างคำใบ้ที่ถูกลบจะไม่สามารถกู้คืนกลับมาได้"
                     setOpen={setIsDeleteModal}

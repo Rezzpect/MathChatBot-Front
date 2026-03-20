@@ -1,6 +1,7 @@
 import type { UserFormData } from "./authdata"
 import type { CourseData } from "./courseData";
 import type { EventItems } from "./event";
+import type { PlanData } from "./studyplan";
 import type { CourseRowProp, HintRowProp, TopicRowProp } from "./table";
 
 export interface ModalProps {
@@ -33,9 +34,13 @@ export interface EventModalProps extends ModalProps {
     setRefresh: React.Dispatch<React.SetStateAction<number>>;
 }
 
+export interface PlanlistModalProps extends ModalProps {
+    modalData? :PlanData
+    setRefresh: React.Dispatch<React.SetStateAction<number>>;
+}
+
 export interface DeleteWarningProps extends ModalProps {
-    idName:string;
-    id:string;
+    body:Record<string, string>
     funcName:string;
     message:string;
     method?:"DELETE" | "POST" | "GET" | "PUT" | "PATCH";

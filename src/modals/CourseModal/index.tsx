@@ -199,7 +199,7 @@ export default function CourseModal(
                 </div>
 
                 <div className="flex flex-col gap-5 p-5 pt-5 text-neutral-content">
-                    <h1 className="font-bold text-xl">{modalData ? 'Create Topic' : 'Edit Topic'}</h1>
+                    <h1 className="font-bold text-xl">{modalData ? 'Edit Course':'Create Course' }</h1>
                     <form className="flex flex-col gap-2">
                         <InputForm
                             name='Course Name'

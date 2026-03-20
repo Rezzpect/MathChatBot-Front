@@ -37,8 +37,7 @@ export default function TopicTable({
             {
                 isDeleteModal &&
                 <DeleteModal
-                    idName="topic_id"
-                    id={topicId}
+                    body={{topic_id:topicId}}
                     funcName="delete-topic"
                     message="หากดำเนินการต่อ หัวข้อที่ถูกลบและคำถามที่อยู่ข้างในจะไม่สามารถถูกกู้คืนได้"
                     setOpen={setIsDeleteModal}

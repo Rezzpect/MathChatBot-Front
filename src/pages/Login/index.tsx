@@ -78,9 +78,9 @@ export default function LoginPage() {
                             value={formData.password}
                             onChange={handleInputChange}
                         />
-                        <div className="flex justify-end text-sm w-full">
+                        {/* <div className="flex justify-end text-sm w-full">
                             <a className="text-primary">forgot your password</a>
-                        </div>
+                        </div> */}
                     </div>
 
                     <button className="btn bg-primary text-primary-content w-full" type="submit">LOGIN</button>

@@ -40,7 +40,7 @@ export default function Chatbot({
                 method: 'POST',
                 body: {
                     // mode: question or theory
-                    mode: 'question',
+                    mode: getMode,
                     message: message,
                     // questionResult will return session_id after first call
                     session_id: sessionId,
@@ -58,7 +58,7 @@ export default function Chatbot({
             };
 
             if (data) {
-                console.log(data.session_id)
+                console.log(data)
                 if (!sessionId && data.session_id){
                     setSessionId(data.session_id)
                 }

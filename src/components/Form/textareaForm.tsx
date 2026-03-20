@@ -4,11 +4,12 @@ type InputFormProps = {
     id: string;
     name: string;
     placeholder?: string;
+    readOnly?: boolean;
     onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 
 }
 
-export default function TextareaForm({ value, error, id, name, placeholder = '', onChange }: InputFormProps) {
+export default function TextareaForm({ value, error, id, name, placeholder = '',readOnly=false, onChange }: InputFormProps) {
     return (
         <div className="flex flex-col gap-1 w-full">
             <label className="font-bold" htmlFor={id}>{name}</label>
@@ -21,7 +22,8 @@ export default function TextareaForm({ value, error, id, name, placeholder = '',
                 id={id}
                 value={value}
                 placeholder={placeholder}
-                onChange={onChange} />
+                onChange={onChange}
+                disabled={readOnly} />
             {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
     )

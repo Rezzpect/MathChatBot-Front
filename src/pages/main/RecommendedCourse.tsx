@@ -12,7 +12,7 @@ export default function RecommendedCourse() {
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            const { data, error } = await supabaseClient.functions.invoke('home-courses', {
+            const { data, error } = await supabaseClient.functions.invoke('recommend-course', {
                 method: 'GET',
             })
             if (error) {

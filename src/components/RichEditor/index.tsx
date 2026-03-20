@@ -6,16 +6,15 @@ import type { EditorProps } from "../../@types/richeditor";
 
 const toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-    ['blockquote', 'code-block'],
-    ['link', 'image', 'formula'],
+    ['blockquote'],
+    ['image'],
     [{ 'list': 'ordered' }, { 'list': 'bullet' }],
 
-    [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-    [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-    [{ 'font': [] }],
+    [{ 'size': ['small', false, 'large', 'huge'] }],
+    [{ 'color': [] }, { 'background': [] }],          
     [{ 'align': [] }],
 
-    ['clean']                                         // remove formatting button
+    ['clean']
 ];
 
 const Image = Quill.import('formats/image') as any;

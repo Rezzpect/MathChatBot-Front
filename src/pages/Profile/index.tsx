@@ -32,7 +32,7 @@ export default function StudentProfile() {
     }
 
     const getFile = async () => {
-        if (authData) {
+        if (authData && authData.profile_picture) {
             const { data } = supabaseClient.storage.from('profile_image').getPublicUrl(authData?.user_id + authData?.profile_picture)
 
             console.log(data.publicUrl)
@@ -72,8 +72,7 @@ export default function StudentProfile() {
             {
                 isDeleteModal &&
                 <DeleteModal
-                    idName="course_id"
-                    id={courseId}
+                    body={{course_id:courseId}}
                     method="PUT"
                     funcName="delete-soft-course"
                     message="หากดำเนินการต่อ ข้อมูลต่างที่อยู่ในคอร์สจะถูกลบและไม่สามารถกู้คืนได้"
@@ -98,8 +97,7 @@ export default function StudentProfile() {
                                 <div className="flex justify-center avatar absolute w-[100px] bottom-[-30px] ">
                                     <div className="rounded-full">
                                         <img
-                                            src={profilePicture}
-                                            onError={(e) => e.currentTarget.src = '/anonymous-user.png'}
+                                            src={profilePicture !== ''? profilePicture : '/anonymous-user.png'}
                                         />
                                     </div>
                                 </div>
@@ -153,7 +151,7 @@ export default function StudentProfile() {
                             {
                                 (authData?.role_name === 'student')
                                     ? <DataTable
-                                        name='delete-soft-course'
+                                        name='student-enrollment-list'
                                         id_key='user_id'
                                         data_id={authData?.user_id ?? ''}
                                         refreshTrigger={refreshTrigger}

@@ -1,18 +1,56 @@
 import CourseCard from "../../components/CourseCard";
 import { useState, useEffect } from "react";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaSearch } from "react-icons/fa";
 import type { CourseCardProp } from "../../@types/coursecard";
 import supabaseClient from "../../utils/SupabaseClient";
 import { temp_course } from "./tempdata";
 import { useRef } from "react";
 import CourseCardSkeleton from "../../components/Skeletons/CourseCardSkeleton";
+import toast from "react-hot-toast";
 
 export default function HomeCourse() {
-    const [enrolledData, setEnrolledData] = useState<CourseCardProp[]>([])
+    const [coursesData, setCoursesData] = useState<CourseCardProp[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(1);
+    const [searchQuery, setSearchQuery] = useState<string>('');
     const page_size: number = 6;
+
+    const searchCourse = async () => {
+        setIsLoading(true);
+        try {
+            const { data, error } = await supabaseClient.functions.invoke('search-course', {
+                method: "POST",
+                body: {
+                    query: searchQuery,
+                    difficulty: null,
+                    current_page: currentPage,
+                    page_size: page_size
+                }
+            })
+            if (error) throw error;
+
+            if (data) {
+                setCoursesData(data.data.items)
+                setTotalPages(data.data.total_pages)
+            }
+        } catch (error) {
+            toast.error('Failed to retrieve courses')
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setCurrentPage(1);
+        if (searchQuery !== '') {
+            searchCourse();
+        } else {
+            fetchData();
+        }
+
+    }
 
     const fetchData = async () => {
         setIsLoading(true);
@@ -30,7 +68,7 @@ export default function HomeCourse() {
 
             if (data) {
                 console.log(data.data)
-                setEnrolledData(data.data.items);
+                setCoursesData(data.data.items);
                 setTotalPages(data.data.total_pages);
             }
 
@@ -47,7 +85,12 @@ export default function HomeCourse() {
     };
 
     useEffect(() => {
-        fetchData();
+        if (searchQuery !== '') {
+            searchCourse();
+        } else {
+            fetchData();
+        }
+
         // setEnrolledData(temp_course)
     }, [currentPage])
 
@@ -69,28 +112,32 @@ export default function HomeCourse() {
     }
 
     return (
-        <div className="flex flex-col">
-            <div className="flex w-full items-center gap-5">
-                <div className="grid grid-cols-3 grid-row-2 w-full gap-4 overflow-x-hidden scroll-smooth py-5 px-1">
-                    {isLoading ?
+        <div className="flex flex-col items-center justify-center">
+            <form onSubmit={handleSearch} className="md:w-[50vw] w-full h-auto my-2 flex items-center gap-2 py-10">
+                <input className="rounded-full pl-5 w-[700px] h-[50px] bg-neutral outline-none focus:border focus:border-primary"
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Type here" />
+                <button className="bg-primary h-[50px] w-[50px] text-white btn rounded-full text-l" type='submit'><FaSearch /></button>
+            </form>
+            <div className="grid grid-cols-3 grid-row-2 w-full gap-4 overflow-x-hidden scroll-smooth py-5 px-1">
+                {isLoading ?
 
-                        <>
-                            <CourseCardSkeleton />
-                            <CourseCardSkeleton />
-                            <CourseCardSkeleton />
-                            <CourseCardSkeleton />
-                            <CourseCardSkeleton />
-                            <CourseCardSkeleton />
-                        </>
-                        :
-                        enrolledData && enrolledData.map(data => (
-                            <CourseCard
-                                key={data.course_id}
-                                {...data}
-                            />
-                        ))
-                    }
-                </div>
+                    <>
+                        <CourseCardSkeleton />
+                        <CourseCardSkeleton />
+                        <CourseCardSkeleton />
+                        <CourseCardSkeleton />
+                        <CourseCardSkeleton />
+                        <CourseCardSkeleton />
+                    </>
+                    :
+                    coursesData && coursesData.map(data => (
+                        <CourseCard
+                            key={data.course_id}
+                            {...data}
+                        />
+                    ))
+                }
             </div>
 
             <div className="flex items-center justify-center mb-5">

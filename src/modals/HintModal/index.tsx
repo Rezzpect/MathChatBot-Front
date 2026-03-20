@@ -161,7 +161,7 @@ export default function HintModal(
             <div className="flex flex-col overflow-hidden max-h-[90vh] bg-base-100 shadow-sm rounded-lg w-130">
                 <div className="flex-1 overflow-y-auto p-5 pt-5 text-neutral-content">
                     <h1 className="font-bold text-xl mb-5">{options === 'create' ? 'Create Hint Example' : 'Edit Hint Example'}</h1>
-                    <form className="flex flex-col gap-2">
+                    <form className="flex flex-col gap-2" onSubmit={(e)=>e.preventDefault()}>
                         <InputForm
                             name='ตัวอย่างคำถาม'
                             error={formError['hint_title']}

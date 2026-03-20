@@ -4,8 +4,7 @@ import supabaseClient from "../../utils/SupabaseClient";
 import { useState } from "react";
 
 export default function DeleteModal({
-    idName,
-    id,
+    body,
     funcName,
     message,
     method = 'DELETE',
@@ -20,7 +19,7 @@ export default function DeleteModal({
             const { error } = await supabaseClient.functions.invoke(funcName, {
                 method: method,
                 body: {
-                    [idName]: id
+                    ...body
                 }
             })
 

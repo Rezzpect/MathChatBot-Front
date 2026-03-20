@@ -6,17 +6,17 @@ import { AuthContext } from "../../contexts/authContext";
 export default function Navbar() {
     const navigate = useNavigate();
     const [profilePicture, setProfilePicture] = useState<string>('')
-    const { authData,isLoadingAuth, logout } = useContext(AuthContext);
+    const { authData, isLoadingAuth, logout } = useContext(AuthContext);
     const handleLogout = () => {
         logout();
     }
 
     const getFile = async () => {
-        if(!authData) return
-        const { data } = supabaseClient.storage.from('profile_image').getPublicUrl(authData?.user_id + authData?.profile_picture)
+        if (authData && authData.profile_picture) {
+            const { data } = supabaseClient.storage.from('profile_image').getPublicUrl(authData?.user_id + authData?.profile_picture)
 
-        setProfilePicture(data.publicUrl);
-
+            setProfilePicture(data.publicUrl);
+        }
     }
 
     useEffect(() => {
@@ -44,8 +44,7 @@ export default function Navbar() {
                                     <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                                         <div className="w-10 rounded-full">
                                             <img
-                                                src={profilePicture}
-                                                onError={(e) => e.currentTarget.src = '/anonymous-user.png'}
+                                                src={profilePicture !==''?profilePicture:'/anonymous-user.png'}
                                             />
                                         </div>
                                     </div>

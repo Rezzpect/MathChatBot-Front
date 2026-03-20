@@ -26,7 +26,7 @@ export default function DocumentTable({
         if (data) setRefreshTrigger(refreshTrigger + 1);
     }
 
-    const uppy = useUppyWithSupabase({ bucketName: 'document_course', course_id: '24' })
+    const uppy = useUppyWithSupabase({ bucketName: 'document_course', course_id: course_id })
         .on('complete', (result) => {
             if (result.failed?.length === 0) {
                 setRefreshTrigger((prev) => prev + 1);
