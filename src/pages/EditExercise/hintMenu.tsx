@@ -1,10 +1,7 @@
-import DataTable from "../../components/Table/DataTable";
 import { useMemo, useState } from "react";
-import supabaseClient from "../../utils/SupabaseClient";
 import type { HintRowProp } from "../../@types/table";
 import { useParams } from "react-router-dom";
 import HintModal from "../../modals/HintModal";
-import toast from "react-hot-toast";
 import HintTable from "../../components/Table/HintTable";
 import DeleteModal from "../../modals/DeleteModal";
 

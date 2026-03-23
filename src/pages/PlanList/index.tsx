@@ -7,57 +7,6 @@ import PlanListModal from "../../modals/StudyPlanModal";
 import type { PlanData } from "../../@types/studyplan";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import DeleteModal from "../../modals/DeleteModal";
-interface NewEventItems {
-    course_name: string,
-    topic_name: string,
-    topic_id: number,
-    start: Date,
-    end: Date,
-    deadline: number
-}
-
-const tempData: NewEventItems[] = [
-    {
-        course_name: "Mathematics Grade 6",
-        topic_name: "Fractions and Decimals",
-        topic_id: 1,
-        start: new Date("2026-03-01"),
-        end: new Date("2026-03-07"),
-        deadline: 6
-    },
-    {
-        course_name: "Physics Fundamentals",
-        topic_name: "Newton's Laws of Motion",
-        topic_id: 2,
-        start: new Date("2026-03-03"),
-        end: new Date("2026-03-10"),
-        deadline: 7
-    },
-    {
-        course_name: "Computer Programming 101",
-        topic_name: "Introduction to TypeScript",
-        topic_id: 3,
-        start: new Date("2026-03-05"),
-        end: new Date("2026-03-12"),
-        deadline: 7
-    },
-    {
-        course_name: "Data Structures",
-        topic_name: "Binary Trees",
-        topic_id: 4,
-        start: new Date("2026-03-08"),
-        end: new Date("2026-03-15"),
-        deadline: 7
-    },
-    {
-        course_name: "Linear Algebra",
-        topic_name: "Matrix Multiplication",
-        topic_id: 5,
-        start: new Date("2026-03-10"),
-        end: new Date("2026-03-18"),
-        deadline: 8
-    }
-];
 
 export default function PlanListPage({ }
 ) {

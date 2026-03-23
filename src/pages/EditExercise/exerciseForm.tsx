@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import RichEditor from '../../components/RichEditor';
-import type { QuestionData, QuestionForm, QuestionFormProps, QuestionFormValidate } from '../../@types/question';
+import type { QuestionData, QuestionForm, QuestionFormValidate } from '../../@types/question';
 import supabaseClient from '../../utils/SupabaseClient';
 import InputForm from '../../components/Form/inputForm';
 import { IoIosArrowDown } from 'react-icons/io';
@@ -350,9 +350,12 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
                             <div tabIndex={0} role="button" className="flex justify-between font-bold items-center gap-2 hover:cursor-pointer hover:bg-base-300 p-2 rounded-lg">
                                 <header>{questionForm.difficulty}</header><IoIosArrowDown />
                             </div>
-                            <ul tabIndex={-1} className="dropdown-content font-bold menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                            <ul id={'difficulty-dropdown'} tabIndex={-1} className="dropdown-content font-bold menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
                                 {difficulty_list.map((mode_name) =>
-                                    <li><a onClick={() => setQuestionForm((prev) => ({ ...prev, difficulty: mode_name }))}>{mode_name}</a></li>
+                                    <li><a onClick={() => {
+                                        setQuestionForm((prev) => ({ ...prev, difficulty: mode_name }))
+                                        document.getElementById('difficulty-dropdown')?.blur();
+                                    }}>{mode_name}</a></li>
                                 )}
                             </ul>
                         </div>
@@ -360,7 +363,7 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
 
                     <label className="flex items-center gap-2 rounded-full bg-white border border-black py-2 px-5 h-fit text-black font-bold text-md" htmlFor="is_publish">
                         <input className="checkbox checkbox-primary rounded-lg" id="is_publish" checked={questionForm.is_published} onChange={() => setQuestionForm((prev) => ({ ...prev, is_published: !questionForm.is_published }))} type="checkbox" />
-                        <div>
+                        <div className='line-clamp-1' title='เผยแพร่?'>
                             เผยแพร่
                         </div>
                     </label>

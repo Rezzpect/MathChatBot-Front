@@ -1,10 +1,8 @@
-import { useContext, useEffect, useState } from "react";
-
+import { useEffect, useState } from "react";
 import supabaseClient from "../../utils/SupabaseClient";
-import { AuthContext } from "../../contexts/authContext";
-import type { ModalProps, PlanlistModalProps } from "../../@types/modal";
+import type { PlanlistModalProps } from "../../@types/modal";
 import { useParams } from "react-router-dom";
-import type { PlanData, PlanForm, PlanValidate } from "../../@types/studyplan";
+import type { PlanForm, PlanValidate } from "../../@types/studyplan";
 import toast from "react-hot-toast";
 
 type TopicSelections = {

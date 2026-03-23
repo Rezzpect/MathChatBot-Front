@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { questionTableConfig, hintTableConfig, skeltonTableConfig, teacherCourseTableConfig, topicTableConfig, studentCourseTableConfig, DocumentTableConfig, StudentInCourseTableConfig } from "./tableconfig";
 import { useNavigate, useParams } from "react-router-dom";
 import supabaseClient from "../../../utils/SupabaseClient";
@@ -184,7 +184,7 @@ export default function DataTable<K extends IdKey>({
                                             : index === (visibleCol.length - 1) && !(showAction) ? (
                                                 <th className="rounded-r-xl" style={{ width: col.width }} key={`header-${index}`}>{col.header}</th>
                                             )
-                                                : (<th style={{ width: col.width }}>{col.header}</th>)
+                                                : (<th style={{ width: col.width }} key={`header-${index}`}>{col.header}</th>)
                                     }
                                     )}
 
@@ -199,7 +199,7 @@ export default function DataTable<K extends IdKey>({
 
                             <tbody>
 
-                                {tableData?.map((row) => {
+                                {tableData?.map((row,r_index) => {
                                     const row_id = row[config.rowIdKey];
 
                                     return (
@@ -211,14 +211,14 @@ export default function DataTable<K extends IdKey>({
                                                     : config.isFile
                                                         ? () => {return extractFileUrl(row.name) }
                                                         : undefined}
-                                            key={`row-${row_id}`}
+                                            key={`row-${r_index}`}
                                             style={underline ? { "borderBottom": "1px solid black" } : {}}
                                         >
                                             {
-                                                visibleCol?.map((col) => {
+                                                visibleCol?.map((col,c_index) => {
                                                     const box_data = row[col.key as string]
                                                     return (
-                                                        <td>
+                                                        <td key={`row-${r_index}-col-${c_index}`}>
                                                             <p className="w-full line-clamp-3">
                                                                 {
                                                                     renderBoxData(box_data)

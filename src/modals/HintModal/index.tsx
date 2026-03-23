@@ -1,6 +1,5 @@
 import type { HintModalProps } from "../../@types/modal"
 import { useEffect, useState } from "react";
-import type { TopicForm } from "../../@types/topic";
 import supabaseClient from "../../utils/SupabaseClient";
 import TextareaForm from "../../components/Form/textareaForm";
 import type { HintForm } from "../../@types/hint";

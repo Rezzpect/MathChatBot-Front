@@ -41,18 +41,26 @@ export default function Navbar() {
                                     <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                                         <div className="w-10 rounded-full">
                                             <img
-                                                src={profilePicture !==''?profilePicture:'/anonymous-user.png'}
+                                                src={profilePicture !== '' ? profilePicture : '/anonymous-user.png'}
                                             />
                                         </div>
                                     </div>
                                     <ul
                                         tabIndex={0}
+                                        id={"nav-dropdown"}
                                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                                         <li><a className="text-neutral-content font-bold py-2"
-                                            onClick={() => { navigate('/profile') }}>Profile</a>
+                                            onClick={() => {
+                                                navigate('/profile')
+                                                document.getElementById('nav-dropdown')?.blur();
+                                            }}>Profile</a>
                                         </li>
                                         <li><a className="text-red-500 font-bold py-2"
-                                            onClick={logout}>Logout</a>
+                                            onClick={() => {
+                                                logout
+                                                document.getElementById('nav-dropdown')?.blur();
+                                            }}
+                                        >Logout</a>
                                         </li>
                                     </ul>
                                 </div>

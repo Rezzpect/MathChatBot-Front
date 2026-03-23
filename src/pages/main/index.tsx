@@ -1,4 +1,3 @@
-import { FaSearch } from "react-icons/fa";
 import RecommendedCourse from "./RecommendedCourse";
 import HomeCourse from "./HomeCourse";
 

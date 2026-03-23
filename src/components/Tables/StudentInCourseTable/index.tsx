@@ -1,6 +1,4 @@
-import { useState } from "react"
 import DataTable from "../../Table/DataTable"
-import supabaseClient from "../../../utils/SupabaseClient";
 
 export default function StudentListTable({
     course_id,

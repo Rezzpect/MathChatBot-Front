@@ -1,5 +1,4 @@
 import { RiArrowGoBackFill } from "react-icons/ri";
-import { FaPlus } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import supabaseClient from "../../utils/SupabaseClient";
@@ -27,7 +26,7 @@ export default function TopicPage() {
     })
 
     const getFile = async (course_id:string,banner_name: string) => {
-        if(!bannerUrl) return
+
         const { data } = supabaseClient.storage.from('course_banner').getPublicUrl(course_id + banner_name);
 
         if (data) {
@@ -44,11 +43,11 @@ export default function TopicPage() {
                     topic_id: params.topicId
                 }
             })
-            if (error || data.data[0].length===0) throw error;
-            
+            if (error) throw error;
 
             if (data) {
                 const topic_data = data.data[0]
+                if ( topic_data.length===0) navigate('/',{replace:true});
                 const banner_name = topic_data.course_banner_picture;
                 if (banner_name) getFile(topic_data.course_id,banner_name);
                 setTopicData(data.data[0]);
@@ -56,8 +55,8 @@ export default function TopicPage() {
             
             setIsLoading(false);
         } catch (error) {
+            toast.error('Cannot retrieve topic info')
             navigate('/',{replace:true})
-            throw error
         }
 
     }

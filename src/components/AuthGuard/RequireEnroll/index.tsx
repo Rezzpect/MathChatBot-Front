@@ -9,7 +9,7 @@ import LoadingPage from "../../../pages/Loading";
 export function RequireEnroll({ children }: {
     children: JSX.Element
 }) {
-    const { authData, isLoadingAuth } = useContext(AuthContext);
+    const { authData } = useContext(AuthContext);
     const [isChecking, setIsChecking] = useState(true);
     const [enrollStatus,setEnrollStatus] = useState<boolean>(false);
     const user_role = authData?.role_name

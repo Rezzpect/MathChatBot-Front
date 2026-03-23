@@ -33,7 +33,6 @@ export default function DocumentTable({
             }
         });
 
-
     return (
         <div>
             <DashboardModal

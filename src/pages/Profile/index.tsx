@@ -1,5 +1,4 @@
 import CourseProgressBar from "../../components/CourseProgressBar";
-import StudentStat from "./StudentStat";
 import WeeklyExerciseBar from "../../components/WeeklyExerciseChart";
 import { useContext, useEffect, useState } from "react";
 import EditProfileModal from "../../modals/EditProfile";
@@ -7,7 +6,6 @@ import { AuthContext } from "../../contexts/authContext";
 import supabaseClient from "../../utils/SupabaseClient";
 import DataTable from "../../components/Table/DataTable";
 import CourseModal from "../../modals/CourseModal";
-import type { CourseRowProp } from "../../@types/table";
 import toast from "react-hot-toast";
 import type { CourseProgress } from "../../@types/courseData";
 import DeleteModal from "../../modals/DeleteModal";

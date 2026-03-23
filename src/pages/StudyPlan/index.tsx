@@ -1,6 +1,6 @@
 
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
-import { type Event, type EventProps, type View } from 'react-big-calendar';
+import type {EventProps, View } from 'react-big-calendar';
 import { useState, useMemo, useEffect } from 'react';
 import format from 'date-fns/format'
 import parse from 'date-fns/parse'

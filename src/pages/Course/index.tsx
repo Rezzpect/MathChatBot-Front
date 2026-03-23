@@ -1,5 +1,5 @@
 import { RiArrowGoBackFill } from "react-icons/ri";
-import { FaBook, FaBookOpen, FaMinus, FaPlus } from "react-icons/fa";
+import { FaMinus, FaPlus } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import supabaseClient from "../../utils/SupabaseClient";

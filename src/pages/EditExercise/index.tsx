@@ -2,9 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import TabMenu from "../../components/TabMenu/tabMenu";
 import ExerciseForm from "./exerciseForm";
 import HintMenu from "./hintMenu";
-import supabaseClient from "../../utils/SupabaseClient";
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../contexts/authContext";
+import { useState } from "react";
 import LoadingPage from "../Loading";
 
 export default function EditExercise() {

@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react"
-import { GiHamburgerMenu } from "react-icons/gi";
-import { FaX } from "react-icons/fa6"
 import supabaseClient from "../../utils/SupabaseClient";
 import { useNavigate, useParams } from "react-router-dom";
 import type { QuestionData } from "../../@types/question";

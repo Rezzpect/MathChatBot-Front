@@ -83,6 +83,8 @@ export const useUppyWithSupabase = ({ bucketName, course_id }: { bucketName: str
 
         // Initialize Uppy with Supabase settings
         initializeUppy();
+
+        return () => uppy.destroy();
     }, [uppy, bucketName]);
 
     // Return the configured Uppy instance

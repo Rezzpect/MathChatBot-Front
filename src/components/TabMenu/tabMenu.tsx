@@ -29,6 +29,7 @@ export default function TabMenu({ tab_data }: TabMenuProps) {
                                 borderTopLeftRadius: '1rem',
                                 borderTopRightRadius: '1rem',
                             }}
+                            key={`tab-${index}`}
                             onClick={() => setTabIndex(index)}
                         > {tab.label} </div>
                     )

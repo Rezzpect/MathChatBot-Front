@@ -1,9 +1,8 @@
 import CourseCard from "../../components/CourseCard";
 import { useState, useEffect } from "react";
-import { FaChevronLeft, FaChevronRight, FaSearch } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import type { CourseCardProp } from "../../@types/coursecard";
 import supabaseClient from "../../utils/SupabaseClient";
-import { temp_course } from "./tempdata";
 import { useRef } from "react";
 import CourseCardSkeleton from "../../components/Skeletons/CourseCardSkeleton";
 import toast from "react-hot-toast";
