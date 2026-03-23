@@ -48,7 +48,6 @@ export default function HintModal(
                 throw error
             }
             if (data.data) {
-                console.log(data.data);
                 setGeneratedHint(data.data);
             }
         } catch (error) {

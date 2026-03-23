@@ -67,7 +67,6 @@ export default function HomeCourse() {
             }
 
             if (data) {
-                console.log(data.data)
                 setCoursesData(data.data.items);
                 setTotalPages(data.data.total_pages);
             }
@@ -114,31 +113,34 @@ export default function HomeCourse() {
     return (
         <div className="flex flex-col items-center justify-center">
             <form onSubmit={handleSearch} className="md:w-[50vw] w-full h-auto my-2 flex items-center gap-2 py-10">
-                <input className="rounded-full pl-5 w-[700px] h-[50px] bg-neutral outline-none focus:border focus:border-primary"
+                <input className="rounded-full pl-5 w-full h-[50px] bg-neutral outline-none focus:border focus:border-primary"
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Type here" />
-                <button className="bg-primary h-[50px] w-[50px] text-white btn rounded-full text-l" type='submit'><FaSearch /></button>
+                <button className="btn-primary w-[50px] h-[50px] text-white btn rounded-full text-l" type='submit'><FaSearch /></button>
             </form>
-            <div className="grid grid-cols-3 grid-row-2 w-full gap-4 overflow-x-hidden scroll-smooth py-5 px-1">
-                {isLoading ?
+            <div className="flex justify-center">
+                <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 w-full gap-4 overflow-x-hidden scroll-smooth py-5 px-1">
+                    {isLoading ?
 
-                    <>
-                        <CourseCardSkeleton />
-                        <CourseCardSkeleton />
-                        <CourseCardSkeleton />
-                        <CourseCardSkeleton />
-                        <CourseCardSkeleton />
-                        <CourseCardSkeleton />
-                    </>
-                    :
-                    coursesData && coursesData.map(data => (
-                        <CourseCard
-                            key={data.course_id}
-                            {...data}
-                        />
-                    ))
-                }
+                        <>
+                            <CourseCardSkeleton />
+                            <CourseCardSkeleton />
+                            <CourseCardSkeleton />
+                            <CourseCardSkeleton />
+                            <CourseCardSkeleton />
+                            <CourseCardSkeleton />
+                        </>
+                        :
+                        coursesData && coursesData.map(data => (
+                            <CourseCard
+                                key={data.course_id}
+                                {...data}
+                            />
+                        ))
+                    }
+                </div>
             </div>
+
 
             <div className="flex items-center justify-center mb-5">
                 <div className="flex join justify-center items-center gap-2 font-bold">

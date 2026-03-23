@@ -53,7 +53,6 @@ export default function HintTable({
             }
 
             if (data.data) {
-                console.log(data.data);
                 setTableData(data.data.items);
                 setTotalItems(data.data.total_items);
                 setTotalPages(data.data.total_pages);

@@ -7,9 +7,6 @@ export default function Navbar() {
     const navigate = useNavigate();
     const [profilePicture, setProfilePicture] = useState<string>('')
     const { authData, isLoadingAuth, logout } = useContext(AuthContext);
-    const handleLogout = () => {
-        logout();
-    }
 
     const getFile = async () => {
         if (authData && authData.profile_picture) {
@@ -24,8 +21,8 @@ export default function Navbar() {
     }, [isLoadingAuth])
 
     return (
-        <div className="h-[30px] navbar bg-neutral shadow-sm text-neutral-content" >
-            <div className="flex-1">
+        <div className="h-[30px] navbar flex justify-between bg-neutral shadow-sm text-neutral-content" >
+            <div className="flex">
                 <a className="md:flex hidden text-primary visited:text-primary text-lg font-bold hover:cursor-pointer" onClick={() => { navigate('/') }}>MATHEMATHIC CHATBOT</a>
             </div>
 

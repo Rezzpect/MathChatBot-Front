@@ -67,10 +67,9 @@ export default function DataTable<K extends IdKey>({
             }
 
             if (data) {
-                const table_items = data.data.items
-                setTableData(data.data.items);
-                console.log(data.data.items)
-                setTotalPages(data.data.total_pages);
+                const table_data = data.data
+                setTableData(table_data.items);
+                setTotalPages(table_data.total_pages);
             }
         } catch (error) {
             throw error
@@ -113,7 +112,7 @@ export default function DataTable<K extends IdKey>({
     const renderBoxData = (data: any) => {
         if (Array.isArray(data)) {
             return data.map((item: string) => (
-                <span className="badge badge-sm badge-accent mx-0.5 text-white">
+                <span title={item}  className="badge badge-sm badge-accent mx-0.5 text-white line-clamp-1">
                     {item}
                 </span>
             ))
@@ -143,8 +142,6 @@ export default function DataTable<K extends IdKey>({
         }
 
         const previewable = ['pdf', 'md', 'txt', 'json']
-
-        console.log(data);
 
         if (previewable.includes(file_surname)) {
             window.open(data?.signedUrl)
@@ -212,7 +209,7 @@ export default function DataTable<K extends IdKey>({
                                                 config.navDest
                                                     ? () => navigate(`${config.navDest}${row[config.rowIdKey]}`)
                                                     : config.isFile
-                                                        ? () => { console.log(row.name); return extractFileUrl(row.name) }
+                                                        ? () => {return extractFileUrl(row.name) }
                                                         : undefined}
                                             key={`row-${row_id}`}
                                             style={underline ? { "borderBottom": "1px solid black" } : {}}
@@ -232,7 +229,8 @@ export default function DataTable<K extends IdKey>({
                                                 }
                                                 )
                                             }
-                                            {showAction && <td>
+                                            {showAction && 
+                                            <td>
                                                 <div onClick={(e) => e.stopPropagation()} className="dropdown dropdown-end">
                                                     <div tabIndex={0} className="text-xl h-full w-full hover:cursor-pointer hover:text-primary text-neutral-content"><BsThreeDotsVertical /></div>
                                                     <ul id={`manage-dropdown-${row_id}`} tabIndex={-1} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">

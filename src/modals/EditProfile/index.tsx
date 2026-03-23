@@ -26,7 +26,6 @@ export default function EditProfileModal(
     const [isLoading,setIsLoading] = useState<boolean>(false);
 
     const insertNewImg = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(e.target.files)
         const input_file = e.target.files?.[0];
 
         if (!input_file) return;

@@ -35,7 +35,6 @@ export default function StudentProfile() {
         if (authData && authData.profile_picture) {
             const { data } = supabaseClient.storage.from('profile_image').getPublicUrl(authData?.user_id + authData?.profile_picture)
 
-            console.log(data.publicUrl)
             if (data.publicUrl.length > 0)
                 setProfilePicture(data.publicUrl);
         }
@@ -57,7 +56,6 @@ export default function StudentProfile() {
         }
 
         if (data) {
-            console.log(data.data);
             setCourseProgress(data.data);
         }
     }

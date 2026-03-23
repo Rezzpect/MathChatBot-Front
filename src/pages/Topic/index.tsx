@@ -27,6 +27,7 @@ export default function TopicPage() {
     })
 
     const getFile = async (course_id:string,banner_name: string) => {
+        if(!bannerUrl) return
         const { data } = supabaseClient.storage.from('course_banner').getPublicUrl(course_id + banner_name);
 
         if (data) {
@@ -48,7 +49,6 @@ export default function TopicPage() {
 
             if (data) {
                 const topic_data = data.data[0]
-                console.log(topic_data);
                 const banner_name = topic_data.course_banner_picture;
                 if (banner_name) getFile(topic_data.course_id,banner_name);
                 setTopicData(data.data[0]);
@@ -75,7 +75,7 @@ export default function TopicPage() {
                     <div className="flex flex-col lg:px-50 md:px-20 px-5 w-full h-fit min-h-[500px]">
                         <div className="relative rounded-b-lg w-full h-[12rem] bg-primary overflow-hidden">
                             {
-                                bannerUrl && <img src={bannerUrl} className=" absolute h-full w-full" />
+                                bannerUrl && <img src={bannerUrl === ''?undefined:bannerUrl} className=" absolute h-full w-full" />
                             }
                             <button
                                 onClick={() => navigate('/course/' + topicData.course_id)}

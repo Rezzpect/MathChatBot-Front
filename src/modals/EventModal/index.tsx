@@ -39,7 +39,6 @@ export default function EventModal({
         fetchCourses();
 
         if (!modalData) return
-        console.log(modalData)
         setFormData(modalData);
     }, [])
 
@@ -52,7 +51,7 @@ export default function EventModal({
         })
 
         if (error) throw error
-        if (data) console.log(data); setCourseList(data.data);
+        if (data) setCourseList(data.data);
     }
 
     useEffect(() => {

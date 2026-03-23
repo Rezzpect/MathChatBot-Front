@@ -16,10 +16,10 @@ export default function TabMenu({ tab_data }: TabMenuProps) {
     return (
         <div className="flex flex-col h-full min-h-0 w-full text-neutral-content">
             {/* Tab menu */}
-            <div className="flex shrink-0">
+            <div className="flex">
                 {
                     tab_data.map((tab, index) =>
-                        <div className={`font-bold text-xl min-w-50 p-2 rounded-lg"
+                        <div className={`font-bold text-xl md:w-50 w-full line-clamp-1 p-2 hover:cursor-pointer"
                             ${index !== 0 ? "ml-[-10px]" : ""}
                             ${tabIndex === index ?
                                 "text-primary-content bg-primary" :

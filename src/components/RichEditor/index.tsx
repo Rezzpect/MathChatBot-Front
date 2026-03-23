@@ -45,10 +45,6 @@ Quill.register(CustomImage, true);
 export default function RichEditor({ setImagesToUpload,placeholder, value, onChange, readOnly }:  EditorProps) {
     const quillRef = useRef<ReactQuill>(null);
 
-    useEffect(() => {
-        console.log(value);
-    }, [value]);
-
     const imageHandler = async () => {
         const input = document.createElement('input');
         input.setAttribute('type', 'file');
@@ -60,7 +56,6 @@ export default function RichEditor({ setImagesToUpload,placeholder, value, onCha
             if (!file) return;
 
             const blob_url = URL.createObjectURL(file);
-            console.log(blob_url);
             setImagesToUpload((prev) => ([...prev, { url: blob_url, file: file }]));
 
             const quill = quillRef.current?.getEditor();

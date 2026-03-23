@@ -219,13 +219,11 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
 
             if (error) {
                 toast.error('Failed to upload image to');
-                console.log(storagePath, img.file);
                 throw error;
             }
 
             const { data: { publicUrl } } = supabaseClient.storage.from('question_image').getPublicUrl(storagePath);
 
-            // console.log(final_content);
             setUploadedImages((prev) => ([...prev, publicUrl]));
             final_content = final_content.replace(img.url, publicUrl);
             URL.revokeObjectURL(img.url);

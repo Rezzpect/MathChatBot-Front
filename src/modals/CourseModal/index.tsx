@@ -44,14 +44,13 @@ export default function CourseModal(
     }, []);
 
     const insertNewImg = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(e.target.files)
         const input_file = e.target.files?.[0];
 
         if (!input_file) return;
 
         const preview_url = URL.createObjectURL(input_file);
 
-        if (bannerUrl) URL.revokeObjectURL(bannerUrl); //revoke old preview url
+        if (imageUrl) URL.revokeObjectURL(imageUrl); //revoke old preview url
         setNewImage(input_file);
         setImageUrl(preview_url);
     }

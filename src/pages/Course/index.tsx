@@ -25,7 +25,7 @@ export default function CoursePage() {
 
     const [refreshPage, setRefreshPage] = useState<number>(0);
 
-    const [bannerUrl, setBannerUrl] = useState<string>('https://img.freepik.com/premium-photo/purple-background-simple-empty-backdrop-various-design-works-with-copy-space-text-images_7954-57975.jpg');
+    const [bannerUrl, setBannerUrl] = useState<string>('');
 
     const [courseData, setCourseData] = useState<CourseData>({
         "course_id": 0,
@@ -84,6 +84,7 @@ export default function CoursePage() {
     }
 
     const getFile = async (banner_name: string) => {
+        if (!banner_name) return
         const { data } = supabaseClient.storage.from('course_banner').getPublicUrl(params.courseId + banner_name);
 
         if (data) {
@@ -104,7 +105,6 @@ export default function CoursePage() {
 
             if (error) throw error
             if (data) {
-                console.log(data);
                 await getEnrolledStatus();
                 toast.success('Enroll successfully');
             }
@@ -129,7 +129,6 @@ export default function CoursePage() {
 
             if (error) throw error
             if (data) {
-                console.log(data);
                 await getEnrolledStatus();
                 toast.success('Unenroll successfully');
             }
@@ -190,7 +189,7 @@ export default function CoursePage() {
                 <div className="flex flex-col lg:px-50 md:px-20 px-5 w-full h-fit min-h-[500px]">
                     <div className="relative rounded-b-lg w-full h-[12rem] bg-primary overflow-hidden">
                         {
-                            bannerUrl && <img src={bannerUrl} className=" absolute h-full w-full" />
+                            bannerUrl && <img src={bannerUrl===''?undefined:bannerUrl} className=" absolute h-full w-full" />
                         }
                         <button
                             onClick={() => navigate('/')}

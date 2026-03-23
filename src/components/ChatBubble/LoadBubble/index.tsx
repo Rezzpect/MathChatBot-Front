@@ -1,5 +1,3 @@
-import type { ChatMessage } from "../../../@types/chatbot";
-
 export default function LoadBubble() {
 
     return (

@@ -40,7 +40,6 @@ export default function StudyPlan() {
 
         if (error) throw error
         if (data) {
-            console.log(data.data);
             const res: EventResProp[] = data.data;
             const event_list: EventItems[] = res.map((item) => ({
                 title: item.course_name,

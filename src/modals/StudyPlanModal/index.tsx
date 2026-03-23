@@ -52,7 +52,7 @@ export default function PlanListModal({
             })
 
             if (error) throw error
-            if (data) console.log(data); setTopicList(data.data);
+            if (data) setTopicList(data.data);
         } catch (error) {
             toast.error('Enable to retrive available topic')
             setOpen(false);
@@ -83,7 +83,6 @@ export default function PlanListModal({
             if (error) throw error;
 
             if (data) {
-                console.log('create', data);
                 toast.success("Created study plan successfully")
                 setRefresh((prev) => prev + 1)
                 setOpen(false);
@@ -140,7 +139,6 @@ export default function PlanListModal({
             if (error) throw error;
 
             if (data) {
-                console.log('edit', data);
                 toast.success("สร้างแผนการเรียนเสร็จสมบูรณ์")
                 setRefresh((prev) => prev + 1)
                 setOpen(false);

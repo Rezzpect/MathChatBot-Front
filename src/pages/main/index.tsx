@@ -12,7 +12,7 @@ export default function HomePage() {
                 <RecommendedCourse />
             </div>
 
-            <div className="flex flex-col items-center justify-center gap-10">
+            <div className="flex flex-col items-center justify-center gap-10 w-full">
                 <div className="flex flex-col w-full my-2 gap-5">
                     <HomeCourse />
                 </div>

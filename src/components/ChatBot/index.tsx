@@ -6,6 +6,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import supabaseClient from "../../utils/SupabaseClient";
 import { useParams } from "react-router-dom";
 import LoadBubble from "../ChatBubble/LoadBubble";
+import toast from "react-hot-toast";
 
 export default function Chatbot({
     messages,
@@ -49,16 +50,9 @@ export default function Chatbot({
                 }
             })
 
-            if (error) {
-                console.log(error);
-                setMessages((prev) => [
-                    ...prev,
-                    { message: "An Unexpected Error has occurred", role: 'bot' }
-                ]);
-            };
+            if (error) throw error;
 
             if (data) {
-                console.log(data)
                 if (!sessionId && data.session_id){
                     setSessionId(data.session_id)
                 }
@@ -70,7 +64,7 @@ export default function Chatbot({
                 ]);
             }
         } catch (error) {
-            console.log(error);
+            toast.error('Unable to reach chatbot');
             setMessages((prev) => [
                 ...prev,
                 { message: "An Unexpected Error has occurred", role: 'bot' }

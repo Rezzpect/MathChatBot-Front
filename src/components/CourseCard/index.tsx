@@ -12,7 +12,6 @@ export default function CourseCard({
     course_description,
     student_amount,
     banner_picture,
-    is_pubished,
 }
     : CourseCardProp) {
 
@@ -24,9 +23,7 @@ export default function CourseCard({
         else {
             const { data } = supabaseClient.storage.from('course_banner').getPublicUrl(course_id + banner_picture,)
 
-            if (data)
-                console.log(data.publicUrl);
-            setBannerUrl(data.publicUrl);
+            if (data) setBannerUrl(data.publicUrl);
         }
     }
 
@@ -44,7 +41,7 @@ export default function CourseCard({
                     banner_picture &&
                     <>
                         <span className="absolute bg-primary/70 top-0 left-0 z-1 w-full h-full" />
-                        <img src={bannerUrl} className="absolute h-full w-full top-0 left-0 bg-rp" />
+                        <img src={bannerUrl === ''? undefined:bannerUrl} className="absolute h-full w-full top-0 left-0 bg-rp" />
                     </>
                 }
                 <header className="text-lg font-bold h-full line-clamp-2 max-h-[60px] z-1">{course_name}</header>

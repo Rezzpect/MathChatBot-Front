@@ -20,7 +20,6 @@ export default function RecommendedCourse() {
             }
 
             if (data) {
-                console.log(data.data)
                 setEnrolledData(data.data);
             }
 
@@ -55,7 +54,7 @@ export default function RecommendedCourse() {
     return (
         <div className="flex w-full items-center gap-5">
             <button
-                className="bg-primary text-primary-content rounded-full p-2 text-3xl"
+                className="hover:cursor-pointer hover:brightness-90 bg-primary text-primary-content rounded-full p-2 text-3xl"
                 onClick={() => scroll("left")}
             >
                 <FaChevronLeft />
@@ -83,7 +82,7 @@ export default function RecommendedCourse() {
             }
 
             <button
-                className="bg-primary text-primary-content rounded-full p-2 text-3xl"
+                className="hover:cursor-pointer hover:brightness-90 bg-primary text-primary-content rounded-full p-2 text-3xl"
                 onClick={() => scroll("right")}
             >
                 <FaChevronRight />
