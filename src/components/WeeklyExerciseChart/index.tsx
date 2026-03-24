@@ -10,6 +10,9 @@ import {
 import { Bar } from "react-chartjs-2";
 
 import { weekstat } from './tempdata'
+import { useContext } from 'react';
+import { AuthContext } from '../../contexts/authContext';
+import supabaseClient from '../../utils/SupabaseClient';
 
 ChartJS.register(
     CategoryScale,
@@ -21,15 +24,16 @@ ChartJS.register(
 );
 
 export default function WeeklyExerciseBar() {
+    const {authData} = useContext(AuthContext);
     return (
         <div className="w-full h-100 bg-base-300 rounded-lg p-5 items-center relative">
             <Bar
                 data={{
-                    labels: weekstat.map((data) => data.label),
+                    labels: authData?.week_status.map((data) => `${data.day.slice(0,3)}, ${data.date}`),
                     datasets: [
                         {
-                            label: 'exerciseCount',
-                            data: weekstat.map((data) => data.value),
+                            label: 'Count',
+                            data: authData?.week_status.map((data) => data.count),
                             backgroundColor: ["rgba(138,56,245,1)"],
                             borderRadius: 10,
                             barThickness: 35

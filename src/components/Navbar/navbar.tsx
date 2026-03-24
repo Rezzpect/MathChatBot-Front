@@ -51,13 +51,13 @@ export default function Navbar() {
                                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                                         <li><a className="text-neutral-content font-bold py-2"
                                             onClick={() => {
-                                                navigate('/profile')
+                                                navigate('/profile');
                                                 document.getElementById('nav-dropdown')?.blur();
                                             }}>Profile</a>
                                         </li>
                                         <li><a className="text-red-500 font-bold py-2"
                                             onClick={() => {
-                                                logout
+                                                logout();
                                                 document.getElementById('nav-dropdown')?.blur();
                                             }}
                                         >Logout</a>
