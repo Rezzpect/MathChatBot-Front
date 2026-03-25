@@ -14,6 +14,7 @@ import { AllowedRoles } from "../components/AuthGuard/AllowedRole";
 import { RequireEnroll } from "../components/AuthGuard/RequireEnroll";
 import supabaseClient from "../utils/SupabaseClient";
 import toast from "react-hot-toast";
+import PageNotFound from "../pages/NotFound";
 
 async function topicLoader() {
 
@@ -91,6 +92,10 @@ function Routes() {
             path: '/register',
             element: <RegisterPage />
         },
+        {
+            path: '*',
+            element: <PageNotFound/>
+        }
     ]);
 }
 

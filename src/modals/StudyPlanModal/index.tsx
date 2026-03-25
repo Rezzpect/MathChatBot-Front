@@ -97,17 +97,17 @@ export default function PlanListModal({
             {
                 key: 'topic_id',
                 condition: (formData.topic_id === 0),
-                message: "กรูณาเลือกหัวข้อที่ต้องการ"
+                message: "Please select a topic for the plan"
             },
             {
                 key: 'start_day',
                 condition: (formData.start_day === 0),
-                message: "วันไม่สามารถมีค่าเป็น 0 ได้"
+                message: "Start day cannot be 0"
             },
             {
                 key: 'day_todo',
                 condition: (formData.day_todo === 0),
-                message: "วันไม่สามารถมีค่าเป็น 0 ได้"
+                message: "Day to do topic cannot be 0"
             }
         ]
 
@@ -137,12 +137,12 @@ export default function PlanListModal({
             if (error) throw error;
 
             if (data) {
-                toast.success("สร้างแผนการเรียนเสร็จสมบูรณ์")
+                toast.success("Created study plan successfully")
                 setRefresh((prev) => prev + 1)
                 setOpen(false);
             };
         } catch (error) {
-            toast.error('เกิดข้อผิดพลาดในการสร้าง')
+            toast.error('Failed to create study plan')
         } finally {
             setIsLoading(false);
         }
@@ -160,7 +160,7 @@ export default function PlanListModal({
         const error = validate()
         if (error) {
             setFormError({ ...error });
-            toast.error('กรุณากรอกข้อมูลให้ครบถ้วนและถูกต้อง');
+            toast.error('Please fill in all required fields correctly');
             return;
         }
 
@@ -173,10 +173,10 @@ export default function PlanListModal({
         <div className="fixed w-full h-full bg-black/50 top-0 left-0 flex justify-center items-center z-9999">
             <div className="h-fit w-full max-w-120 bg-base-100 shadow-sm rounded-lg">
                 <div className="flex flex-col gap-5 p-5 pt-10 text-neutral-content">
-                    <header className="font-bold text-2xl">{modalData ? 'แก้ไข' : 'สร้าง'}แผนการเรียน</header>
+                    <header className="font-bold text-2xl">{modalData ? 'Edit' : 'Create'} Study Plan</header>
                     <div className="flex flex-col w-full h-fit gap-2" >
-                        <div className="flex flex-col gap-2">
-                            <label htmlFor="course-select">หัวข้อ</label>
+                        <div className="flex flex-col gap-1">
+                            <label className='font-bold' htmlFor="course-select">Topic</label>
                             <select
                                 id="course-select"
                                 onChange={(e) => handleSelectCourse(e)}
@@ -207,15 +207,15 @@ export default function PlanListModal({
                             {formError.topic_id && <p className="text-sm text-red-500">{formError.topic_id}</p>}
                         </div>
                         
-                        <div className="flex flex-col gap-2">
-                            <label htmlFor="exercise-todo">วันที่จะให้เริ่มหลังจากลงทะเบียน</label>
+                        <div className="flex flex-col gap-1">
+                            <label className='font-bold' htmlFor="exercise-todo">Start day after enroll</label>
                             <input className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none 
                                 border ${formError.start_day?'border-red-500':'border-neutral'} h-full w-full p-2 rounded-lg bg-white outline-none
                                 focus:border focus:border-primary`}
                                 value={formData.start_day === 1 ? '' : formData.start_day}
                                 min={1}
                                 max={99}
-                                placeholder="วันแรกที่ลงทะเบียน"
+                                placeholder="วันแรกที่ลงทะเบียน (Day 1)"
                                 onChange={(e) => setFormData((prev) => ({ ...prev, start_day: parseInt(e.target.value) || 0 }))}
                                 id="exercise-todo"
                                 type='number'
@@ -223,8 +223,8 @@ export default function PlanListModal({
                             />
                             {formError.start_day && <p className="text-sm text-red-500">{formError.start_day}</p>}
                         </div>
-                        <div className="flex flex-col gap-2">
-                            <label htmlFor="exercise-todo">จำนวนวันก่อนหมดเขต</label>
+                        <div className="flex flex-col gap-1">
+                            <label className='font-bold' htmlFor="exercise-todo">Time until deadline (Day)</label>
                             <input className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none 
                                 border ${formError.start_day?'border-red-500':'border-neutral'} h-full w-full p-2 rounded-lg bg-white outline-none
                                 focus:border focus:border-primary`}
