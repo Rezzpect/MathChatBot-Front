@@ -83,5 +83,8 @@ export function RequireEnroll({ children }: {
 
     if (user_role === 'admin' || enrollStatus) {
         return children
-    } else return <Navigate to={'/'} replace />
+    } else{ 
+        toast.error('You need to enroll the course first!');
+        return <Navigate to={'/'} replace /> 
+    }
 }

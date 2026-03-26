@@ -59,7 +59,7 @@ export default function StudentProfile() {
     }
 
     useEffect(() => {
-        getFile()
+        getFile();
         getCourseProgress();
     }, [])
 
