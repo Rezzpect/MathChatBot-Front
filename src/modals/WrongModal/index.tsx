@@ -1,11 +1,9 @@
-import { useNavigate } from "react-router-dom"
 import type { ModalProps } from "../../@types/modal";
 import { BsXCircleFill } from "react-icons/bs";
 
 export default function WrongModal(
     { setOpen }: ModalProps
 ) {
-    const navigate = useNavigate();
 
     return (
         <div className="fixed w-full h-full bg-black/50 top-0  flex justify-center items-center z-100">

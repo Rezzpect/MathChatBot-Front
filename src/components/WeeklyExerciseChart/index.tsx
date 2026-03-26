@@ -9,10 +9,8 @@ import {
 } from 'chart.js';
 import { Bar } from "react-chartjs-2";
 
-import { weekstat } from './tempdata'
 import { useContext } from 'react';
 import { AuthContext } from '../../contexts/authContext';
-import supabaseClient from '../../utils/SupabaseClient';
 
 ChartJS.register(
     CategoryScale,

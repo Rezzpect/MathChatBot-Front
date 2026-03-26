@@ -104,7 +104,7 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
                 }
             })
 
-            const { data: answer, error: answer_error } = await supabaseClient.functions.invoke('question-answer', {
+            const { data: answer } = await supabaseClient.functions.invoke('question-answer', {
                 method: 'POST',
                 body: {
                     "question_id": questionId
@@ -215,7 +215,7 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
             const fileName = 'img' + Date.now()
             const storagePath = `${course_id}/${questionId ?? question_id}/${fileName}`
 
-            const { data, error } = await supabaseClient.storage.from('question_image').upload(storagePath, img.file)
+            const { error } = await supabaseClient.storage.from('question_image').upload(storagePath, img.file)
 
             if (error) {
                 toast.error('Failed to upload image to');
@@ -250,7 +250,6 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
 
             if (!isEdit) {
                 const question_id = await createQuestion(questionForm.question)
-                const { data } = await supabaseClient.functions.invoke('')
                 final_content = await ChangeUrl(question_id);
                 await editQuestion(final_content, question_id);
                 navigate(`/topic/${topicId}`);

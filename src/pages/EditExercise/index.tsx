@@ -8,8 +8,8 @@ import LoadingPage from "../Loading";
 export default function EditExercise() {
     const navigate = useNavigate();
     const { questionId, topicId} = useParams();
-    const [courseId,setCourseId] = useState<string>('');
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [courseId] = useState<string>('');
+    const [isLoading] = useState<boolean>(false);
     const isEdit = questionId ? true : false
 
     // const [showAlert, setShowAlert] = useState(false);

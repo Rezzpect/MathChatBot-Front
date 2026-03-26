@@ -1,8 +1,7 @@
-import type { UserFormData } from "./authdata"
 import type { CourseData } from "./courseData";
 import type { EventItems } from "./event";
 import type { PlanData } from "./studyplan";
-import type { CourseRowProp, HintRowProp, TopicRowProp } from "./table";
+import type { HintRowProp, TopicRowProp } from "./table";
 
 export interface ModalProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>

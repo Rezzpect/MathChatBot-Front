@@ -74,21 +74,21 @@ export default function Chatbot({
         }
     }
 
-    const TestSendMessage = () => {
-        setMessages((prev) => [...prev,
-        {
-            role: 'user',
-            message: userInput
-        }
-        ]);
-        setMessages((prev) => [...prev,
-        {
-            role: 'bot',
-            message: 'Message received'
-        }
-        ]);
-        setUserInput('');
-    }
+    // const TestSendMessage = () => {
+    //     setMessages((prev) => [...prev,
+    //     {
+    //         role: 'user',
+    //         message: userInput
+    //     }
+    //     ]);
+    //     setMessages((prev) => [...prev,
+    //     {
+    //         role: 'bot',
+    //         message: 'Message received'
+    //     }
+    //     ]);
+    //     setUserInput('');
+    // }
 
     return (
         <div className="flex flex-col h-full w-full">

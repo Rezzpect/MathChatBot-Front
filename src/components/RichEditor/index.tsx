@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+import { useRef } from "react";
 import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import "./quill-fix.css"
@@ -66,16 +66,6 @@ export default function RichEditor({ setImagesToUpload,placeholder, value, onCha
             quill.setSelection(range.index + 1);
         }
     }
-
-    const modulesOption = useMemo(() => (
-        {
-            toolbar: toolbarOptions,
-            handlers: {
-                image: imageHandler,
-            }
-
-        }
-    ), []);
 
     return (
         <div className="text-editor border border-neutral rounded-lg [&>div]:flex [&>div]:flex-col-reverse">

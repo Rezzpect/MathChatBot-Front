@@ -64,7 +64,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (data && (data.data.length != 0)) {
             const user_data = data.data[0]
-            console.log(user_data);
             // const profile_image = await getFile(user_data.user_id);
 
             setAuthData({...user_data});
@@ -93,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         const { data: auth_listener } = supabaseClient.auth.onAuthStateChange((
-            event, session
+            _event, session
         ) => {
             if (session?.user) {
                 getUserData(session.user.id);

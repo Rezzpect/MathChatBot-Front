@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import type { CourseCardProp } from "../../@types/coursecard";
 import supabaseClient from "../../utils/SupabaseClient";
-import { useRef } from "react";
 import CourseCardSkeleton from "../../components/Skeletons/CourseCardSkeleton";
 import toast from "react-hot-toast";
 
@@ -91,23 +90,6 @@ export default function HomeCourse() {
 
         // setEnrolledData(temp_course)
     }, [currentPage])
-
-    const containerRef = useRef<HTMLDivElement>(null)
-
-    const scroll = (direction: "left" | "right") => {
-        const container = containerRef.current
-        if (!container) return
-
-        const cardWidth = container.firstElementChild?.clientWidth ?? 0
-        const gap = 16 // gap-4 = 16px
-
-        container.scrollBy({
-            left: direction === "left"
-                ? -(cardWidth + gap)
-                : cardWidth + gap,
-            behavior: "smooth",
-        })
-    }
 
     return (
         <div className="flex flex-col items-center justify-center">

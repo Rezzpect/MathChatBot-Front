@@ -1,6 +1,4 @@
-import { useNavigate } from "react-router-dom"
 import type { EventItems } from "../../@types/event"
-import { format } from "date-fns";
 
 type EventBoxProp = {
     event: EventItems
@@ -9,9 +7,6 @@ type EventBoxProp = {
 }
 
 export default function EventBox({ event,selectEvent,setOpen }: EventBoxProp) {
-    const navigate = useNavigate();
-    const startTime = format(event.start,'p');
-    const endTime = format(event.end,'p');
 
     const handleClickOpen = (e:React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.stopPropagation();

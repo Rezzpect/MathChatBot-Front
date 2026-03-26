@@ -74,9 +74,9 @@ export const useUppyWithSupabase = ({ bucketName, course_id }: { bucketName: str
                         yourCustomMetadata: true,
                     }),
                 };
-            }).on("upload-error", (file, error) => {
+            }).on("upload-error", () => {
                 toast.error('Failed to upload file');
-            }).on("restriction-failed", (error) => {
+            }).on("restriction-failed", () => {
                 toast.error('Please upload supported files only: .txt .md .pdf .json .docx');
             });
         };

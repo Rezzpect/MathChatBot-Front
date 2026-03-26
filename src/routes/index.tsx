@@ -1,4 +1,4 @@
-import { BrowserRouter, redirect, useRoutes } from "react-router-dom";
+import { BrowserRouter, useRoutes } from "react-router-dom";
 import MainLayout from "../layouts/main";
 import HomePage from "../pages/main";
 import LoginPage from "../pages/Login";
@@ -12,7 +12,6 @@ import StudyPlanPage from "../pages/StudyPlan";
 import PlanListPage from "../pages/PlanList";
 import { AllowedRoles } from "../components/AuthGuard/AllowedRole";
 import { RequireEnroll } from "../components/AuthGuard/RequireEnroll";
-import supabaseClient from "../utils/SupabaseClient";
 import toast from "react-hot-toast";
 import PageNotFound from "../pages/NotFound";
 

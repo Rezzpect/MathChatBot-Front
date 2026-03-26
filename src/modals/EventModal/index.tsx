@@ -19,8 +19,8 @@ export default function EventModal({
 }: EventModalProps
 ) {
     const { authData } = useContext(AuthContext)
-    const [courseList, setCourseList] = useState<CourseSelections[]>([]);
-    const [disableEdit, setDisableEdit] = useState<boolean>(modalData ? true : false);
+    const [, setCourseList] = useState<CourseSelections[]>([]);
+    const [disableEdit] = useState<boolean>(modalData ? true : false);
     const [formData, setFormData] = useState<EventItems>({
         course_id: 0,
         title: "",
