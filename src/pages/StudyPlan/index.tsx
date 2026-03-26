@@ -1,10 +1,10 @@
 
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
-import { type Event, type EventProps, type View } from 'react-big-calendar';
+import type {EventProps, View } from 'react-big-calendar';
 import { useState, useMemo, useEffect } from 'react';
 import format from 'date-fns/format'
 import parse from 'date-fns/parse'
-import { addDays, addWeeks, startOfWeek, endOfWeek,} from 'date-fns';
+import { addDays, addWeeks, startOfWeek, endOfWeek, } from 'date-fns';
 import { getDay } from 'date-fns/getDay'
 import { enUS } from 'date-fns/locale/en-US'
 import { DayPicker } from 'react-day-picker';
@@ -27,17 +27,6 @@ const localizer = dateFnsLocalizer({
     locales,
 })
 
-// const events:EventItems[] = [
-//     {
-//         start: new Date(2026,1,23,10,0),
-//         end: new Date(2026,1,23,12,0),
-//         course_title: 'TEST',
-//         course_id:'1',
-//         question_todo: 10,
-//         status: false,
-//     }
-// ]
-
 export default function StudyPlan() {
     const [selectedEvent, setSelectedEvent] = useState<EventItems | undefined>(undefined);
     const [currentView, setCurrentView] = useState<View>('week');
@@ -47,22 +36,19 @@ export default function StudyPlan() {
     const [refresh, setRefresh] = useState<number>(0);
 
     const fetchEvent = async () => {
-        const { data, error } = await supabaseClient.functions.invoke('study-plan-list');
+        const { data, error } = await supabaseClient.functions.invoke('student-study-plan-list');
 
         if (error) throw error
         if (data) {
-            console.log(data.data);
             const res: EventResProp[] = data.data;
             const event_list: EventItems[] = res.map((item) => ({
                 title: item.course_name,
                 start: new Date(item.start_date),
                 end: new Date(item.end_date),
-                plan_id: item.plan_id,
                 course_id: item.course_id,
-                progress_count: item.progress_count,
-                question_todo: item.question_todo,
-                is_completed: item.is_completed,
-
+                topic_id: item.topic_id,
+                topic_name: item.topic_name,
+                progress: { total: item.progress.total, completed: item.progress.completed }
             }))
             setEventList(event_list);
         }
@@ -75,7 +61,7 @@ export default function StudyPlan() {
     const viewOptions: View[] = ['week', 'day']
 
     const components: any = {
-        event: ({ event }: EventProps<EventItems>) => (<EventBox event={event} selectEvent={setSelectedEvent} setOpen={setIsOpen} />)
+        event: ({ event }: EventProps<EventItems>) => (<EventBox event={event} selectEvent={setSelectedEvent} setOpen={setIsOpen} />),
     }
 
     const handleReduceDate = () => {

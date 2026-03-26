@@ -1,40 +1,23 @@
-import { BrowserRouter, Navigate, useNavigate, useRoutes } from "react-router-dom";
+import { BrowserRouter, useRoutes } from "react-router-dom";
 import MainLayout from "../layouts/main";
-import App from "../App";
 import HomePage from "../pages/main";
 import LoginPage from "../pages/Login";
 import RegisterPage from "../pages/Register";
 import StudentProfile from "../pages/Profile";
-import LessonPage from "../pages/Lesson";
-import ProblemSelectionPage from "../pages/ProblemSelection";
+import CoursePage from "../pages/Course";
+import TopicPage from "../pages/Topic";
 import ExercisePage from "../pages/Exercise";
 import EditExercise from "../pages/EditExercise";
 import StudyPlanPage from "../pages/StudyPlan";
-import { useContext, type JSX } from "react";
-import { AuthContext } from "../contexts/authContext";
-import { ROLE_NO } from "../@types/rolenumber";
 import PlanListPage from "../pages/PlanList";
-import LoadingPage from "../pages/Loading";
+import { AllowedRoles } from "../components/AuthGuard/AllowedRole";
+import { RequireEnroll } from "../components/AuthGuard/RequireEnroll";
+import toast from "react-hot-toast";
+import PageNotFound from "../pages/NotFound";
 
-function AllowedRoles({ allowed_role, children }: {
-    allowed_role: string[],
-    children: JSX.Element
-}) {
-    const { authData,isLoadingAuth } = useContext(AuthContext);
-    const user_role = authData?.role_name
+async function topicLoader() {
 
-    if (isLoadingAuth === true){
-        console.log(isLoadingAuth)
-        return <LoadingPage/>
-    }
-
-    if(!user_role){
-        return <Navigate to={'/login'} replace />
-    }
-    
-    if(allowed_role.includes(user_role)){
-        return children
-    }else return <Navigate to={'/'} replace />
+  toast.success('Loader ran')
 }
 
 function Routes() {
@@ -51,45 +34,50 @@ function Routes() {
                 {
                     path: '/profile',
                     element:
-                        <AllowedRoles allowed_role={['student','teacher','admin']}>
+                        <AllowedRoles allowed_role={['student', 'teacher', 'admin']}>
                             <StudentProfile />
                         </AllowedRoles>
                 },
                 {
-                    path: '/lesson/:lessonId',
+                    path: '/course/:courseId',
                     element:
-                        <LessonPage />
+                        <CoursePage />
                 },
                 {
-                    path: '/lesson/:lessonId/planlists',
+                    path: '/course/:courseId/planlists',
                     element:
-                        <PlanListPage/>
+                        <PlanListPage />
                 },
                 {
-                    path: '/problemselection/:topicId',
+                    path: '/topic/:topicId',
+                    loader:topicLoader,
                     element:
-                        <AllowedRoles allowed_role={['student','teacher','admin']}>
-                            <ProblemSelectionPage />
+                        <AllowedRoles allowed_role={['student', 'teacher', 'admin']}>
+                            <RequireEnroll>
+                                <TopicPage />
+                            </RequireEnroll>
                         </AllowedRoles>
                 },
                 {
                     path: '/question/:questionId',
                     element:
-                        <AllowedRoles allowed_role={['student','teacher','admin']}>
-                            <ExercisePage />
+                        <AllowedRoles allowed_role={['student', 'teacher', 'admin']}>
+                            <RequireEnroll>
+                                <ExercisePage />
+                            </RequireEnroll>
                         </AllowedRoles>
                 },
                 {
-                    path: '/problemselection/:topicId/editquestion/:questionId?',
+                    path: '/topic/:topicId/editquestion/:questionId?',
                     element:
-                        <AllowedRoles allowed_role={['teacher','admin']}>
+                        <AllowedRoles checkPerm={true} allowed_role={['teacher', 'admin']}>
                             <EditExercise />
                         </AllowedRoles>
                 },
                 {
                     path: '/studyplan',
                     element:
-                        <AllowedRoles allowed_role={['student','admin']}>
+                        <AllowedRoles allowed_role={['student', 'admin']}>
                             <StudyPlanPage />
                         </AllowedRoles>
                 },
@@ -103,13 +91,17 @@ function Routes() {
             path: '/register',
             element: <RegisterPage />
         },
+        {
+            path: '*',
+            element: <PageNotFound/>
+        }
     ]);
 }
 
 export default function AppRouter() {
     return (
         <BrowserRouter>
-                <Routes />
+            <Routes />
         </BrowserRouter>
     )
 }

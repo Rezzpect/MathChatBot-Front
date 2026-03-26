@@ -19,18 +19,19 @@ export default function EventModal({
 }: EventModalProps
 ) {
     const { authData } = useContext(AuthContext)
-    const [courseList, setCourseList] = useState<CourseSelections[]>([]);
-    const [disableEdit, setDisableEdit] = useState<boolean>(modalData ? true : false);
-    const [unFinishedNumber, setUnFinishedNumber] = useState<number>(0);
+    const [, setCourseList] = useState<CourseSelections[]>([]);
+    const [disableEdit] = useState<boolean>(modalData ? true : false);
     const [formData, setFormData] = useState<EventItems>({
-        plan_id: 0,
         course_id: 0,
         title: "",
+        topic_id:0,
+        topic_name:"",
         start: new Date(),
         end: addMinutes(new Date(), 30),
-        progress_count: 0,
-        question_todo: 0,
-        is_completed: true,
+        progress:{
+            total:0,
+            completed:0
+        }
 
     })
 
@@ -38,7 +39,6 @@ export default function EventModal({
         fetchCourses();
 
         if (!modalData) return
-        console.log(modalData)
         setFormData(modalData);
     }, [])
 
@@ -51,17 +51,7 @@ export default function EventModal({
         })
 
         if (error) throw error
-        if (data) console.log(data); setCourseList(data.data);
-    }
-
-    const handleSelectCourse = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const { value } = e.target
-        const target_course = courseList.find((course) => course.course_name === value);
-
-        if (!target_course) return;
-
-        setUnFinishedNumber(target_course?.unfinished_question ?? 0);
-        setFormData((prev) => ({ ...prev, course_id: target_course?.course_id, title: value }))
+        if (data) setCourseList(data.data);
     }
 
     useEffect(() => {
@@ -77,11 +67,11 @@ export default function EventModal({
             <div className="h-fit w-140 bg-base-100 shadow-sm rounded-lg">
                 <div className="flex flex-col gap-5 p-5 pt-10 text-neutral-content">
                     <div className="flex flex-col w-full h-fit">
-                        <label htmlFor="course-select">คอร์ส</label>
                         <header className="text-xl font-bold">{formData.title}</header>
+                        <header className="text-lg">{formData.topic_name}</header>
                     </div>
 
-                    <form className="flex md:flex-row flex-col gap-2 w-full">
+                    <div className="flex md:flex-row flex-col gap-2 w-full">
                         <div className="flex flex-col w-full">
                             <label htmlFor="start-time">Start Time</label>
                             <input className='border border-neutral outline-none focus:border-primary rounded-lg p-2 w-full h-fit'
@@ -106,35 +96,18 @@ export default function EventModal({
                                 min={format(addMinutes(formData.start, 30), "yyyy-MM-dd'T'HH:mm")}
                             />
                         </div>
-                    </form>
+                    </div>
 
                     <div className="flex flex-col rounded-lg bg-neutral gap-5 p-5">
                         <div className="flex justify-between">
                             <div className="flex flex-col gap-2">
                                 <div className="text-5xl font-bold">
-                                    {formData.progress_count} / {formData.question_todo > 0 ? formData.question_todo : '-'}
+                                    {formData.progress.completed} / {formData.progress.total}
                                 </div>
                                 <span className="text-sm">คำถามที่ทำเสร็จแล้ว</span>
                             </div>
-                            {!disableEdit &&
-                                <div className="flex flex-col">
-                                    <label htmlFor="exercise-todo">จำนวนข้อที่จะทำ</label>
-                                    <input className='[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none 
-                                border border-neutral h-full w-full p-2 rounded-lg bg-white outline-none
-                                focus:border focus:border-primary'
-                                        value={formData.question_todo === 0 ? '' : formData.question_todo}
-                                        disabled={true}
-                                        min={1}
-                                        max={999}
-                                        placeholder="-"
-                                        onChange={(e) => setFormData((prev) => ({ ...prev, question_todo: parseInt(e.target.value) || 0 }))}
-                                        id="exercise-todo"
-                                        type='number'
-                                    />
-                                </div>
-                            }
                         </div>
-                        <progress className="progress progress-primary w-full" value={formData.progress_count} max={formData.question_todo}></progress>
+                        <progress className="progress progress-primary w-full" value={formData.progress.completed} max={formData.progress.total}></progress>
                     </div>
 
 

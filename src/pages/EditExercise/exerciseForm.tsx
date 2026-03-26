@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import RichEditor from '../../components/RichEditor';
-import type { QuestionData, QuestionForm, QuestionFormProps, QuestionFormValidate } from '../../@types/question';
+import type { QuestionData, QuestionForm, QuestionFormValidate } from '../../@types/question';
 import supabaseClient from '../../utils/SupabaseClient';
 import InputForm from '../../components/Form/inputForm';
 import { IoIosArrowDown } from 'react-icons/io';
@@ -15,8 +15,8 @@ type tagRecord = {
     tag_name: string
 }
 
-export default function ExerciseForm({course_id}:{course_id:string}) {
-    const {topicId, questionId } = useParams();
+export default function ExerciseForm({ course_id }: { course_id: string }) {
+    const { topicId, questionId } = useParams();
     const navigate = useNavigate();
     const [tagsList, setTagsList] = useState<tagRecord[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -104,17 +104,16 @@ export default function ExerciseForm({course_id}:{course_id:string}) {
                 }
             })
 
-            const { data: answer, error: answer_error } = await supabaseClient.functions.invoke('question-answer', {
+            const { data: answer } = await supabaseClient.functions.invoke('question-answer', {
                 method: 'POST',
                 body: {
                     "question_id": questionId
                 }
             })
+            if (question_error) navigate('/', { replace: true })
 
-            if (answer_error || question_error) navigate('/',{replace:true})
-
-            if(question_data.data.length === 0){
-                navigate('/',{replace:true})
+            if (question_data.data[0].length === 0) {
+                navigate('/', { replace: true })
             }
 
             if (question_data) {
@@ -186,7 +185,7 @@ export default function ExerciseForm({course_id}:{course_id:string}) {
     }
 
     const RemoveExistingImage = async () => {
-        if (Object.keys(existingImages).length === 0 )return;
+        if (Object.keys(existingImages).length === 0) return;
 
         const current_url = extractImageUrls(questionForm.question);
         const remove_exist_img = existingImages.filter((img) => !current_url.includes(img.url));
@@ -216,27 +215,24 @@ export default function ExerciseForm({course_id}:{course_id:string}) {
             const fileName = 'img' + Date.now()
             const storagePath = `${course_id}/${questionId ?? question_id}/${fileName}`
 
-            const { data, error } = await supabaseClient.storage.from('question_image').upload(storagePath, img.file)
+            const { error } = await supabaseClient.storage.from('question_image').upload(storagePath, img.file)
 
             if (error) {
                 toast.error('Failed to upload image to');
-                console.log(storagePath, img.file);
                 throw error;
             }
 
             const { data: { publicUrl } } = supabaseClient.storage.from('question_image').getPublicUrl(storagePath);
 
-            // console.log(final_content);
             setUploadedImages((prev) => ([...prev, publicUrl]));
             final_content = final_content.replace(img.url, publicUrl);
             URL.revokeObjectURL(img.url);
         }
-        setQuestionForm((prev)=>({...prev,question:final_content}));
+        setQuestionForm((prev) => ({ ...prev, question: final_content }));
         return final_content
     }
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
 
         setIsLoading(true);
         try {
@@ -254,15 +250,14 @@ export default function ExerciseForm({course_id}:{course_id:string}) {
 
             if (!isEdit) {
                 const question_id = await createQuestion(questionForm.question)
-                const {data} = await supabaseClient.functions.invoke('')
                 final_content = await ChangeUrl(question_id);
                 await editQuestion(final_content, question_id);
-                navigate(`/problemselection/${topicId}`);
+                navigate(`/topic/${topicId}`);
             } else {
                 final_content = await ChangeUrl();
                 await editQuestion(final_content);
             }
-            setQuestionForm((prev)=>({...prev,question:final_content}));
+            setQuestionForm((prev) => ({ ...prev, question: final_content }));
             toast.success('Question saved sucessfully!');
         } catch (error) {
             ErrorCleanup();
@@ -293,7 +288,6 @@ export default function ExerciseForm({course_id}:{course_id:string}) {
         if (isEdit) {
             getQuestionData()
         }
-
     }, [])
 
     useEffect(() => {
@@ -318,7 +312,7 @@ export default function ExerciseForm({course_id}:{course_id:string}) {
 
     return (
         <div className='py-5 min-h-[400px]'>
-            <form className='flex flex-col gap-5 w-full' onSubmit={handleSubmit}>
+            <div className='flex flex-col gap-5 w-full' onSubmit={handleSubmit}>
                 <InputForm
                     name='Question Title'
                     error={formError['title']}
@@ -355,9 +349,12 @@ export default function ExerciseForm({course_id}:{course_id:string}) {
                             <div tabIndex={0} role="button" className="flex justify-between font-bold items-center gap-2 hover:cursor-pointer hover:bg-base-300 p-2 rounded-lg">
                                 <header>{questionForm.difficulty}</header><IoIosArrowDown />
                             </div>
-                            <ul tabIndex={-1} className="dropdown-content font-bold menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                            <ul id={'difficulty-dropdown'} tabIndex={-1} className="dropdown-content font-bold menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
                                 {difficulty_list.map((mode_name) =>
-                                    <li><a onClick={() => setQuestionForm((prev) => ({ ...prev, difficulty: mode_name }))}>{mode_name}</a></li>
+                                    <li><a onClick={() => {
+                                        setQuestionForm((prev) => ({ ...prev, difficulty: mode_name }))
+                                        document.getElementById('difficulty-dropdown')?.blur();
+                                    }}>{mode_name}</a></li>
                                 )}
                             </ul>
                         </div>
@@ -365,7 +362,7 @@ export default function ExerciseForm({course_id}:{course_id:string}) {
 
                     <label className="flex items-center gap-2 rounded-full bg-white border border-black py-2 px-5 h-fit text-black font-bold text-md" htmlFor="is_publish">
                         <input className="checkbox checkbox-primary rounded-lg" id="is_publish" checked={questionForm.is_published} onChange={() => setQuestionForm((prev) => ({ ...prev, is_published: !questionForm.is_published }))} type="checkbox" />
-                        <div>
+                        <div className='line-clamp-1' title='เผยแพร่?'>
                             เผยแพร่
                         </div>
                     </label>
@@ -390,10 +387,10 @@ export default function ExerciseForm({course_id}:{course_id:string}) {
                 </div>
 
                 <div className="flex justify-end gap-2 w-full mt-10">
-                    <button className="btn bg-primary text-primary-content rounded-full" type='submit' disabled={isLoading}>{isLoading ? <span className='loading loading-spin' /> : <>บันทึก<FaSave /></>}</button>
+                    <button className="btn bg-primary text-primary-content rounded-full" type='button' onClick={handleSubmit} disabled={isLoading}>{isLoading ? <span className='loading loading-spin' /> : <>บันทึก<FaSave /></>}</button>
                 </div>
 
-            </form >
+            </div >
 
         </div >
     )

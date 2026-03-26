@@ -23,7 +23,7 @@ export default function CompleteModal(
 
                         <button
                             className="hover:cursor-pointer rounded-full bg-primary text-primary-content font-bold text-lg py-2 px-5"
-                            onClick={()=>(navigate(`/problemselection/${topicId}`))}
+                            onClick={()=>(navigate(`/topic/${topicId}`))}
                             >เลือกแบบฝึกหัดใหม่</button>
                     </div>
                 </div>

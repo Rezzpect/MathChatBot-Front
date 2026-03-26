@@ -1,13 +1,13 @@
 import { RiArrowGoBackFill } from "react-icons/ri";
-import { FaPlus } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import supabaseClient from "../../utils/SupabaseClient";
 import type { TopicData } from "../../@types/topic";
 import QuestionTable from "../../components/Tables/QuestionTable";
 import LoadingPage from "../Loading";
+import toast from "react-hot-toast";
 
-export default function ProblemSelectionPage() {
+export default function TopicPage() {
     const params = useParams()
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -19,13 +19,14 @@ export default function ProblemSelectionPage() {
         course_owner_id: '',
         created_date: '',
         edit_permission: false,
-        topic_description: 'string',
+        topic_description: '',
         topic_id: 0,
         topic_name: '',
         updated_date: '',
     })
 
     const getFile = async (course_id:string,banner_name: string) => {
+
         const { data } = supabaseClient.storage.from('course_banner').getPublicUrl(course_id + banner_name);
 
         if (data) {
@@ -42,26 +43,26 @@ export default function ProblemSelectionPage() {
                     topic_id: params.topicId
                 }
             })
-
             if (error) throw error;
 
             if (data) {
                 const topic_data = data.data[0]
-                console.log(topic_data)
+                if ( topic_data.length===0) navigate('/',{replace:true});
                 const banner_name = topic_data.course_banner_picture;
                 if (banner_name) getFile(topic_data.course_id,banner_name);
                 setTopicData(data.data[0]);
             }
-        } catch (error) {
-            throw error
-        } finally {
+            
             setIsLoading(false);
+        } catch (error) {
+            toast.error('Cannot retrieve topic info')
+            navigate('/',{replace:true})
         }
 
     }
 
     useEffect(() => {
-        fetchData()
+        fetchData();
     }, [])
 
     return (
@@ -73,10 +74,10 @@ export default function ProblemSelectionPage() {
                     <div className="flex flex-col lg:px-50 md:px-20 px-5 w-full h-fit min-h-[500px]">
                         <div className="relative rounded-b-lg w-full h-[12rem] bg-primary overflow-hidden">
                             {
-                                bannerUrl && <img src={bannerUrl} className=" absolute h-full w-full" />
+                                bannerUrl && <img src={bannerUrl === ''?undefined:bannerUrl} className=" absolute h-full w-full" />
                             }
                             <button
-                                onClick={() => navigate('/lesson/' + topicData.course_id)}
+                                onClick={() => navigate('/course/' + topicData.course_id)}
                                 className="absolute m-5 btn btn-black btn-outline bg-white rounded-full shadow-sm">
                                 ย้อนกลับ <RiArrowGoBackFill />
                             </button>

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import type { DataTableProps, HintRowProp, hintTableProps, TableConfig } from "../../../@types/table";
+import type { HintRowProp, hintTableProps, TableConfig } from "../../../@types/table";
 import supabaseClient from "../../../utils/SupabaseClient";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaExclamationCircle } from "react-icons/fa";
@@ -33,7 +33,7 @@ export default function HintTable({
     const [totalItems, setTotalItems] = useState<number>(0);
     const [totalPages, setTotalPages] = useState<number>(1);
     const isMaxHint = useMemo(() => {
-        return totalItems <= 10
+        return totalItems === 10
     }, [totalItems])
 
     const fetchData = async () => {
@@ -53,7 +53,6 @@ export default function HintTable({
             }
 
             if (data.data) {
-                console.log(data.data);
                 setTableData(data.data.items);
                 setTotalItems(data.data.total_items);
                 setTotalPages(data.data.total_pages);
@@ -85,7 +84,8 @@ export default function HintTable({
                         <header className="text-xl font-bold">ตัวอย่างการใบ้</header>
                         {(extraScript && showAction) &&
                             <div>
-                                <button className="btn bg-primary text-primary-content rounded-full"
+                                <button className="btn btn-primary text-primary-content rounded-full"
+                                    disabled={isMaxHint}
                                     onClick={() => {
                                         extraScript(data_id);
                                     }}

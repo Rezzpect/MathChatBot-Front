@@ -92,9 +92,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         const { data: auth_listener } = supabaseClient.auth.onAuthStateChange((
-            event, session
+            _event, session
         ) => {
-            console.log(`ALERT EVENT : ${event}`)
             if (session?.user) {
                 getUserData(session.user.id);
             } else {

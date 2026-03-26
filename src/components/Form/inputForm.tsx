@@ -14,7 +14,7 @@ export default function InputForm({ value, error, id, type, name, placeholder = 
     return (
         <div className="flex flex-col gap-1 w-full">
             <label className="font-bold" htmlFor={id}>{name}</label>
-            <input className={`w-full border p-2 rounded-sm focus:border-primary focus:outline-non
+            <input className={`w-full border p-2 rounded-lg outline-none focus:border-primary focus:outline-non
                 ${error ? 'border-red-500' : 'border-neutral'
                     }`}
                 type={type}

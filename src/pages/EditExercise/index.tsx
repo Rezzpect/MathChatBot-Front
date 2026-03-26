@@ -2,18 +2,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import TabMenu from "../../components/TabMenu/tabMenu";
 import ExerciseForm from "./exerciseForm";
 import HintMenu from "./hintMenu";
-import supabaseClient from "../../utils/SupabaseClient";
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../contexts/authContext";
+import { useState } from "react";
 import LoadingPage from "../Loading";
 
 export default function EditExercise() {
     const navigate = useNavigate();
-    const params = useParams();
-    const { authData } = useContext(AuthContext);
     const { questionId, topicId} = useParams();
-    const [courseId,setCourseId] = useState<string>('');
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [courseId] = useState<string>('');
+    const [isLoading] = useState<boolean>(false);
     const isEdit = questionId ? true : false
 
     // const [showAlert, setShowAlert] = useState(false);
@@ -21,40 +17,6 @@ export default function EditExercise() {
     // const handleSave = () => {
     //     setShowAlert(true);
     // };
-    const checkPermission = async () => {
-        setIsLoading(true);
-        try {
-            const { data, error } = await supabaseClient.functions.invoke('topic-detail', {
-                method: 'POST',
-                body: {
-                    topic_id: params.topicId
-                }
-            })
-
-            if (error) {
-                navigate('/', { replace: true });
-                return
-            }
-
-            if (data.data.length === 0) {
-                navigate('/', { replace: true });
-                return
-            }
-
-            if (data.data.length !== 0) {
-                const topic_data = data.data[0]
-                console.log(topic_data)
-                setCourseId(topic_data.course_id);
-                if (topic_data.course_owner_id !== authData?.user_id && authData?.role_name !== 'admin') navigate('/', { replace: true });
-            }
-
-        } catch (error) {
-            throw error
-        } finally {
-            setIsLoading(false);
-        }
-
-    }
 
     const tab_data = [
         {
@@ -67,14 +29,12 @@ export default function EditExercise() {
         }
     ]
 
-    useEffect(() => { checkPermission(); }, [])
-
     return (
         <>{
             isLoading
             ? <LoadingPage/>
             : <div className="flex flex-col items-center justify-center w-full h-full">
-                <div className="flex flex-col gap-10 w-[60%] m-10">
+                <div className="flex flex-col gap-10 lg:mx-50 md:mx-20 mx-5 my-10">
                     <div className="h-fit">
                         {isEdit
                             ? <TabMenu tab_data={tab_data} />
@@ -83,10 +43,9 @@ export default function EditExercise() {
                     </div>
 
                     <div className="flex justify-end gap-2 w-full">
-                        <button className="btn bg-white text-black border border-black rounded-full" onClick={() => { navigate(`/problemselection/${topicId}`) }}>ย้อนกลับ</button>
+                        <button className="btn bg-white text-black border border-black rounded-full" onClick={() => { navigate(`/topic/${topicId}`) }}>ย้อนกลับ</button>
                     </div>
                 </div>
-                {/* {showAlert && <ShowAlert message={'test'} type="success"/>} */}
             </div>
         }
         </>

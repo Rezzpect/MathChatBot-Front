@@ -1,6 +1,8 @@
 import { useState } from "react"
 import supabaseClient from "../../utils/SupabaseClient"
 import AuthInputForm from "../../components/Form/authInputForm";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 type InputRegisterForm = {
     first_name: string;
@@ -21,8 +23,11 @@ export default function RegisterPage() {
         role_id:'1'
     });
     const [formError, setFormError] = useState<Partial<InputRegisterForm>>({});
+    const [isLoading,setIsLoading] = useState<boolean>(false);
+    const navigate = useNavigate();
 
     const SignUp = async () => {
+        setIsLoading(true);
         try {
             const { data, error } = await supabaseClient.auth.signUp(
                 {
@@ -34,22 +39,21 @@ export default function RegisterPage() {
                             last_name: formData.last_name,
                             role_id: formData.role_id
                         },
-                        emailRedirectTo: 'https://example.com/welcome'
+                        // emailRedirectTo: 'https://example.com/welcome'
                     }
                 }
             )
 
-            if (error) {
-                alert(error);
-                throw error
-            }
+            if (error) throw error
 
             if (data) {
-                console.log(data);
+                toast.success('Sign up successfully')
+                navigate('/');
             }
         } catch (error) {
-            alert(error);
-            throw error;
+            toast.error('Something went wrong');
+        }finally{
+            setIsLoading(false);
         }
     }
 
@@ -127,6 +131,7 @@ export default function RegisterPage() {
                                 type='text'
                                 value={formData.first_name}
                                 onChange={handleInputChange}
+                                readOnly={isLoading}
                             />
                             <AuthInputForm
                                 name='Last Name'
@@ -135,6 +140,7 @@ export default function RegisterPage() {
                                 type='text'
                                 value={formData.last_name}
                                 onChange={handleInputChange}
+                                readOnly={isLoading}
                             />
                         </div>
 
@@ -146,6 +152,7 @@ export default function RegisterPage() {
                             type='text'
                             value={formData.email}
                             onChange={handleInputChange}
+                            readOnly={isLoading}
                         />
                         <AuthInputForm
                             name='Password'
@@ -154,6 +161,7 @@ export default function RegisterPage() {
                             type='password'
                             value={formData.password}
                             onChange={handleInputChange}
+                            readOnly={isLoading}
                         />
                         <AuthInputForm
                             name='Confirm Password'
@@ -162,16 +170,17 @@ export default function RegisterPage() {
                             type='password'
                             value={formData.confirm_password}
                             onChange={handleInputChange}
+                            readOnly={isLoading}
                         />
 
-                        <select onChange={(handleChangeRole)} className="select w-full border-neutral focus:outline-none focus:border-primary">
+                        <select onChange={(handleChangeRole)} disabled={isLoading} className="select w-full border-neutral focus:outline-none focus:border-primary">
                             <option disabled={true}>เลือกบทบาทที่ต้องการ</option>
                             <option value='1'>Student</option>
                             <option value='2'>Teacher</option>
                         </select>
                     </div>
 
-                    <button className="btn bg-primary text-primary-content w-full">Create account</button>
+                    <button className="btn bg-primary text-primary-content w-full" disabled={isLoading}>{isLoading? <span className="loading loading-spinner text-primary-content" />:<>Create account</>}</button>
                 </form>
 
                 <p className="divider text-neutral text-sm">or continue with</p>

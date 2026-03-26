@@ -1,3 +1,5 @@
+import type { WeeklyQuestionCount } from "./statcard";
+
 export type UserAuthData = {
   email: string;
   first_name: string;
@@ -5,6 +7,7 @@ export type UserAuthData = {
   role_name: string;
   user_id: string;
   profile_picture:string;
+  week_status: WeeklyQuestionCount[];
 }
 export interface UserFormData {
     first_name: string,

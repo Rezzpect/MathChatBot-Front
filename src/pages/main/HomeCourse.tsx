@@ -1,18 +1,54 @@
 import CourseCard from "../../components/CourseCard";
 import { useState, useEffect } from "react";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import type { CourseCardProp } from "../../@types/coursecard";
 import supabaseClient from "../../utils/SupabaseClient";
-import { temp_course } from "./tempdata";
-import { useRef } from "react";
 import CourseCardSkeleton from "../../components/Skeletons/CourseCardSkeleton";
+import toast from "react-hot-toast";
 
 export default function HomeCourse() {
-    const [enrolledData, setEnrolledData] = useState<CourseCardProp[]>([])
+    const [coursesData, setCoursesData] = useState<CourseCardProp[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(1);
+    const [searchQuery, setSearchQuery] = useState<string>('');
     const page_size: number = 6;
+
+    const searchCourse = async () => {
+        setIsLoading(true);
+        try {
+            const { data, error } = await supabaseClient.functions.invoke('search-course', {
+                method: "POST",
+                body: {
+                    query: searchQuery,
+                    difficulty: null,
+                    current_page: currentPage,
+                    page_size: page_size
+                }
+            })
+            if (error) throw error;
+
+            if (data) {
+                setCoursesData(data.data.items)
+                setTotalPages(data.data.total_pages)
+            }
+        } catch (error) {
+            toast.error('Failed to retrieve courses')
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setCurrentPage(1);
+        if (searchQuery !== '') {
+            searchCourse();
+        } else {
+            fetchData();
+        }
+
+    }
 
     const fetchData = async () => {
         setIsLoading(true);
@@ -29,8 +65,7 @@ export default function HomeCourse() {
             }
 
             if (data) {
-                console.log(data.data)
-                setEnrolledData(data.data.items);
+                setCoursesData(data.data.items);
                 setTotalPages(data.data.total_pages);
             }
 
@@ -47,31 +82,25 @@ export default function HomeCourse() {
     };
 
     useEffect(() => {
-        fetchData();
+        if (searchQuery !== '') {
+            searchCourse();
+        } else {
+            fetchData();
+        }
+
         // setEnrolledData(temp_course)
     }, [currentPage])
 
-    const containerRef = useRef<HTMLDivElement>(null)
-
-    const scroll = (direction: "left" | "right") => {
-        const container = containerRef.current
-        if (!container) return
-
-        const cardWidth = container.firstElementChild?.clientWidth ?? 0
-        const gap = 16 // gap-4 = 16px
-
-        container.scrollBy({
-            left: direction === "left"
-                ? -(cardWidth + gap)
-                : cardWidth + gap,
-            behavior: "smooth",
-        })
-    }
-
     return (
-        <div className="flex flex-col">
-            <div className="flex w-full items-center gap-5">
-                <div className="grid grid-cols-3 grid-row-2 w-full gap-4 overflow-x-hidden scroll-smooth py-5 px-1">
+        <div className="flex flex-col items-center justify-center">
+            <form onSubmit={handleSearch} className="md:w-[50vw] w-full h-auto my-2 flex items-center gap-2 py-10">
+                <input className="rounded-full pl-5 w-full h-[50px] bg-neutral outline-none focus:border focus:border-primary"
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Type here" />
+                <button className="btn-primary w-[50px] h-[50px] text-white btn rounded-full text-l" type='submit'><FaSearch /></button>
+            </form>
+            <div className="flex justify-center">
+                <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 w-full gap-4 overflow-x-hidden scroll-smooth py-5 px-1">
                     {isLoading ?
 
                         <>
@@ -83,7 +112,7 @@ export default function HomeCourse() {
                             <CourseCardSkeleton />
                         </>
                         :
-                        enrolledData && enrolledData.map(data => (
+                        coursesData && coursesData.map(data => (
                             <CourseCard
                                 key={data.course_id}
                                 {...data}
@@ -92,6 +121,7 @@ export default function HomeCourse() {
                     }
                 </div>
             </div>
+
 
             <div className="flex items-center justify-center mb-5">
                 <div className="flex join justify-center items-center gap-2 font-bold">

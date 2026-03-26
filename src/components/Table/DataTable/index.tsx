@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { questionTableConfig, hintTableConfig, skeltonTableConfig, teacherCourseTableConfig, topicTableConfig, studentCourseTableConfig, DocumentTableConfig, StudentInCourseTableConfig } from "./tableconfig";
 import { useNavigate, useParams } from "react-router-dom";
 import supabaseClient from "../../../utils/SupabaseClient";
@@ -67,10 +67,9 @@ export default function DataTable<K extends IdKey>({
             }
 
             if (data) {
-                const table_items = data.data.items
-                setTableData(data.data.items);
-                console.log(data.data.items)
-                setTotalPages(data.data.total_pages);
+                const table_data = data.data
+                setTableData(table_data.items);
+                setTotalPages(table_data.total_pages);
             }
         } catch (error) {
             throw error
@@ -113,7 +112,7 @@ export default function DataTable<K extends IdKey>({
     const renderBoxData = (data: any) => {
         if (Array.isArray(data)) {
             return data.map((item: string) => (
-                <span className="badge badge-sm badge-accent mx-0.5 text-white">
+                <span title={item}  className="badge badge-sm badge-accent mx-0.5 text-white line-clamp-1">
                     {item}
                 </span>
             ))
@@ -133,9 +132,9 @@ export default function DataTable<K extends IdKey>({
     const extractFileUrl = async (name: string) => {
         const file_surname = name.split('.').pop()?.toLocaleLowerCase()
 
-        if (!bucketName || !params.lessonId || !file_surname) return;
+        if (!bucketName || !params.courseId || !file_surname) return;
 
-        const { data, error } = await supabaseClient.storage.from(bucketName).createSignedUrl(`${params.lessonId}/${name}`, 600)
+        const { data, error } = await supabaseClient.storage.from(bucketName).createSignedUrl(`${params.courseId}/${name}`, 600)
 
         if (error || !data) {
             console.error('Failed to get signed URL:', error);
@@ -143,8 +142,6 @@ export default function DataTable<K extends IdKey>({
         }
 
         const previewable = ['pdf', 'md', 'txt', 'json']
-
-        console.log(data);
 
         if (previewable.includes(file_surname)) {
             window.open(data?.signedUrl)
@@ -187,7 +184,7 @@ export default function DataTable<K extends IdKey>({
                                             : index === (visibleCol.length - 1) && !(showAction) ? (
                                                 <th className="rounded-r-xl" style={{ width: col.width }} key={`header-${index}`}>{col.header}</th>
                                             )
-                                                : (<th style={{ width: col.width }}>{col.header}</th>)
+                                                : (<th style={{ width: col.width }} key={`header-${index}`}>{col.header}</th>)
                                     }
                                     )}
 
@@ -202,7 +199,7 @@ export default function DataTable<K extends IdKey>({
 
                             <tbody>
 
-                                {tableData?.map((row) => {
+                                {tableData?.map((row,r_index) => {
                                     const row_id = row[config.rowIdKey];
 
                                     return (
@@ -212,16 +209,16 @@ export default function DataTable<K extends IdKey>({
                                                 config.navDest
                                                     ? () => navigate(`${config.navDest}${row[config.rowIdKey]}`)
                                                     : config.isFile
-                                                        ? () => { console.log(row.name); return extractFileUrl(row.name) }
+                                                        ? () => {return extractFileUrl(row.name) }
                                                         : undefined}
-                                            key={`row-${row_id}`}
+                                            key={`row-${r_index}`}
                                             style={underline ? { "borderBottom": "1px solid black" } : {}}
                                         >
                                             {
-                                                visibleCol?.map((col) => {
+                                                visibleCol?.map((col,c_index) => {
                                                     const box_data = row[col.key as string]
                                                     return (
-                                                        <td>
+                                                        <td key={`row-${r_index}-col-${c_index}`}>
                                                             <p className="w-full line-clamp-3">
                                                                 {
                                                                     renderBoxData(box_data)
@@ -232,7 +229,8 @@ export default function DataTable<K extends IdKey>({
                                                 }
                                                 )
                                             }
-                                            {showAction && <td>
+                                            {showAction && 
+                                            <td>
                                                 <div onClick={(e) => e.stopPropagation()} className="dropdown dropdown-end">
                                                     <div tabIndex={0} className="text-xl h-full w-full hover:cursor-pointer hover:text-primary text-neutral-content"><BsThreeDotsVertical /></div>
                                                     <ul id={`manage-dropdown-${row_id}`} tabIndex={-1} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">

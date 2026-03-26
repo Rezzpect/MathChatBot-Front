@@ -6,17 +6,14 @@ import { AuthContext } from "../../contexts/authContext";
 export default function Navbar() {
     const navigate = useNavigate();
     const [profilePicture, setProfilePicture] = useState<string>('')
-    const { authData,isLoadingAuth, logout } = useContext(AuthContext);
-    const handleLogout = () => {
-        logout();
-    }
+    const { authData, isLoadingAuth, logout } = useContext(AuthContext);
 
     const getFile = async () => {
-        if(!authData) return
-        const { data } = supabaseClient.storage.from('profile_image').getPublicUrl(authData?.user_id + authData?.profile_picture)
+        if (authData && authData.profile_picture) {
+            const { data } = supabaseClient.storage.from('profile_image').getPublicUrl(authData?.user_id + authData?.profile_picture)
 
-        setProfilePicture(data.publicUrl);
-
+            setProfilePicture(data.publicUrl);
+        }
     }
 
     useEffect(() => {
@@ -24,8 +21,8 @@ export default function Navbar() {
     }, [isLoadingAuth])
 
     return (
-        <div className="h-[30px] navbar bg-neutral shadow-sm text-neutral-content" >
-            <div className="flex-1">
+        <div className="h-[30px] navbar flex justify-between bg-neutral shadow-sm text-neutral-content" >
+            <div className="flex">
                 <a className="md:flex hidden text-primary visited:text-primary text-lg font-bold hover:cursor-pointer" onClick={() => { navigate('/') }}>MATHEMATHIC CHATBOT</a>
             </div>
 
@@ -44,19 +41,26 @@ export default function Navbar() {
                                     <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                                         <div className="w-10 rounded-full">
                                             <img
-                                                src={profilePicture}
-                                                onError={(e) => e.currentTarget.src = '/anonymous-user.png'}
+                                                src={profilePicture !== '' ? profilePicture : '/anonymous-user.png'}
                                             />
                                         </div>
                                     </div>
                                     <ul
                                         tabIndex={0}
+                                        id={"nav-dropdown"}
                                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                                         <li><a className="text-neutral-content font-bold py-2"
-                                            onClick={() => { navigate('/profile') }}>Profile</a>
+                                            onClick={() => {
+                                                navigate('/profile');
+                                                document.getElementById('nav-dropdown')?.blur();
+                                            }}>Profile</a>
                                         </li>
                                         <li><a className="text-red-500 font-bold py-2"
-                                            onClick={logout}>Logout</a>
+                                            onClick={() => {
+                                                logout();
+                                                document.getElementById('nav-dropdown')?.blur();
+                                            }}
+                                        >Logout</a>
                                         </li>
                                     </ul>
                                 </div>

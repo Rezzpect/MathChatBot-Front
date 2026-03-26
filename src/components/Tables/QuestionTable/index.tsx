@@ -27,8 +27,7 @@ export default function QuestionTable({
             {
                 isDeleteModal &&
                 <DeleteModal
-                    idName="question_id"
-                    id={questionId}
+                    body={{question_id:questionId}}
                     funcName="delete-question"
                     message="หากดำเนินการต่อคำถามที่ถูกลบและตัวอย่างการใบ้ที่อยู่ข้างในจะไม้สามารถถูกกู้คืนกลับมาได้"
                     setOpen={setIsDeleteModal}

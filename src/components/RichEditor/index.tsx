@@ -1,4 +1,4 @@
-import { useRef, useEffect, useMemo } from "react";
+import { useRef } from "react";
 import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import "./quill-fix.css"
@@ -6,16 +6,15 @@ import type { EditorProps } from "../../@types/richeditor";
 
 const toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-    ['blockquote', 'code-block'],
-    ['link', 'image', 'formula'],
+    ['blockquote'],
+    ['image'],
     [{ 'list': 'ordered' }, { 'list': 'bullet' }],
 
-    [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-    [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-    [{ 'font': [] }],
+    [{ 'size': ['small', false, 'large', 'huge'] }],
+    [{ 'color': [] }, { 'background': [] }],          
     [{ 'align': [] }],
 
-    ['clean']                                         // remove formatting button
+    ['clean']
 ];
 
 const Image = Quill.import('formats/image') as any;
@@ -46,10 +45,6 @@ Quill.register(CustomImage, true);
 export default function RichEditor({ setImagesToUpload,placeholder, value, onChange, readOnly }:  EditorProps) {
     const quillRef = useRef<ReactQuill>(null);
 
-    useEffect(() => {
-        console.log(value);
-    }, [value]);
-
     const imageHandler = async () => {
         const input = document.createElement('input');
         input.setAttribute('type', 'file');
@@ -61,7 +56,6 @@ export default function RichEditor({ setImagesToUpload,placeholder, value, onCha
             if (!file) return;
 
             const blob_url = URL.createObjectURL(file);
-            console.log(blob_url);
             setImagesToUpload((prev) => ([...prev, { url: blob_url, file: file }]));
 
             const quill = quillRef.current?.getEditor();
@@ -72,16 +66,6 @@ export default function RichEditor({ setImagesToUpload,placeholder, value, onCha
             quill.setSelection(range.index + 1);
         }
     }
-
-    const modulesOption = useMemo(() => (
-        {
-            toolbar: toolbarOptions,
-            handlers: {
-                image: imageHandler,
-            }
-
-        }
-    ), []);
 
     return (
         <div className="text-editor border border-neutral rounded-lg [&>div]:flex [&>div]:flex-col-reverse">

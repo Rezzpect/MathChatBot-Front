@@ -23,9 +23,9 @@ export default function EditProfileModal(
     const [formError, setFormError] = useState<Partial<UserFormData>>({})
     const [newImage, setNewImage] = useState<File | undefined>(undefined);
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+    const [isLoading,setIsLoading] = useState<boolean>(false);
 
     const insertNewImg = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(e.target.files)
         const input_file = e.target.files?.[0];
 
         if (!input_file) return;
@@ -83,16 +83,16 @@ export default function EditProfileModal(
         if (Object.keys(result).length !== 0) return result
     };
 
-    const uploadImage = async (new_image: File, filename:string) => {
+    const uploadImage = async (new_image: File, filename: string) => {
         if (!authData) return
 
-        const{error:UploadError} = await supabaseClient.storage.from('profile_image').upload(authData.user_id + filename, new_image);
-        
+        const { error: UploadError } = await supabaseClient.storage.from('profile_image').upload(authData.user_id + filename, new_image);
+
         if (UploadError) {
             toast.error('failed to upload profile image')
             throw UploadError;
         }
-        
+
         if (formData?.profile_picture) {
             const { error } = await supabaseClient.storage.from('course_banner').remove([authData.user_id + formData.profile_picture]);
 
@@ -104,7 +104,8 @@ export default function EditProfileModal(
     }
 
     const EditProfile = async (first_name: string, last_name: string) => {
-        const filename =`/profile${Date.now()}`;
+        const filename = `/profile${Date.now()}`;
+        setIsLoading(true);
         try {
 
             if (!authData) return
@@ -114,28 +115,29 @@ export default function EditProfileModal(
                 body: {
                     "first_name": first_name,
                     "last_name": last_name,
-                    "picture_name": newImage? filename : formData.profile_picture
+                    "picture_name": newImage ? filename : formData.profile_picture
                 }
             })
 
-            if (error){
+            if (error) {
                 toast.error('Failed to update profile');
                 throw error
             }
 
-            if(newImage){
-                await uploadImage(newImage,filename);
+            if (newImage) {
+                await uploadImage(newImage, filename);
             }
+            toast.success('Profile updated successfully')
             refreshAuthData();
         } catch (error) {
             toast.error('Something went wrong');
-            throw error 
+            throw error
+        }finally{
+            setIsLoading(false);
         };
     }
 
-    const handleSave = async (e: React.FormEvent) => {
-        e.preventDefault();
-
+    const handleSave = async () => {
         if (formData.first_name === authData?.first_name
             && formData.last_name === authData.last_name
             && !newImage) {
@@ -149,7 +151,7 @@ export default function EditProfileModal(
             setFormError({ ...error });
             toast.error('Invalid Profile')
             return
-        }else setFormError({})
+        } else setFormError({})
 
         await EditProfile(formData.first_name, formData.last_name); //edit-profile
         setOpen(false);
@@ -159,7 +161,7 @@ export default function EditProfileModal(
         const { value, id } = e.target;
         setFormData((prev) => ({ ...prev, [id]: value }))
     }
-    
+
     useEffect(() => {
         document.body.classList.add('overflow-hidden')
 
@@ -176,9 +178,14 @@ export default function EditProfileModal(
                     {/* Profile Image */}
                     <div className="flex justify-center avatar absolute w-[100px] bottom-[-30px]">
                         <div className="rounded-full">
-                            <img src={imageUrl || formData.picture_url} />
+                            <img src={imageUrl
+                                ? imageUrl
+                                : formData.picture_url !== ''
+                                    ? formData.picture_url
+                                    : '/anonymous-user.png'
+                            } />
                         </div>
-                        <label className="absolute bottom-0 right-0 p-1 shadow-sm hover:cursor-pointer bg-primary text-primary-content rounded-full h-fit w-fit">
+                        <label className="absolute bottom-0 right-0 p-1 shadow-sm btn btn-primary text-primary-content rounded-full h-fit w-fit">
                             <MdEdit className="text-lg" />
                             <input type='file' max={1} onChange={insertNewImg} className="hidden" />
                         </label>
@@ -188,45 +195,49 @@ export default function EditProfileModal(
 
                 {/* Name and Description */}
                 <div className="flex flex-col gap-10 p-5 pt-10 text-neutral-content">
-                    <form className="flex flex-col gap-2" onSubmit={handleSave}>
-                        <div className="flex gap-5 w-full">
-                            <InputForm
-                                name='First Name'
-                                error={formError['first_name']}
-                                id='first_name'
-                                type='text'
-                                value={formData.first_name}
-                                onChange={handleInputChange}
-                            />
-
-                            <InputForm
-                                name='Last Name'
-                                error={formError['last_name']}
-                                id='last_name'
-                                type='text'
-                                value={formData.last_name}
-                                onChange={handleInputChange}
-                            />
-
-                        </div>
+                    <div className="flex flex-col gap-2" >
+                        {/* <div className="flex gap-5 w-full"> */}
+                        <InputForm
+                            name='First Name'
+                            error={formError['first_name']}
+                            id='first_name'
+                            type='text'
+                            value={formData.first_name}
+                            onChange={handleInputChange}
+                            readOnly={isLoading}
+                        />
 
                         <InputForm
+                            name='Last Name'
+                            error={formError['last_name']}
+                            id='last_name'
+                            type='text'
+                            value={formData.last_name}
+                            onChange={handleInputChange}
+                            readOnly={isLoading}
+                        />
+
+                        {/* </div> */}
+
+                        {/* <InputForm
                             name='Email'
                             error={formError['email']}
                             id='email'
                             type='email'
                             value={formData.email}
                             onChange={handleInputChange}
-                        />
-                    </form>
+                        /> */}
+                    </div>
                     <div className="flex w-full justify-end gap-2">
                         <button
                             onClick={() => setOpen(false)}
-                            className="hover:cursor-pointer rounded-full bg-white border border-black text-black font-bold text-lg py-2 px-5">Cancel</button>
+                            disabled={isLoading}
+                            className="btn btn-white rounded-full border border-black text-black font-bold text-lg py-2 px-5">Cancel</button>
 
                         <button
                             onClick={handleSave}
-                            className="hover:cursor-pointer rounded-full bg-primary text-primary-content font-bold text-lg py-2 px-5">Save</button>
+                            disabled={isLoading}
+                            className="btn btn-primary rounded-full text-primary-content font-bold text-lg py-2 px-5">{isLoading? <span className="loading loading-spinner text-primary-content" />:<>Save</>}</button>
                     </div>
                 </div>
 

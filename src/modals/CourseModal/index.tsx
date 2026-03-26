@@ -23,7 +23,7 @@ export default function CourseModal(
     const [imageUrl, setImageUrl] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [newImage, setNewImage] = useState<File | undefined>(undefined)
-    const { lessonId } = useParams();
+    const { courseId } = useParams();
 
     const difficulty_list = ['Easy', 'Normal', 'Hard'];
 
@@ -44,14 +44,13 @@ export default function CourseModal(
     }, []);
 
     const insertNewImg = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(e.target.files)
         const input_file = e.target.files?.[0];
 
         if (!input_file) return;
 
         const preview_url = URL.createObjectURL(input_file);
 
-        if (bannerUrl) URL.revokeObjectURL(bannerUrl); //revoke old preview url
+        if (imageUrl) URL.revokeObjectURL(imageUrl); //revoke old preview url
         setNewImage(input_file);
         setImageUrl(preview_url);
     }
@@ -87,9 +86,9 @@ export default function CourseModal(
     }
 
     const uploadImage = async (new_image: File, filename: string, course_id?: string) => {
-        const { error } = await supabaseClient.storage.from('course_banner').upload(lessonId ?? course_id + filename, new_image);
+        const { error } = await supabaseClient.storage.from('course_banner').upload(courseId ?? course_id + filename, new_image);
         if (modalData?.banner_picture) {
-            const { error } = await supabaseClient.storage.from('course_banner').remove([lessonId ?? course_id + modalData.banner_picture]);
+            const { error } = await supabaseClient.storage.from('course_banner').remove([courseId ?? course_id + modalData.banner_picture]);
 
             if (error) {
                 toast.error(error.message);
@@ -199,8 +198,8 @@ export default function CourseModal(
                 </div>
 
                 <div className="flex flex-col gap-5 p-5 pt-5 text-neutral-content">
-                    <h1 className="font-bold text-xl">{modalData ? 'Create Topic' : 'Edit Topic'}</h1>
-                    <form className="flex flex-col gap-2">
+                    <h1 className="font-bold text-xl">{modalData ? 'Edit Course':'Create Course' }</h1>
+                    <div className="flex flex-col gap-2">
                         <InputForm
                             name='Course Name'
                             error={formError['course_name']}
@@ -217,7 +216,7 @@ export default function CourseModal(
                             value={formData.course_description}
                             onChange={handleInputChange}
                         />
-                    </form>
+                    </div>
 
                     <div className="dropdown border border-neutral rounded-lg">
                         <div tabIndex={0} role="button" className="flex justify-between font-bold items-center gap-2 hover:cursor-pointer hover:bg-base-300 p-2 rounded-lg">
