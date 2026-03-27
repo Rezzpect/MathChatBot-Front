@@ -86,7 +86,7 @@ export default function CourseModal(
     }
 
     const uploadImage = async (new_image: File, filename: string, course_id?: string) => {
-        const { error } = await supabaseClient.storage.from('course_banner').upload(courseId ?? course_id + filename, new_image);
+        const { error } = await supabaseClient.storage.from('course_banner').upload(course_id ? course_id + filename: courseId+filename, new_image);
         if (modalData?.banner_picture) {
             const { error } = await supabaseClient.storage.from('course_banner').remove([courseId ?? course_id + modalData.banner_picture]);
 
