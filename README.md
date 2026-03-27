@@ -1,4 +1,14 @@
-# React + TypeScript + Vite
+# MathChatBot-Front
+
+## Project Overview
+
+This is the frontend for Math Teaching Chatbot System. The full project is split across multiple repositories:
+
+- Frontend: [MathChatBot-Front](https://github.com/Rezzpect/MathChatBot-Front) (you are here)
+- Backend: [MathChatBot-Back](https://github.com/ReallyWarm/MathChatBot-Back)
+- n8n-Workflow:
+
+## React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
@@ -7,7 +17,7 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://raw.githubusercontent.com/Kfirm1208/MathChatBot-Front/main/src/pages/Exercise/Front-Chat-Math-Bot-3.9.zip) uses [Babel](https://raw.githubusercontent.com/Kfirm1208/MathChatBot-Front/main/src/pages/Exercise/Front-Chat-Math-Bot-3.9.zip) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://raw.githubusercontent.com/Kfirm1208/MathChatBot-Front/main/src/pages/Exercise/Front-Chat-Math-Bot-3.9.zip) uses [SWC](https://raw.githubusercontent.com/Kfirm1208/MathChatBot-Front/main/src/pages/Exercise/Front-Chat-Math-Bot-3.9.zip) for Fast Refresh
 
-## Expanding the ESLint configuration
+### Expanding the ESLint configuration
 
 If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
@@ -67,3 +77,9 @@ export default https://raw.githubusercontent.com/Kfirm1208/MathChatBot-Front/mai
   },
 ])
 ```
+
+## Contributors
+
+- [@Apec](https://github.com/Rezzpect)
+- [@K_firm1208](https://github.com/Kfirm1208)
+- [@ReallyWarm](https://github.com/ReallyWarm)
