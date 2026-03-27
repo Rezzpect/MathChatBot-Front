@@ -82,7 +82,7 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
                 "title": questionForm.title,
                 "question": question,
                 "answer": questionForm.answer,
-                "difficulty": "Easy",
+                "difficulty": questionForm.difficulty,
                 "is_published": true,
                 "new_tags": questionForm.tags
             }

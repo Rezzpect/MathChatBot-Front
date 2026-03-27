@@ -219,7 +219,7 @@ export default function DataTable<K extends IdKey>({
                                                     const box_data = row[col.key as string]
                                                     return (
                                                         <td key={`row-${r_index}-col-${c_index}`}>
-                                                            <p className="w-full line-clamp-3">
+                                                            <p className="flex w-full line-clamp-3">
                                                                 {
                                                                     renderBoxData(box_data)
                                                                 }
