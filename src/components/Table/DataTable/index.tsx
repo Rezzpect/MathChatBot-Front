@@ -111,8 +111,8 @@ export default function DataTable<K extends IdKey>({
 
     const renderBoxData = (data: any) => {
         if (Array.isArray(data)) {
-            return data.map((item: string) => (
-                <span title={item}  className="badge badge-sm badge-accent mx-0.5 text-white line-clamp-1">
+            return data.map((item: string,index) => (
+                <span key={`tag-${index}`} title={item}  className="badge badge-sm badge-accent mx-0.5 text-white line-clamp-1">
                     {item}
                 </span>
             ))

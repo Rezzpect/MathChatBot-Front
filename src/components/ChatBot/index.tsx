@@ -99,8 +99,8 @@ export default function Chatbot({
                         <header>{getMode}</header><IoIosArrowDown />
                     </div>
                     <ul tabIndex={-1} className="dropdown-content font-bold menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                        {Object.values(ChatModeType).map((mode_name) =>
-                            <li><a onClick={() => setMode(mode_name)}>{mode_name}</a></li>
+                        {Object.values(ChatModeType).map((mode_name,index) =>
+                            <li key={`mode-${index}`}><a onClick={() => setMode(mode_name)}>{mode_name}</a></li>
                         )}
                     </ul>
                 </div>

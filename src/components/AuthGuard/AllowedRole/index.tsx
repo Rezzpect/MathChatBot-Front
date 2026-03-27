@@ -43,7 +43,8 @@ export function AllowedRoles({ allowed_role, checkPerm = false, children }: {
 
                 if (data.data.length !== 0) {
                     const topic_data = data.data[0]
-                    if (topic_data.course_owner_id !== authData?.user_id) {
+                    console.log(topic_data)
+                    if (topic_data.course_owner_id === authData?.user_id) {
                         setPermission(true);
                     }
                 }
