@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import DashboardModal from "@uppy/react/dashboard-modal";
 import supabaseClient from "../../utils/SupabaseClient";
 import DataTable from "../../components/Table/DataTable";
