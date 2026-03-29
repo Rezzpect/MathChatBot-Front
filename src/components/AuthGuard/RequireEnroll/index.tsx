@@ -85,6 +85,6 @@ export function RequireEnroll({ children }: {
         return children
     } else{ 
         toast.error('You need to enroll the course first!');
-        return <Navigate to={'/'} replace /> 
+        return <Navigate to={'/'} replace={true} /> 
     }
 }

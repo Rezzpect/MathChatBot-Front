@@ -101,7 +101,10 @@ export default function RegisterPage() {
 
         if (!error) {
             SignUp();
-        } else setFormError((prev) => ({ ...prev, ...error }));
+        } else {
+            setFormError((prev) => ({ ...prev, ...error }));
+            toast.error('Please fix the errors in the form');
+        }
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -59,7 +59,7 @@ export default function LoginPage() {
             },
             {
                 key:'password',
-                condition:(formData.password.length < 4),
+                condition:(formData.password.length < 6),
                 message:'password must be atleast 6 character long!'
             },
         ]
