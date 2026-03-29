@@ -128,7 +128,7 @@ export default function HintTable({
                                             : index === (visibleCol.length - 1) && !(showAction) ? (
                                                 <th className="rounded-r-xl" style={{ width: col.width }} key={`header-${index}`}>{col.header}</th>
                                             )
-                                                : (<th style={{ width: col.width }}>{col.header}</th>)
+                                                : (<th style={{ width: col.width }} key={`header-${index}`}>{col.header}</th>)
                                     }
                                     )}
 

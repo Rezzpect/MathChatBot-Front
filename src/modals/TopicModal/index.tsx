@@ -98,7 +98,7 @@ export default function TopicModal(
 
         if (error) {
             setFormError({ ...error });
-            alert('validate false');
+            toast.error('Please fix the errors in the form');
             return
         }
 

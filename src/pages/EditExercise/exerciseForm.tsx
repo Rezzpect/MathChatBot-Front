@@ -29,7 +29,7 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
         question: '',
         answer: '',
         tags: [],
-        difficulty: 'easy',
+        difficulty: 'Easy',
         is_published: false
     });
     const [formError, setFormError] = useState<Partial<QuestionForm>>({});
@@ -350,8 +350,8 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
                                 <header>{questionForm.difficulty}</header><IoIosArrowDown />
                             </div>
                             <ul id={'difficulty-dropdown'} tabIndex={-1} className="dropdown-content font-bold menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                                {difficulty_list.map((mode_name) =>
-                                    <li><a onClick={() => {
+                                {difficulty_list.map((mode_name,index) =>
+                                    <li key={`difficulty-${index}`}><a onClick={() => {
                                         setQuestionForm((prev) => ({ ...prev, difficulty: mode_name }))
                                         document.getElementById('difficulty-dropdown')?.blur();
                                     }}>{mode_name}</a></li>

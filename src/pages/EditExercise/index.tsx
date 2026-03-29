@@ -35,7 +35,7 @@ export default function EditExercise() {
             ? <LoadingPage/>
             : <div className="flex flex-col items-center justify-center w-full h-full">
                 <div className="flex flex-col gap-10 lg:mx-50 md:mx-20 mx-5 my-10">
-                    <div className="h-fit">
+                    <div className="h-fit md:w-200 w-full">
                         {isEdit
                             ? <TabMenu tab_data={tab_data} />
                             : <TabMenu tab_data={[tab_data[0]]} />
