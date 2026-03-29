@@ -29,7 +29,7 @@ class CustomImage extends Image {
 
   static value(node: HTMLElement) {
     return node.getAttribute('src');
-  }
+  } 
 
   static sanitize(url: string) {
     // Bypass Quill's built-in URL sanitizer entirely

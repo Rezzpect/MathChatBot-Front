@@ -72,7 +72,7 @@ export default function ExercisePage() {
     return (
         <div className="flex flex-col h-full w-full justify-center pb-5">
             {isWrongOpen && <WrongModal setOpen={setIsWrongOpen} />}
-            {isCompleteOpen && <CompleteModal setOpen={setIsCompleteOpen} />}
+            {isCompleteOpen && <CompleteModal setOpen={setIsCompleteOpen} topicId={questionData?.topic_id} />}
             {isTabOpen && (
                 <div
                     className="fixed w-full top-[0px] h-full bg-black/50 z-40"

@@ -12,13 +12,7 @@ import StudyPlanPage from "../pages/StudyPlan";
 import PlanListPage from "../pages/PlanList";
 import { AllowedRoles } from "../components/AuthGuard/AllowedRole";
 import { RequireEnroll } from "../components/AuthGuard/RequireEnroll";
-import toast from "react-hot-toast";
 import PageNotFound from "../pages/NotFound";
-
-async function topicLoader() {
-
-  toast.success('Loader ran')
-}
 
 function Routes() {
     return useRoutes([
@@ -50,7 +44,6 @@ function Routes() {
                 },
                 {
                     path: '/topic/:topicId',
-                    loader:topicLoader,
                     element:
                         <AllowedRoles allowed_role={['student', 'teacher', 'admin']}>
                             <RequireEnroll>

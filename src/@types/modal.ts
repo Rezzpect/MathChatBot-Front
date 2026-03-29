@@ -45,3 +45,7 @@ export interface DeleteWarningProps extends ModalProps {
     method?:"DELETE" | "POST" | "GET" | "PUT" | "PATCH";
     setRefresh: React.Dispatch<React.SetStateAction<number>>;
 }
+
+export interface QuestionCompleteModalProps extends ModalProps {
+    topicId: string | undefined;
+}

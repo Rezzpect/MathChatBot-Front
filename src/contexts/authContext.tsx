@@ -40,8 +40,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             window.location.href = "/";
         } catch (error) {
             throw error
+        } finally {
+            setIsLoadingAuth(false);
         }
-        setIsLoadingAuth(false);
     }
 
     const logout = async () => {
@@ -66,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const user_data = data.data[0]
             // const profile_image = await getFile(user_data.user_id);
 
-            setAuthData({...user_data});
+            setAuthData({ ...user_data });
         } else { throw new Error('404 User not found') }
     }
 
@@ -74,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoadingAuth(true);
         try {
             const { data, error } = await supabaseClient.auth.getClaims();
-            if (error) {throw error;}
+            if (error) { throw error; }
 
             if (data) {
                 await getUserData(data.claims.sub);
