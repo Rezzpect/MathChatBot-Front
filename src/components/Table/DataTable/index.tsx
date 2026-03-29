@@ -111,11 +111,14 @@ export default function DataTable<K extends IdKey>({
 
     const renderBoxData = (data: any) => {
         if (Array.isArray(data)) {
-            return data.map((item: string,index) => (
-                <span key={`tag-${index}`} title={item}  className="badge badge-sm badge-accent mx-0.5 text-white line-clamp-1">
-                    {item}
-                </span>
-            ))
+            return (
+                <div className="flex">{data.map((item: string,index) => (
+                    <span key={`tag-${index}`} title={item} className="badge badge-sm badge-accent mx-0.5 text-white line-clamp-1">
+                        {item}
+                    </span>
+                    ))}
+                </div>
+            )
         }
 
         if (typeof (data) === 'boolean') {
@@ -199,7 +202,7 @@ export default function DataTable<K extends IdKey>({
 
                             <tbody>
 
-                                {tableData?.map((row,r_index) => {
+                                {tableData?.map((row, r_index) => {
                                     const row_id = row[config.rowIdKey];
 
                                     return (
@@ -209,17 +212,17 @@ export default function DataTable<K extends IdKey>({
                                                 config.navDest
                                                     ? () => navigate(`${config.navDest}${row[config.rowIdKey]}`)
                                                     : config.isFile
-                                                        ? () => {return extractFileUrl(row.name) }
+                                                        ? () => { return extractFileUrl(row.name) }
                                                         : undefined}
                                             key={`row-${r_index}`}
                                             style={underline ? { "borderBottom": "1px solid black" } : {}}
                                         >
                                             {
-                                                visibleCol?.map((col,c_index) => {
+                                                visibleCol?.map((col, c_index) => {
                                                     const box_data = row[col.key as string]
                                                     return (
                                                         <td key={`row-${r_index}-col-${c_index}`}>
-                                                            <p className="flex w-full line-clamp-3">
+                                                            <p className="w-full line-clamp-3">
                                                                 {
                                                                     renderBoxData(box_data)
                                                                 }
@@ -229,36 +232,36 @@ export default function DataTable<K extends IdKey>({
                                                 }
                                                 )
                                             }
-                                            {showAction && 
-                                            <td>
-                                                <div onClick={(e) => e.stopPropagation()} className="dropdown dropdown-end">
-                                                    <div tabIndex={0} className="text-xl h-full w-full hover:cursor-pointer hover:text-primary text-neutral-content"><BsThreeDotsVertical /></div>
-                                                    <ul id={`manage-dropdown-${row_id}`} tabIndex={-1} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                                                        {editScript && !config.isFile && (
-                                                            <li>
-                                                                <div className="text-primary"
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        document.getElementById(`manage-dropdown-${row_id}`)?.blur();
-                                                                        editScript(row);
-                                                                    }}>edit
-                                                                </div>
-                                                            </li>
-                                                        )}
-                                                        {deleteScript && (
-                                                            <li>
-                                                                <div className="text-primary"
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        document.getElementById(`manage-dropdown-${row_id}`)?.blur();
-                                                                        deleteScript(config.isFile ? row.name : row_id);
-                                                                    }}>delete
-                                                                </div>
-                                                            </li>
-                                                        )}
-                                                    </ul>
-                                                </div>
-                                            </td>}
+                                            {showAction &&
+                                                <td>
+                                                    <div onClick={(e) => e.stopPropagation()} className="dropdown dropdown-end">
+                                                        <div tabIndex={0} className="text-xl h-full w-full hover:cursor-pointer hover:text-primary text-neutral-content"><BsThreeDotsVertical /></div>
+                                                        <ul id={`manage-dropdown-${row_id}`} tabIndex={-1} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                                                            {editScript && !config.isFile && (
+                                                                <li>
+                                                                    <div className="text-primary"
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            document.getElementById(`manage-dropdown-${row_id}`)?.blur();
+                                                                            editScript(row);
+                                                                        }}>edit
+                                                                    </div>
+                                                                </li>
+                                                            )}
+                                                            {deleteScript && (
+                                                                <li>
+                                                                    <div className="text-primary"
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            document.getElementById(`manage-dropdown-${row_id}`)?.blur();
+                                                                            deleteScript(config.isFile ? row.name : row_id);
+                                                                        }}>delete
+                                                                    </div>
+                                                                </li>
+                                                            )}
+                                                        </ul>
+                                                    </div>
+                                                </td>}
                                         </tr>)
                                 })}
                             </tbody>
