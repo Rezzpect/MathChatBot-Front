@@ -13,6 +13,7 @@ import PlanListPage from "../pages/PlanList";
 import { AllowedRoles } from "../components/AuthGuard/AllowedRole";
 import { RequireEnroll } from "../components/AuthGuard/RequireEnroll";
 import PageNotFound from "../pages/NotFound";
+import TheoryDocPage from "../pages/TheoryDoc";
 
 function Routes() {
     return useRoutes([
@@ -72,6 +73,13 @@ function Routes() {
                     element:
                         <AllowedRoles allowed_role={['student', 'admin']}>
                             <StudyPlanPage />
+                        </AllowedRoles>
+                },
+                {
+                    path: '/theorydoc',
+                    element:
+                        <AllowedRoles allowed_role={['admin']}>
+                            <TheoryDocPage />
                         </AllowedRoles>
                 },
             ]

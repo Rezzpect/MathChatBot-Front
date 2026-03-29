@@ -25,8 +25,8 @@ type BasePageRequest = {
 
 export type DataTableProps<K extends IdKey> = {
     name: string,
-    id_key: K,
-    data_id: number | string,
+    id_key?: K,
+    data_id?: number | string,
     editScript?: (item: any) => void,
     deleteScript?: (item: any) => void,
     extraScript?: (item: any) => void,

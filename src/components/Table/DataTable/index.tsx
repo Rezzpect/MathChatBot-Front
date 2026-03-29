@@ -8,14 +8,14 @@ import { FaCheck, FaX } from "react-icons/fa6";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import toast from "react-hot-toast";
 
-function BuildReqBody<K extends IdKey>(
-    idKey: K,
-    idValue: number | string,
+function BuildReqBody<K extends IdKey>(    
     currentPage: number,
-    pagesSize: number
+    pagesSize: number,
+    idKey?: K,
+    idValue?: number | string,
 ): PageReqWithId<K> {
     return {
-        [idKey]: idValue,
+        ...(idKey !== undefined && { [idKey]: idValue }),
         current_page: currentPage,
         page_size: pagesSize,
     } as PageReqWithId<K>
@@ -50,10 +50,10 @@ export default function DataTable<K extends IdKey>({
         setIsLoading(true);
         try {
             const req_body = BuildReqBody(
+                currentPage,
+                itemsPerPage,
                 id_key,
                 data_id,
-                currentPage,
-                itemsPerPage
             )
 
             const { data, error } = await supabaseClient.functions.invoke(name, {
@@ -95,7 +95,7 @@ export default function DataTable<K extends IdKey>({
         } else if (name === "student-enrollment-list") {
             fetchData();
             setConfig(studentCourseTableConfig);
-        } else if (name === "course-doc-list") {
+        } else if (name === "course-doc-list" || name === "theory-doc-list") {
             fetchData();
             setConfig(DocumentTableConfig);;
         } else if (name === "student-list-in-course") {

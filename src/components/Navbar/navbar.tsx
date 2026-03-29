@@ -33,6 +33,9 @@ export default function Navbar() {
                     {
                         authData?.role_name === 'student' && <li><a onClick={() => { navigate('/studyplan') }} className="font-bold hover:bg-primary hover:text-primary-content">StudyPlan</a></li>
                     }
+                    {
+                        authData?.role_name === 'admin' && <li><a onClick={() => { navigate('/theorydoc') }} className="font-bold hover:bg-primary hover:text-primary-content">Theory Document</a></li>
+                    }
 
                     <li>
                         {
