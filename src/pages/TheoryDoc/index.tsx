@@ -28,7 +28,9 @@ export default function TheoryDocPage() {
         <div className="flex justify-center items-center w-full h-full mt-10">
             <DashboardModal
                 open={isModal}
-                onRequestClose={() => setIsModal(false)}
+                onRequestClose={() => {
+                    setIsModal(false); 
+                    uppy.clear();}}
                 uppy={uppy}
                 proudlyDisplayPoweredByUppy={false}
                 disableInformer={true}

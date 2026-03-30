@@ -58,6 +58,7 @@ export default function DataTable<K extends IdKey>({
             )
 
             const { data, error } = await supabaseClient.functions.invoke(name, {
+                "method": "POST",
                 "body":
                     req_body
             });
@@ -87,16 +88,16 @@ export default function DataTable<K extends IdKey>({
         const config = TABLE_CONFIG_MAP[name];
         setConfig(config);
         fetchData();
-    }, [currentPage])
+    }, [currentPage]);
 
     useEffect(() => {
-        if(initialLoad) return;
+        if (initialLoad) return;
         if (currentPage === 1) {
             fetchData();
         } else {
             setCurrentPage(1);
         }
-    }, [refreshTrigger])
+    }, [refreshTrigger]);
 
     const renderBoxData = (data: any) => {
         if (Array.isArray(data)) {
@@ -114,6 +115,9 @@ export default function DataTable<K extends IdKey>({
             return data ? <FaCheck className="text-accent" /> : <FaX className="text-secondary font-bold" />
         }
 
+        if (typeof (data) === 'object') {
+            return data ? <p className="text-accent">เสร็จ</p> : <p className="text-secondary">ยังไม่เสร็จ</p>
+        }
         return data;
     }
 

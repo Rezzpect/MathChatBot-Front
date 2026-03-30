@@ -124,13 +124,13 @@ export default function StudentProfile() {
                                     <div className="flex flex-col gap-5">
                                         {
                                             (courseProgress.length !== 0) &&
-                                            courseProgress.map((course) => (
-                                                <>
+                                            courseProgress.map((course,index) => (
+                                                <div key={`course_progress_${index}`}>
                                                     <CourseProgressBar
                                                         course_name={course.course_name}
                                                         progress={course.completion_percentage}
                                                     />
-                                                </>
+                                                </div>
                                             ))
                                         }
                                     </div>

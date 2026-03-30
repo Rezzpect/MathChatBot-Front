@@ -43,7 +43,7 @@ export default function HintTable({
                 body: {
                     question_id: questionId,
                     current_page: currentPage,
-                    page_size: 10
+                    page_size: 5
                 }
             })
 

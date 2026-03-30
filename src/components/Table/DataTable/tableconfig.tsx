@@ -30,7 +30,7 @@ export const questionTableConfig: TableConfig<QuestionRowProp> = {
         { key: 'tag_names', header: 'Tags', display: true },
         { key: 'difficulty', header: 'ความยาก', display: true, width: '100px' },
         { key: 'question_id', header: 'ID', display: false, },
-        { key: 'is_completed', header: 'Description', display: false },
+        { key: 'optional', header: 'สถานะ', display: true },
     ]
 };
 
@@ -91,7 +91,7 @@ export const StudentInCourseTableConfig: TableConfig<StudentRowProp> = {
         { key: 'user_id', header: '', display: false },
         { key: 'student_name', header: 'ชื่อ-นามสกุล', display: true },
         { key: 'public_email', header: 'email', display: true },
-        { key: 'is_completed', header: 'เล่นเสร็จหรือยัง', display: true },
+        { key: 'is_completed', header: 'สถานะเรียนจบ', display: true },
         { key: 'profile_picture', header: 'รูปโปลไฟล์', display: false }
     ]
 }

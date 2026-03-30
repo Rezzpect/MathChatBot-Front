@@ -37,7 +37,9 @@ export default function DocumentTable({
         <div>
             <DashboardModal
                 open={isModal && edit_permission}
-                onRequestClose={() => setModal(false)}
+                onRequestClose={() => {
+                    setModal(false); 
+                    uppy.clear();}}
                 uppy={uppy}
                 proudlyDisplayPoweredByUppy={false}
                 disableInformer={true}

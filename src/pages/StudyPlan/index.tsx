@@ -1,10 +1,10 @@
 
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
-import type {EventProps, View } from 'react-big-calendar';
+import type { EventProps, View } from 'react-big-calendar';
 import { useState, useMemo, useEffect } from 'react';
 import format from 'date-fns/format'
 import parse from 'date-fns/parse'
-import { addDays, addWeeks, startOfWeek, endOfWeek, } from 'date-fns';
+import { addDays, addWeeks, startOfWeek, endOfWeek, startOfDay, } from 'date-fns';
 import { getDay } from 'date-fns/getDay'
 import { enUS } from 'date-fns/locale/en-US'
 import { DayPicker } from 'react-day-picker';
@@ -28,7 +28,19 @@ const localizer = dateFnsLocalizer({
 })
 
 export default function StudyPlan() {
-    const [selectedEvent, setSelectedEvent] = useState<EventItems | undefined>(undefined);
+    const [selectedEvent, setSelectedEvent] = useState<EventItems>({
+        course_id: 0,
+        title: "",
+        topic_id: 0,
+        topic_name: "",
+        start: new Date(),
+        end: new Date(),
+        progress: {
+            total: 0,
+            completed: 0
+        }
+
+    });
     const [currentView, setCurrentView] = useState<View>('week');
     const [date, setDate] = useState<Date>(new Date());
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -43,8 +55,8 @@ export default function StudyPlan() {
             const res: EventResProp[] = data.data;
             const event_list: EventItems[] = res.map((item) => ({
                 title: item.course_name,
-                start: new Date(item.start_date),
-                end: new Date(item.end_date),
+                start: startOfDay(new Date(item.start_date)),
+                end: startOfDay(new Date(item.end_date)),
                 course_id: item.course_id,
                 topic_id: item.topic_id,
                 topic_name: item.topic_name,
@@ -119,7 +131,7 @@ export default function StudyPlan() {
                         {viewOptions.map((label, id) => (
                             <button className={`btn join-item
               ${currentView === label ? 'bg-primary text-primary-content' : 'bg-base-200'}`}
-                                id={`view_btn_${id}`}
+                                key={`view_btn_${id}`}
                                 onClick={() => setCurrentView(label)}>{label.toLocaleUpperCase()}</button>
                         ))}
                     </div>

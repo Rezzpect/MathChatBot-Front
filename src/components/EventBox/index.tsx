@@ -2,7 +2,7 @@ import type { EventItems } from "../../@types/event"
 
 type EventBoxProp = {
     event: EventItems
-    selectEvent: React.Dispatch<React.SetStateAction<EventItems | undefined>>
+    selectEvent: React.Dispatch<React.SetStateAction<EventItems>>
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 

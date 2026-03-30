@@ -63,7 +63,7 @@ export interface QuestionRowProp {
     tag_names: string[],
     difficulty: string,
     question_id: number,
-    is_completed: boolean
+    optional: object
 }
 
 export interface HintRowProp {

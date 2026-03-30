@@ -29,7 +29,7 @@ export interface CourseModalProps extends ModalProps {
 }
 
 export interface EventModalProps extends ModalProps {
-    modalData?: EventItems
+    modalData: EventItems
     setRefresh: React.Dispatch<React.SetStateAction<number>>;
 }
 

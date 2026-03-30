@@ -20,8 +20,8 @@ export default function QuestionPanel({
     // const [ isCompleteOpen,setIsCompleteOpen] = useState<boolean>(false);
 
     const sendAnswer = async () => {
-        if(authData?.role_name === 'teacher') return;
-        
+        if(answer.length === 0) return;
+
         setIsLoading(true);
         try {
             const { data, error } = await supabaseClient.functions.invoke('check-student-answer', {

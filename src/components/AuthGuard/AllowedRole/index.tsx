@@ -38,6 +38,7 @@ export function AllowedRoles({ allowed_role, checkPerm = false, children }: {
                 }
 
                 if (data.data[0].length === 0) {
+                    setIsChecking(false);
                     return
                 }
 
@@ -50,6 +51,7 @@ export function AllowedRoles({ allowed_role, checkPerm = false, children }: {
                 setIsChecking(false);
             } catch (error) {
                 toast.error('Something went wrong');
+                setIsChecking(false);
                 setPermission(false);
             }
         }
