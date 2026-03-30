@@ -41,7 +41,7 @@ export default function Chatbot({
                 method: 'POST',
                 body: {
                     // mode: question or theory
-                    mode: getMode,
+                    mode: getMode.toLowerCase(),
                     message: message,
                     // questionResult will return session_id after first call
                     session_id: sessionId,

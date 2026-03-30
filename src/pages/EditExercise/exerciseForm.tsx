@@ -56,7 +56,7 @@ export default function ExerciseForm() {
                 "question": question,
                 "answer": questionForm.answer,
                 "difficulty": "Easy",
-                "is_published": true,
+                "is_published": questionForm.is_published,
                 "tags": questionForm.tags
             }
         })
@@ -75,7 +75,7 @@ export default function ExerciseForm() {
                 "question": question,
                 "answer": questionForm.answer,
                 "difficulty": questionForm.difficulty,
-                "is_published": true,
+                "is_published": questionForm.is_published,
                 "new_tags": questionForm.tags
             }
         })
