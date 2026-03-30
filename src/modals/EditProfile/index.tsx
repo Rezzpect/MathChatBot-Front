@@ -94,7 +94,7 @@ export default function EditProfileModal(
         }
 
         if (formData?.profile_picture) {
-            const { error } = await supabaseClient.storage.from('course_banner').remove([authData.user_id + formData.profile_picture]);
+            const { error } = await supabaseClient.storage.from('profile_image').remove([authData.user_id + formData.profile_picture]);
 
             if (error) {
                 toast.error(error.message);
