@@ -3,6 +3,7 @@ import type { UploadedImage } from "./richeditor";
 export interface QuestionData {
     question_id: number;
     topic_id: string;
+    course_id: string;
     title: string;
     question: string;
     difficulty: string;

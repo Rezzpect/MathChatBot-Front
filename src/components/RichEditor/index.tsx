@@ -3,6 +3,7 @@ import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import "./quill-fix.css"
 import type { EditorProps } from "../../@types/richeditor";
+import toast from "react-hot-toast";
 
 const toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
@@ -46,6 +47,10 @@ export default function RichEditor({ setImagesToUpload,placeholder, value, onCha
     const quillRef = useRef<ReactQuill>(null);
 
     const imageHandler = async () => {
+        if(value?.toString().includes('img')){
+            toast.error('Only one image can be uploaded');
+            return;
+        }
         const input = document.createElement('input');
         input.setAttribute('type', 'file');
         input.setAttribute('accept', 'image/*');

@@ -15,11 +15,12 @@ type tagRecord = {
     tag_name: string
 }
 
-export default function ExerciseForm({ course_id }: { course_id: string }) {
+export default function ExerciseForm() {
     const { topicId, questionId } = useParams();
     const navigate = useNavigate();
     const [tagsList, setTagsList] = useState<tagRecord[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [courseId, setCourseId] = useState<string>('');
     const difficulty_list = ['Easy', 'Normal', 'Hard'];
 
     const isEdit = useMemo(() => { return Boolean(questionId) }, [])
@@ -118,6 +119,7 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
 
             if (question_data) {
                 const QuestionData: QuestionData = question_data.data[0]
+                setCourseId(QuestionData.course_id);
                 const tagMap = await getTagsMap();
 
                 const tags_id = (tagMap && QuestionData.tag_names[0])
@@ -184,9 +186,11 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
         await supabaseClient.storage.from('question_image').remove(remove_path);
     }
 
+    //remove image that exist in storage but not in question content anymore
     const RemoveExistingImage = async () => {
         if (Object.keys(existingImages).length === 0) return;
 
+        //extract current url in question and compare with existing image to determine which image need to be deleted
         const current_url = extractImageUrls(questionForm.question);
         const remove_exist_img = existingImages.filter((img) => !current_url.includes(img.url));
 
@@ -202,23 +206,43 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
     }
 
     const ChangeUrl = async (question_id?: string) => {
+        //extract current url in question and compare with existing image and new uploaded image to determine which image 
+        //need to be upload and which image need to be deleted
         const current_url = extractImageUrls(questionForm.question);
 
+        //filter the image that need to be upload and deleted
         const upload_url = imagesToUpload.filter((img) => current_url.includes(img.url))
         const deleted_url = imagesToUpload.filter(
             (img) => !current_url.includes(img.url)
         );
+        //revoke url that are not used to prevent memory leak
         deleted_url.forEach((item) => { URL.revokeObjectURL(item.url) });
 
+        let course_id = '';
+
+        if (question_id) {
+            const { data: question_data, error } = await supabaseClient.functions.invoke('question-detail', {
+                method: 'POST',
+                body: {
+                    "question_id": question_id
+                }
+            })
+            if (error) {
+                toast.error('Failed to upload image');
+                throw error;
+            }else course_id = question_data.data[0].course_id;
+        }
+
         let final_content = questionForm.question
+        //upload new image to storage and replace url in question to new url from storage
         for (const img of upload_url) {
             const fileName = 'img' + Date.now()
-            const storagePath = `${course_id}/${questionId ?? question_id}/${fileName}`
+            const storagePath = `${courseId === '' ? course_id : courseId}/${questionId ?? question_id}/${fileName}`
 
             const { error } = await supabaseClient.storage.from('question_image').upload(storagePath, img.file)
 
             if (error) {
-                toast.error('Failed to upload image to');
+                toast.error('Failed to upload image');
                 throw error;
             }
 
@@ -233,6 +257,7 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
     }
 
     const handleSubmit = async () => {
+        let question_id = '';
 
         setIsLoading(true);
         try {
@@ -249,7 +274,7 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
             let final_content = ''
 
             if (!isEdit) {
-                const question_id = await createQuestion(questionForm.question)
+                question_id = await createQuestion(questionForm.question)
                 final_content = await ChangeUrl(question_id);
                 await editQuestion(final_content, question_id);
                 navigate(`/topic/${topicId}`);
@@ -258,10 +283,18 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
                 await editQuestion(final_content);
             }
             setQuestionForm((prev) => ({ ...prev, question: final_content }));
+            const existing_url = extractImageUrls(final_content).map((url) => ({
+                url,
+                path: urlToStoragePath(url),
+            }));
+
+            if (existing_url.length > 0) setExistingImages(existing_url);
             toast.success('Question saved sucessfully!');
         } catch (error) {
             ErrorCleanup();
-            throw error
+            if (!isEdit) {
+                navigate(`/topic/${topicId}/editquestion/${question_id}`);
+            }
         } finally {
             RemoveExistingImage();
             setIsLoading(false);
@@ -350,7 +383,7 @@ export default function ExerciseForm({ course_id }: { course_id: string }) {
                                 <header>{questionForm.difficulty}</header><IoIosArrowDown />
                             </div>
                             <ul id={'difficulty-dropdown'} tabIndex={-1} className="dropdown-content font-bold menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                                {difficulty_list.map((mode_name,index) =>
+                                {difficulty_list.map((mode_name, index) =>
                                     <li key={`difficulty-${index}`}><a onClick={() => {
                                         setQuestionForm((prev) => ({ ...prev, difficulty: mode_name }))
                                         document.getElementById('difficulty-dropdown')?.blur();
