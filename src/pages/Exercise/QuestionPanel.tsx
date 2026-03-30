@@ -20,6 +20,8 @@ export default function QuestionPanel({
     // const [ isCompleteOpen,setIsCompleteOpen] = useState<boolean>(false);
 
     const sendAnswer = async () => {
+        if(authData?.role_name === 'teacher') return;
+        
         setIsLoading(true);
         try {
             const { data, error } = await supabaseClient.functions.invoke('check-student-answer', {
@@ -80,7 +82,7 @@ export default function QuestionPanel({
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
                 ></input>
-                <button className="btn btn-primary text-primary-content rounded-full" disabled={isLoading || isLoadingQuestion} type='submit'>{(isLoading || isLoadingQuestion) ? <span className="loading loading-spinner loading-lg" /> : 'ส่งคำตอบ'}</button>
+                <button className="btn btn-primary text-primary-content rounded-full" disabled={isLoading || isLoadingQuestion || authData?.role_name==='teacher'} type='submit'>{(isLoading || isLoadingQuestion) ? <span className="loading loading-spinner loading-lg" /> : 'ส่งคำตอบ'}</button>
             </form>
         </div>
     )

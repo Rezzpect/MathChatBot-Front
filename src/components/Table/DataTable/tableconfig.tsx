@@ -95,3 +95,14 @@ export const StudentInCourseTableConfig: TableConfig<StudentRowProp> = {
         { key: 'profile_picture', header: 'รูปโปลไฟล์', display: false }
     ]
 }
+
+export const TABLE_CONFIG_MAP: Record<string, TableConfig<any>> = {
+    "topic-list-in-course":    topicTableConfig,
+    "question-list-in-topic":  questionTableConfig,
+    "hint-list-in-question":   hintTableConfig,
+    "teacher-course-list":     teacherCourseTableConfig,
+    "student-enrollment-list": studentCourseTableConfig,
+    "course-doc-list":         DocumentTableConfig,
+    "theory-doc-list":         DocumentTableConfig,
+    "student-list-in-course":  StudentInCourseTableConfig,
+}

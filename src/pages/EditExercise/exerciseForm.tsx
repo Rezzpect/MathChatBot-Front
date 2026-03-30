@@ -42,18 +42,9 @@ export default function ExerciseForm() {
         setQuestionForm((prev) => ({ ...prev, question: content }));
     };
 
-    const getTagsMap = async () => {
-        const { data, error } = await supabaseClient.functions.invoke('all-question-tag', {
-            method: 'GET'
-        })
-
-        if (error) throw error
-
-        if (data) {
-            const tagMap = Object.fromEntries(data.data.map((t: tagRecord) => [t.tag_name, t.tag_id]))
-            return tagMap
-        }
-
+    const createTagsMap = (tags: tagRecord[]) => {
+        const tagMap = Object.fromEntries(tags.map((t: tagRecord) => [t.tag_name, t.tag_id]))
+        return tagMap
     }
 
     const createQuestion = async (question: string) => {
@@ -111,7 +102,19 @@ export default function ExerciseForm() {
                     "question_id": questionId
                 }
             })
-            if (question_error) navigate('/', { replace: true })
+
+            const { data:tag_data, error:tag_error } = await supabaseClient.functions.invoke('all-question-tag', {
+                method: 'GET'
+            })
+
+            if (tag_error) throw tag_error
+
+            if (tag_data) {
+                setTagsList([...tag_data.data])
+            }
+
+            if (question_error) throw question_error;
+            if (tag_error) throw tag_error;
 
             if (question_data.data[0].length === 0) {
                 navigate('/', { replace: true })
@@ -120,7 +123,7 @@ export default function ExerciseForm() {
             if (question_data) {
                 const QuestionData: QuestionData = question_data.data[0]
                 setCourseId(QuestionData.course_id);
-                const tagMap = await getTagsMap();
+                const tagMap = createTagsMap([...tag_data.data]);
 
                 const tags_id = (tagMap && QuestionData.tag_names[0])
                     ? QuestionData.tag_names.map((name) => (tagMap[name].toString()))
@@ -144,7 +147,8 @@ export default function ExerciseForm() {
                 }))
             }
         } catch (error) {
-            throw error
+            toast.error('Unexpected error occurred');
+            navigate(`/topic/${topicId}`, { replace: true });
         } finally {
             setIsLoading(false);
         }
@@ -230,7 +234,7 @@ export default function ExerciseForm() {
             if (error) {
                 toast.error('Failed to upload image');
                 throw error;
-            }else course_id = question_data.data[0].course_id;
+            } else course_id = question_data.data[0].course_id;
         }
 
         let final_content = questionForm.question
@@ -301,27 +305,24 @@ export default function ExerciseForm() {
         }
 
     }
+    const getTagsList = async () => {
+        const { data, error } = await supabaseClient.functions.invoke('all-question-tag', {
+            method: 'GET'
+        })
+
+        if (error) throw error
+
+        if (data) {
+            setTagsList([...data.data]);
+        }
+
+    };
 
     useEffect(() => {
-        const getTagsList = async () => {
-            const { data, error } = await supabaseClient.functions.invoke('all-question-tag', {
-                method: 'GET'
-            })
-
-            if (error) throw error
-
-            if (data) {
-                setTagsList([...data.data])
-            }
-
-        };
-
-        getTagsList();
-
         if (isEdit) {
-            getQuestionData()
-        }
-    }, [])
+            getQuestionData();
+        }else getTagsList();
+    }, [isEdit])
 
     useEffect(() => {
         return () => {

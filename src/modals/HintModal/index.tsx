@@ -28,6 +28,7 @@ export default function HintModal(
         if (modalData) {
             setFormData((prev) => ({
                 ...prev,
+                hint_title: modalData.hint_title ?? '',
                 hint_content: modalData.hint_content ?? '',
                 hint_id: modalData.hint_id?.toString() ?? '',
             }));

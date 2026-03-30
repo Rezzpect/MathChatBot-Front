@@ -158,7 +158,7 @@ export default function PlanListPage({ }
                             <div className="flex items-center gap-2 md:w-fit w-full">
                                 <div className="flex flex-col p-2 md:w-fit w-[70%] items-center bg-neutral rounded-lg">
                                     <header className="text-sm font-bold">วันเริ่ม</header>
-                                    {data.start_day === 1?'วันแรกที่ลงทะเบียน':`${data.start_day} วันหลังจากหลังทะเบียน`} 
+                                    {data.start_day === 1?'วันแรกที่ลงทะเบียน':`วันที่ ${data.start_day} หลังจากการทะเบียน`} 
                                 </div>
                                 <div className="flex flex-col p-2 items-center bg-neutral md:w-fit w-[30%] rounded-lg">
                                     <header className="text-sm font-bold">ระยะเวลา</header>

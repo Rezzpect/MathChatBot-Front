@@ -60,7 +60,7 @@ export default function StudentProfile() {
 
     useEffect(() => {
         getFile();
-        getCourseProgress();
+        if (authData?.role_name === 'student') getCourseProgress();
     }, [])
 
     return (

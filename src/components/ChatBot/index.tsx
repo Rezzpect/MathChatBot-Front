@@ -11,19 +11,19 @@ import toast from "react-hot-toast";
 export default function Chatbot({
     messages,
     setMessages
-}:{messages:ChatMessage[],setMessages:React.Dispatch<React.SetStateAction<ChatMessage[]>>}) {
+}: { messages: ChatMessage[], setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>> }) {
     const [userInput, setUserInput] = useState<string>('');
     const [getMode, setMode] = useState<ChatMode>(ChatModeType.QUESTION_MODE);
-    const [sessionId,setSessionId] = useState<string|null>(null);
-    const [isThinking,setIsThinking] = useState<boolean>(false);
+    const [sessionId, setSessionId] = useState<string | null>(null);
+    const [isThinking, setIsThinking] = useState<boolean>(false);
     const chatbotRef = useRef<HTMLDivElement>(null);
     const params = useParams();
 
-    useEffect(()=>{
-        if (chatbotRef.current){
-           chatbotRef.current.scrollTo({top: chatbotRef.current.scrollHeight}) 
+    useEffect(() => {
+        if (chatbotRef.current) {
+            chatbotRef.current.scrollTo({ top: chatbotRef.current.scrollHeight })
         }
-    },[messages])
+    }, [messages])
 
     const handleSend = async (message: string) => {
         if (!userInput) return
@@ -32,7 +32,7 @@ export default function Chatbot({
             ...prev,
             { message: message, role: 'user' }
         ])
-        
+
         setUserInput('');
 
         setIsThinking(true);
@@ -53,7 +53,7 @@ export default function Chatbot({
             if (error) throw error;
 
             if (data) {
-                if (!sessionId && data.session_id){
+                if (!sessionId && data.session_id) {
                     setSessionId(data.session_id)
                 }
                 const reply = data.message;
@@ -69,7 +69,7 @@ export default function Chatbot({
                 ...prev,
                 { message: "An Unexpected Error has occurred", role: 'bot' }
             ]);
-        } finally{
+        } finally {
             setIsThinking(false);
         }
     }
@@ -98,9 +98,14 @@ export default function Chatbot({
                     <div tabIndex={0} role="button" className="flex font-bold items-center gap-2 m-1 bg-base-300 hover:cursor-pointer p-2 rounded-lg">
                         <header>{getMode}</header><IoIosArrowDown />
                     </div>
-                    <ul tabIndex={-1} className="dropdown-content font-bold menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                        {Object.values(ChatModeType).map((mode_name,index) =>
-                            <li key={`mode-${index}`}><a onClick={() => setMode(mode_name)}>{mode_name}</a></li>
+                    <ul id={'mode-dropdown'} tabIndex={-1} className="dropdown-content font-bold menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                        {Object.values(ChatModeType).map((mode_name, index) =>
+                            <li key={`mode-${index}`}>
+                                <a onClick={() => {
+                                    setMode(mode_name);
+                                    document.getElementById('mode-dropdown')?.blur();
+                                }}>{mode_name}</a>
+                            </li>
                         )}
                     </ul>
                 </div>
@@ -112,7 +117,7 @@ export default function Chatbot({
                     {messages.map((chat) =>
                         <MessageBubble message={chat.message} role={chat.role} />
                     )}
-                    {isThinking && <LoadBubble/>}
+                    {isThinking && <LoadBubble />}
                 </div>
 
             </div>

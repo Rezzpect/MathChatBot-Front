@@ -22,8 +22,8 @@ export default function PlanListModal({
     const [formData, setFormData] = useState<PlanForm>({
         course_id: Number(params.courseId),
         topic_id: 0,
-        start_day: 1,
-        day_todo: 1,
+        start_day: 0,
+        day_todo: 0,
     })
     const [formError, setFormError] = useState<Partial<PlanValidate>>({})
 
@@ -101,13 +101,13 @@ export default function PlanListModal({
             },
             {
                 key: 'start_day',
-                condition: (formData.start_day === 0),
-                message: "Start day cannot be 0"
+                condition: (formData.start_day <= 0),
+                message: "Start day cannot be 0 or negative number"
             },
             {
                 key: 'day_todo',
-                condition: (formData.day_todo === 0),
-                message: "Day to do topic cannot be 0"
+                condition: (formData.day_todo <= 0),
+                message: "Day to do topic cannot be 0 or negative number"
             }
         ]
 
@@ -183,7 +183,7 @@ export default function PlanListModal({
                                 value={formData.topic_id}
                                 disabled={isLoading}
                                 className={`select outline-none! w-full ${formError.topic_id ? 'select-secondary' : 'select-neutral'} rounded-lg focus:select-primary`}>
-                                <option disabled={true} value={0}>เลือกคอร์สที่ต้องการ</option>
+                                <option disabled={true} value={0}>เลือกหัวข้อที่ต้องการ</option>
                                 {
                                     modalData &&
                                     <option
@@ -212,10 +212,10 @@ export default function PlanListModal({
                             <input className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none 
                                 border ${formError.start_day?'border-red-500':'border-neutral'} h-full w-full p-2 rounded-lg bg-white outline-none
                                 focus:border focus:border-primary`}
-                                value={formData.start_day === 1 ? '' : formData.start_day}
+                                value={formData.start_day === 0 ? '' : formData.start_day}
                                 min={1}
                                 max={99}
-                                placeholder="วันแรกที่ลงทะเบียน (Day 1)"
+                                placeholder="วันที่เท่าไหร่หลังจากลงทะเบียน"
                                 onChange={(e) => setFormData((prev) => ({ ...prev, start_day: parseInt(e.target.value) || 0 }))}
                                 id="exercise-todo"
                                 type='number'
@@ -228,10 +228,10 @@ export default function PlanListModal({
                             <input className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none 
                                 border ${formError.start_day?'border-red-500':'border-neutral'} h-full w-full p-2 rounded-lg bg-white outline-none
                                 focus:border focus:border-primary`}
-                                value={formData.day_todo === 1 ? '' : formData.day_todo}
+                                value={formData.day_todo === 0 ? '' : formData.day_todo}
                                 min={1}
                                 max={99}
-                                placeholder="1"
+                                placeholder="-"
                                 onChange={(e) => setFormData((prev) => ({ ...prev, day_todo: parseInt(e.target.value) || 0 }))}
                                 id="exercise-todo"
                                 type='number'

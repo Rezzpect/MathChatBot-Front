@@ -71,12 +71,12 @@ export default function CourseModal(
             });
 
             if (error) {
-                toast.error(error.message);
+                toast.error('Failed to create course');
                 throw error;
             };
 
             if (newImage) await uploadImage(newImage, filename, data.data);
-            toast.success('Course created succesfully');
+            toast.success('Course created successfully');
             refreshSubmit((prev) => prev + 1);
         } catch (error) {
             throw error;
@@ -86,19 +86,24 @@ export default function CourseModal(
     }
 
     const uploadImage = async (new_image: File, filename: string, course_id?: string) => {
-        const { error } = await supabaseClient.storage.from('course_banner').upload(course_id ? course_id + filename: courseId+filename, new_image);
-        if (modalData?.banner_picture) {
-            const { error } = await supabaseClient.storage.from('course_banner').remove([courseId ?? course_id + modalData.banner_picture]);
+        const { error } = await supabaseClient.storage.from('course_banner').upload(course_id ? course_id + filename : courseId + filename, new_image);
+        try {
+            if (modalData?.banner_picture) {
+                const { error } = await supabaseClient.storage.from('course_banner')
+                    .remove([course_id ?
+                        `${course_id}${modalData.banner_picture}`
+                        : `${courseId}${modalData.banner_picture}`]);
+
+                if (error) {
+                    throw error
+                }
+            }
 
             if (error) {
-                toast.error(error.message);
-                throw error
+                throw error;
             }
-        }
-
-        if (error) {
-            console.error(error.message);
-            toast.error('failed to upload banner image');
+        } catch (error) {
+            toast.error('Failed to upload banner image');
             throw error;
         }
     }
@@ -129,8 +134,7 @@ export default function CourseModal(
             if (newImage) await uploadImage(newImage, filename);
             refreshSubmit((prev) => prev + 1);
         } catch (error) {
-            toast.error('Something went wrong')
-            throw error;
+            toast.error('Something went wrong');
         } finally {
             setIsLoading(false);
         }
@@ -186,8 +190,8 @@ export default function CourseModal(
 
     return (
         <div className="fixed w-full h-full bg-black/50 top-0  flex justify-center items-center z-100">
-            <div className="h-fit bg-base-100 shadow-sm rounded-lg w-120 overflow-hidden">
-                <div className="relative w-full h-[12rem] bg-primary overflow-hidden">
+            <div className="h-fit bg-base-100 shadow-sm rounded-lg w-120">
+                <div className="relative w-full h-[12rem] bg-primary overflow-hidden rounded-t-lg">
                     {
                         imageUrl && <img src={imageUrl} className=" absolute h-full w-full" />
                     }
@@ -198,7 +202,7 @@ export default function CourseModal(
                 </div>
 
                 <div className="flex flex-col gap-5 p-5 pt-5 text-neutral-content">
-                    <h1 className="font-bold text-xl">{modalData ? 'Edit Course':'Create Course' }</h1>
+                    <h1 className="font-bold text-xl">{modalData ? 'Edit Course' : 'Create Course'}</h1>
                     <div className="flex flex-col gap-2">
                         <InputForm
                             name='Course Name'
@@ -222,9 +226,15 @@ export default function CourseModal(
                         <div tabIndex={0} role="button" className="flex justify-between font-bold items-center gap-2 hover:cursor-pointer hover:bg-base-300 p-2 rounded-lg">
                             <header>{formData.difficulty}</header><IoIosArrowDown />
                         </div>
-                        <ul tabIndex={-1} className="dropdown-content font-bold menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                        <ul id={'difficulty-dropdown'} tabIndex={-1} className="dropdown-content font-bold menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
                             {difficulty_list.map((mode_name) =>
-                                <li><a onClick={() => setFormData((prev) => ({ ...prev, difficulty: mode_name }))}>{mode_name}</a></li>
+                                <li>
+                                    <a onClick={() => {
+                                        setFormData((prev) => ({ ...prev, difficulty: mode_name }));
+                                        document.getElementById('difficulty-dropdown')?.blur();}}>
+                                        {mode_name}
+                                        </a>
+                                    </li>
                             )}
                         </ul>
                     </div>

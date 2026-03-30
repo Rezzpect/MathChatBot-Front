@@ -17,7 +17,7 @@ export function RequireEnroll({ children }: {
 
     useEffect(() => {
         const checkEnroll = async () => {
-            if (authData?.role_name === 'admin'){ 
+            if (authData?.role_name !== 'student'){ 
                 setIsChecking(false);
                 return
             };
@@ -81,7 +81,7 @@ export function RequireEnroll({ children }: {
         return <LoadingPage/>
     }
 
-    if (user_role === 'admin' || enrollStatus) {
+    if (user_role !== 'student' || enrollStatus) {
         return children
     } else{ 
         toast.error('You need to enroll the course first!');

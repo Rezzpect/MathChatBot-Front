@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { questionTableConfig, hintTableConfig, skeltonTableConfig, teacherCourseTableConfig, topicTableConfig, studentCourseTableConfig, DocumentTableConfig, StudentInCourseTableConfig } from "./tableconfig";
+import { skeltonTableConfig, TABLE_CONFIG_MAP } from "./tableconfig";
 import { useNavigate, useParams } from "react-router-dom";
 import supabaseClient from "../../../utils/SupabaseClient";
 import type { TableConfig } from "../../../@types/table";
@@ -8,7 +8,7 @@ import { FaCheck, FaX } from "react-icons/fa6";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import toast from "react-hot-toast";
 
-function BuildReqBody<K extends IdKey>(    
+function BuildReqBody<K extends IdKey>(
     currentPage: number,
     pagesSize: number,
     idKey?: K,
@@ -39,6 +39,7 @@ export default function DataTable<K extends IdKey>({
     const [itemsPerPage] = useState<number>(6);
     const [config, setConfig] = useState<TableConfig<any>>(skeltonTableConfig);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [initialLoad, setInitialLoad] = useState<boolean>(true);
 
     const handlePageChange = (page: number) => {
         if (page >= 1 && page <= totalPages) {
@@ -69,54 +70,41 @@ export default function DataTable<K extends IdKey>({
             if (data) {
                 const table_data = data.data
                 setTableData(table_data.items);
-                setTotalPages(table_data.total_pages);
+                if (table_data.total_pages > 0) {
+                    setTotalPages(table_data.total_pages);
+                }
             }
         } catch (error) {
             throw error
         } finally {
             setIsLoading(false);
+            setInitialLoad(false);
         }
 
     }
 
     useEffect(() => {
-        if (name === "topic-list-in-course") {
-            fetchData();
-            setConfig(topicTableConfig);
-        } else if (name === "question-list-in-topic") {
-            fetchData();
-            setConfig(questionTableConfig);
-        } else if (name === "hint-list-in-question") {
-            fetchData();
-            setConfig(hintTableConfig);
-        } else if (name === "teacher-course-list") {
-            fetchData();
-            setConfig(teacherCourseTableConfig);
-        } else if (name === "student-enrollment-list") {
-            fetchData();
-            setConfig(studentCourseTableConfig);
-        } else if (name === "course-doc-list" || name === "theory-doc-list") {
-            fetchData();
-            setConfig(DocumentTableConfig);;
-        } else if (name === "student-list-in-course") {
-            fetchData();
-            setConfig(StudentInCourseTableConfig);
-        }
+        const config = TABLE_CONFIG_MAP[name];
+        setConfig(config);
+        fetchData();
     }, [currentPage])
 
     useEffect(() => {
-        fetchData();
-        setCurrentPage(1);
+        if (currentPage === 1 && !initialLoad) {
+            fetchData();
+        } else {
+            setCurrentPage(1);
+        }
     }, [refreshTrigger])
 
     const renderBoxData = (data: any) => {
         if (Array.isArray(data)) {
             return (
-                <div className="flex">{data.map((item: string,index) => (
+                <div className="flex">{data.map((item: string, index) => (
                     <span key={`tag-${index}`} title={item} className="badge badge-sm badge-accent mx-0.5 text-white line-clamp-1">
                         {item}
                     </span>
-                    ))}
+                ))}
                 </div>
             )
         }

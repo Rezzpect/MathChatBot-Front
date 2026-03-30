@@ -43,6 +43,7 @@ export default function CoursePage() {
     })
 
     const getEnrolledStatus = async () => {
+        if (!authData || authData.role_name !== 'student') return;
         const { data, error } = await supabaseClient.functions.invoke('can-enroll', {
             method: 'POST',
             body: {
