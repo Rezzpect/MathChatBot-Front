@@ -23,6 +23,7 @@ export default function HintModal(
     const [formError, setFormError] = useState<Partial<HintForm>>({});
     const [isGeneratingHint, setIsGeneratingHint] = useState<boolean>(false);
     const [generatedHint, setGeneratedHint] = useState<PresetHint[]>([]);
+    const [wantHint, setWantHint] = useState<boolean>(false);
 
     useEffect(() => {
         if (modalData) {
@@ -37,6 +38,7 @@ export default function HintModal(
 
     const generateHint = async () => {
         setIsGeneratingHint(true);
+        if (!wantHint) setWantHint(true);
         try {
             const { data, error } = await supabaseClient.functions.invoke('generate-hint', {
                 body: {
@@ -148,11 +150,7 @@ export default function HintModal(
         return () => {
             document.body.classList.remove('overflow-hidden')
         }
-    }, [])
-
-    useEffect(() => {
-        generateHint();
-    }, [])
+    }, []);
 
     return (
         <div className="fixed w-full h-full bg-black/50 top-0 left-0 flex justify-center items-center z-100">
@@ -183,7 +181,7 @@ export default function HintModal(
                         <span className="divider divider-primary" />
                         <div className="flex w-full justify-between">
                             <header className="font-bold text-lg">ตัวอย่างสำเร็จรูป</header>
-                            <button className="btn btn-primary btn-ghost rounded-full p-2 text-primary hover:text-primary-content" onClick={generateHint}>Refresh</button>
+                            <button className="btn btn-primary btn-ghost rounded-full p-2 text-primary hover:text-primary-content" onClick={generateHint}>{wantHint?'Refresh':'Generate'}</button>
                         </div>
                         {isGeneratingHint
                             ? <div className="flex justify-around items-center w-full h-full bg-neutral rounded-lg">

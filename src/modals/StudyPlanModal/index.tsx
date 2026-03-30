@@ -129,7 +129,7 @@ export default function PlanListModal({
                     course_id: formData.course_id,
                     old_topic_id: modalData?.topic_id,
                     new_topic_id: formData.topic_id !== modalData?.topic_id ? formData.topic_id : null,
-                    start_day: formData.start_day ? formData.start_day + 1 : null,
+                    start_day: formData.start_day,
                     day_todo: formData.day_todo
                 }
             })

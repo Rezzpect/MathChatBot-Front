@@ -90,7 +90,8 @@ export default function DataTable<K extends IdKey>({
     }, [currentPage])
 
     useEffect(() => {
-        if (currentPage === 1 && !initialLoad) {
+        if(initialLoad) return;
+        if (currentPage === 1) {
             fetchData();
         } else {
             setCurrentPage(1);
