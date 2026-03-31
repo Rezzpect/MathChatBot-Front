@@ -33,7 +33,8 @@ export type DataTableProps<K extends IdKey> = {
     bucketName?: string,
     showAction?: boolean,
     refreshTrigger?: number,
-    underline?: boolean
+    underline?: boolean,
+    enableNav?: boolean,
 }
 
 export type hintTableProps = {

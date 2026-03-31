@@ -147,6 +147,7 @@ export default function CoursePage() {
                 <TopicTable
                     course_id={params.courseId}
                     edit_permission={courseData.edit_permission}
+                    is_enroll={enrollStatus}
                 />
         },
         {

@@ -19,11 +19,11 @@ export default function TabMenu({ tab_data }: TabMenuProps) {
             <div className="flex">
                 {
                     tab_data.map((tab, index) =>
-                        <div className={`font-bold text-xl md:w-50 w-full line-clamp-1 p-2 hover:cursor-pointer"
+                        <div className={`font-bold text-xl md:w-50 w-full line-clamp-1 p-2
                             ${index !== 0 ? "ml-[-10px]" : ""}
                             ${tabIndex === index ?
                                 "text-primary-content bg-primary" :
-                                "text-neutral-content bg-neutral"}`}
+                                "text-neutral-content bg-neutral hover:cursor-pointer"}`}
                             style={{
                                 clipPath: 'polygon(0 0, 85% 0, 100% 100%, 0 100%)',
                                 borderTopLeftRadius: '1rem',

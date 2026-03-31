@@ -31,7 +31,8 @@ export default function DataTable<K extends IdKey>({
     extraScript,
     bucketName,
     showAction = false,
-    refreshTrigger = 0
+    refreshTrigger = 0,
+    enableNav = true,
 }: DataTableProps<K>) {
     const [tableData, setTableData] = useState<Array<Record<string, any>>>();
     const [totalPages, setTotalPages] = useState<number>(1);
@@ -199,10 +200,10 @@ export default function DataTable<K extends IdKey>({
                                     const row_id = row[config.rowIdKey];
 
                                     return (
-                                        <tr className={`${(!config?.navDest || config?.navDest === '') ? '' : 'hover:cursor-pointer hover:bg-base-300'}`}
+                                        <tr className={`${(config?.isFile || (config?.navDest&&config?.navDest !== '')) ?'hover:cursor-pointer hover:bg-base-300' : '' }`}
 
                                             onClick={
-                                                config.navDest
+                                                (config.navDest && enableNav)
                                                     ? () => navigate(`${config.navDest}${row[config.rowIdKey]}`)
                                                     : config.isFile
                                                         ? () => { return extractFileUrl(row.name) }

@@ -6,10 +6,12 @@ import DeleteModal from "../../../modals/DeleteModal";
 
 export default function TopicTable({
     course_id,
-    edit_permission
+    edit_permission,
+    is_enroll
 }: {
     course_id: string | undefined,
-    edit_permission: boolean
+    edit_permission: boolean,
+    is_enroll:boolean
 }) {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
     const [modalData, setModalData] = useState<TopicRowProp | undefined>(undefined);
@@ -68,6 +70,7 @@ export default function TopicTable({
                 extraScript={openCreateModal}
                 refreshTrigger={refreshTrigger}
                 showAction={edit_permission}
+                enableNav={!is_enroll}
             />
         </div>
     )
