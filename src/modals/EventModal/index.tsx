@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 
 import "./timepicker.css";
 import type { EventModalProps } from "../../@types/modal";
-import { addMinutes, differenceInMinutes, format } from "date-fns";
-import type { EventItems } from "../../@types/event";
+import { format } from "date-fns";
 
 export default function EventModal({
     modalData,
