@@ -189,7 +189,7 @@ export default function CoursePage() {
                 />}
 
                 <div className="flex flex-col lg:px-50 md:px-20 px-5 w-full h-fit min-h-[500px]">
-                    <div className="relative rounded-b-lg w-full h-[190px] bg-primary overflow-hidden">
+                    <div className="relative rounded-b-lg w-full min-h-[190px] bg-primary overflow-hidden">
                         {
                             bannerUrl && <img src={bannerUrl===''?undefined:bannerUrl} className=" absolute h-full w-full" />
                         }
