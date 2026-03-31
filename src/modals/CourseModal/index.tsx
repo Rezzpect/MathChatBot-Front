@@ -123,7 +123,7 @@ export default function CourseModal(
                 method: 'PUT',
                 body: {
                     "course_name": formData.course_name,
-                    "difficulty": "Easy",
+                    "difficulty": formData.difficulty,
                     "course_description": formData.course_description,
                     "course_id": formData.course_id,
                     "is_published": formData.is_published,
