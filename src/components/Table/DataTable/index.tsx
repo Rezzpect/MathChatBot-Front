@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { skeltonTableConfig, TABLE_CONFIG_MAP } from "./tableconfig";
 import { useNavigate, useParams } from "react-router-dom";
 import supabaseClient from "../../../utils/SupabaseClient";
-import type { TableConfig } from "../../../@types/table";
+import type { Roles, TableConfig } from "../../../@types/table";
 import type { PageReqWithId, IdKey, DataTableProps } from "../../../@types/table";
 import { FaCheck, FaX } from "react-icons/fa6";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import toast from "react-hot-toast";
+import { AuthContext } from "../../../contexts/authContext";
 
 function BuildReqBody<K extends IdKey>(
     currentPage: number,
@@ -34,6 +35,7 @@ export default function DataTable<K extends IdKey>({
     refreshTrigger = 0,
     enableNav = true,
 }: DataTableProps<K>) {
+    const { authData } = useContext(AuthContext);
     const [tableData, setTableData] = useState<Array<Record<string, any>>>();
     const [totalPages, setTotalPages] = useState<number>(1);
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -118,12 +120,18 @@ export default function DataTable<K extends IdKey>({
 
         if (typeof (data) === 'object') {
             return !data ? <p className="text-secondary">ยังไม่เสร็จ</p> :
-            data.student_answer.is_completed? <p className="text-accent">เสร็จ</p> : <p className="text-yellow-600">กำลังทำ</p>
+                data.student_answer.is_completed ? <p className="text-accent">เสร็จ</p> : <p className="text-yellow-600">กำลังทำ</p>
         }
         return data;
     }
 
-    const visibleCol = config.columns.filter(col => col.display !== false)
+    const filterVisibleCol = () => {
+        let visibleCol = config.columns.filter(col => col.display !== false);
+        visibleCol = visibleCol.filter(col => col.displayRole ? col.displayRole.includes(authData?.role_name as Roles) : true);
+        return visibleCol
+    };
+
+    const visibleCol = filterVisibleCol();
     const navigate = useNavigate();
     const params = useParams();
 
@@ -201,7 +209,7 @@ export default function DataTable<K extends IdKey>({
                                     const row_id = row[config.rowIdKey];
 
                                     return (
-                                        <tr className={`${(config?.isFile || (config?.navDest&&config?.navDest !== '')) ?'hover:cursor-pointer hover:bg-base-300' : '' }`}
+                                        <tr className={`${(config?.isFile || (config?.navDest && config?.navDest !== '')) ? 'hover:cursor-pointer hover:bg-base-300' : ''}`}
 
                                             onClick={
                                                 (config.navDest && enableNav)

@@ -76,13 +76,13 @@ export default function QuestionPanel({
                     e.preventDefault()
                     sendAnswer();
                 }}>
-                <input className="input focus:outline-none rounded-full w-full"
+                <input className="input focus:outline-none focus:border focus:border-primary rounded-full w-full"
                     placeholder="write your answer here"
-                    disabled={isLoading || isLoadingQuestion || authData?.role_name==='teacher'}
+                    disabled={isLoading || isLoadingQuestion || authData?.role_name!=='student'}
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
                 ></input>
-                <button className="btn btn-primary text-primary-content rounded-full" disabled={isLoading || isLoadingQuestion || authData?.role_name==='teacher'} type='submit'>{(isLoading || isLoadingQuestion) ? <span className="loading loading-spinner loading-lg" /> : 'ส่งคำตอบ'}</button>
+                <button className="btn btn-primary text-primary-content rounded-full" disabled={isLoading || isLoadingQuestion || authData?.role_name!=='student'} type='submit'>{(isLoading || isLoadingQuestion) ? <span className="loading loading-spinner loading-lg" /> : 'ส่งคำตอบ'}</button>
             </form>
         </div>
     )

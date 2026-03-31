@@ -1,3 +1,4 @@
+export type Roles = 'teacher' | 'student' | 'admin';
 export interface ColumnConfig<T> {
     key: keyof T;
     header: string;
@@ -5,6 +6,7 @@ export interface ColumnConfig<T> {
     sortable?: boolean;
     islist?: boolean;
     width?: string;
+    displayRole?: Roles[];
     render?: (value: any, row: T) => React.ReactNode; // Custom renderer
 }
 
@@ -64,7 +66,8 @@ export interface QuestionRowProp {
     tag_names: string[],
     difficulty: string,
     question_id: number,
-    optional: object
+    optional: object,
+    is_published: boolean
 }
 
 export interface HintRowProp {

@@ -133,7 +133,7 @@ export default function Chatbot({
                     placeholder="Type here"
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
-                    className="input rounded-full w-full focus:outline-none" />
+                    className="input rounded-full w-full focus:outline-none focus:border focus:border-primary" />
                 <button
                     type='submit'
                     className="btn rounded-full btn-primary text-primary-content">Send</button>

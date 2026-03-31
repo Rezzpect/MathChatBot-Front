@@ -30,7 +30,8 @@ export const questionTableConfig: TableConfig<QuestionRowProp> = {
         { key: 'tag_names', header: 'Tags', display: true },
         { key: 'difficulty', header: 'ความยาก', display: true, width: '100px' },
         { key: 'question_id', header: 'ID', display: false, },
-        { key: 'optional', header: 'สถานะ', display: true },
+        { key: 'optional', header: 'สถานะ', display: true, displayRole:['student']},
+        { key: 'is_published', header: 'เผยแพร่', display: true, displayRole:['teacher','admin'] },
     ]
 };
 
