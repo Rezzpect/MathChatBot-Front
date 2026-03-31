@@ -45,8 +45,14 @@ export default function CourseModal(
 
     const insertNewImg = (e: React.ChangeEvent<HTMLInputElement>) => {
         const input_file = e.target.files?.[0];
+        const allowedTypes = ['image/jpeg', 'image/png'];
 
         if (!input_file) return;
+
+        if (!allowedTypes.includes(input_file.type)) {
+            toast.error('Only JPEG and PNG files are allowed!');
+            return;
+        }
 
         const preview_url = URL.createObjectURL(input_file);
 
@@ -197,7 +203,7 @@ export default function CourseModal(
                     }
                     <label className="absolute right-0 p-1 m-5 shadow-lg border hover:cursor-pointer bg-primary text-primary-content rounded-full h-fit w-fit">
                         <MdEdit className="text-lg" />
-                        <input type='file' max={1} onChange={insertNewImg} className="hidden" />
+                        <input type='file' max={1} onChange={insertNewImg} accept="image/jpeg, image/png" className="hidden" />
                     </label>
                 </div>
 
@@ -231,10 +237,11 @@ export default function CourseModal(
                                 <li>
                                     <a onClick={() => {
                                         setFormData((prev) => ({ ...prev, difficulty: mode_name }));
-                                        document.getElementById('difficulty-dropdown')?.blur();}}>
+                                        document.getElementById('difficulty-dropdown')?.blur();
+                                    }}>
                                         {mode_name}
-                                        </a>
-                                    </li>
+                                    </a>
+                                </li>
                             )}
                         </ul>
                     </div>
