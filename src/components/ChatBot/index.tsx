@@ -133,10 +133,12 @@ export default function Chatbot({
                     placeholder="Type here"
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
+                    disabled={isThinking}
                     className="input rounded-full w-full focus:outline-none focus:border focus:border-primary" />
                 <button
                     type='submit'
-                    className="btn rounded-full btn-primary text-primary-content">Send</button>
+                    disabled={isThinking}
+                    className="btn rounded-full btn-primary text-primary-content">{isThinking ? <span className="loading loading-spinner loading-lg" />:'Send'}</button>
             </form>
         </div>
     )

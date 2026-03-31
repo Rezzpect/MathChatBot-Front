@@ -3,20 +3,26 @@ import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
 import 'katex/dist/katex.min.css'
+import { useCallback } from "react";
 
 export default function MessageBubble({
     message,
     role
 }: ChatMessage) {
-    const normalizeLatex = (text: string): string => {
-        return text
-            // fix single-bracket block math: [ \frac ] → $$ \frac $$
-            .replace(/\[\s*(\\[a-zA-Z].*?)\s*\]/gs, '$$$$$1$$$$')
-            // fix \( \) inline → $ $
-            .replace(/\\\(/g, '$').replace(/\\\)/g, '$')
-            // fix \[ \] block → $$ $$
-            .replace(/\\\[/g, '$$$$').replace(/\\\]/g, '$$$$')
-    }
+    const normalizeLatex = useCallback((text: string): string => {
+    return (
+      text
+        // \( \) inline math → $ $
+        .replace(/\\\(/g, "$")
+        .replace(/\\\)/g, "$")
+        // \[ \] block math → $$ $$
+        .replace(/\\\[/g, "$$")
+        .replace(/\\\]/g, "$$")
+        // [ \frac{}{} ] block math, but NOT Markdown links [text](url)
+        // Only match if content starts with a backslash command
+        .replace(/\[\s*(\\[^\]]+?)\s*\]/gs, (_, inner) => `$$${inner}$$`)
+    );
+  }, []);
 
     return (
         <div className={`chat ${role === 'user' ? 'chat-end' : 'chat-start'}`}>
