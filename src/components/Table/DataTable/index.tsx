@@ -117,7 +117,8 @@ export default function DataTable<K extends IdKey>({
         }
 
         if (typeof (data) === 'object') {
-            return data ? <p className="text-accent">เสร็จ</p> : <p className="text-secondary">ยังไม่เสร็จ</p>
+            return !data ? <p className="text-secondary">ยังไม่เสร็จ</p> :
+            data.student_answer.is_completed? <p className="text-accent">เสร็จ</p> : <p className="text-yellow-600">กำลังทำ</p>
         }
         return data;
     }
