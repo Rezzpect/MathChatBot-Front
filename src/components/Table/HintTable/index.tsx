@@ -53,6 +53,7 @@ export default function HintTable({
             }
 
             if (data.data) {
+                console.log(data.data);
                 setTableData(data.data.items);
                 setTotalItems(data.data.total_items);
                 setTotalPages(data.data.total_pages);
@@ -74,7 +75,7 @@ export default function HintTable({
 
     useEffect(() => {
         fetchData();
-    }, [refreshTrigger])
+    }, [refreshTrigger,currentPage])
 
     return (
         <div className="flex flex-col gap-5">
