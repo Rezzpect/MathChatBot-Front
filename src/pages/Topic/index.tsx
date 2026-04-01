@@ -25,7 +25,7 @@ export default function TopicPage() {
         updated_date: '',
     })
 
-    const getFile = async (course_id:string,banner_name: string) => {
+    const getFile = async (course_id: string, banner_name: string) => {
 
         const { data } = supabaseClient.storage.from('course_banner').getPublicUrl(course_id + banner_name);
 
@@ -47,16 +47,16 @@ export default function TopicPage() {
 
             if (data) {
                 const topic_data = data.data[0]
-                if ( topic_data.length===0) navigate('/',{replace:true});
+                if (topic_data.length === 0) navigate('/', { replace: true });
                 const banner_name = topic_data.course_banner_picture;
-                if (banner_name) getFile(topic_data.course_id,banner_name);
+                if (banner_name) getFile(topic_data.course_id, banner_name);
                 setTopicData(data.data[0]);
             }
-            
+
             setIsLoading(false);
         } catch (error) {
             toast.error('Cannot retrieve topic info')
-            navigate('/',{replace:true})
+            navigate('/', { replace: true })
         }
 
     }
@@ -69,12 +69,12 @@ export default function TopicPage() {
         <>{
             isLoading
                 ? <LoadingPage />
-                : <div className="h-[calc(100vh-65px)] min-h-fit flex flex-col justify-center items-center">
+                : <div className="min-h-fit flex flex-col justify-center w-full items-center">
 
                     <div className="flex flex-col lg:px-50 md:px-20 px-5 w-full h-fit min-h-[500px]">
                         <div className="relative rounded-b-lg w-full min-h-[190px] bg-primary overflow-hidden">
                             {
-                                bannerUrl && <img src={bannerUrl === ''?undefined:bannerUrl} className=" absolute h-full w-full" />
+                                bannerUrl && <img src={bannerUrl === '' ? undefined : bannerUrl} className=" absolute h-full w-full" />
                             }
                             <button
                                 onClick={() => navigate('/course/' + topicData.course_id)}
@@ -95,10 +95,13 @@ export default function TopicPage() {
                             <span className="px-10 py-5 w-full">{topicData.topic_description}</span>
                         </div>
 
-                        <QuestionTable
-                            topic_id={params.topicId}
-                            edit_permission={topicData.edit_permission}
-                        />
+                        <div>
+                            <QuestionTable
+                                topic_id={params.topicId}
+                                edit_permission={topicData.edit_permission}
+                            />
+                        </div>
+
                     </div>
                 </div>
         }
