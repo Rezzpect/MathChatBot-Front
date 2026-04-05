@@ -6,7 +6,7 @@ This is the frontend for Math Teaching Chatbot System. The full project is split
 
 - Frontend: [MathChatBot-Front](https://github.com/Rezzpect/MathChatBot-Front) (you are here)
 - Backend: [MathChatBot-Back](https://github.com/ReallyWarm/MathChatBot-Back)
-- n8n-Workflow:
+- n8n-Workflow: [Math-Teaching-Chatbot-System-Workflow-n8n](https://github.com/Kfirm1208/Math-Teaching-Chatbot-System-Workflow-n8n)
 
 ## React + TypeScript + Vite
 
