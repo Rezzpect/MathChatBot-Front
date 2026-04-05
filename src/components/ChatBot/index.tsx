@@ -74,22 +74,6 @@ export default function Chatbot({
         }
     }
 
-    // const TestSendMessage = () => {
-    //     setMessages((prev) => [...prev,
-    //     {
-    //         role: 'user',
-    //         message: userInput
-    //     }
-    //     ]);
-    //     setMessages((prev) => [...prev,
-    //     {
-    //         role: 'bot',
-    //         message: 'Message received'
-    //     }
-    //     ]);
-    //     setUserInput('');
-    // }
-
     return (
         <div className="flex flex-col h-full w-full">
             <div className="flex justify-between my-1 px-2 w-full items-center shrink-0">

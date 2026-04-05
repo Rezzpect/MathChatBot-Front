@@ -43,7 +43,6 @@ export default function WeeklyExerciseBar() {
 
             if (data && (data.data.length != 0)) {
                 const user_data = data.data[0]
-                // const profile_image = await getFile(user_data.user_id);
 
                 setWeeklyExercise(user_data.week_status);
             } else { throw new Error('404 User not found') }

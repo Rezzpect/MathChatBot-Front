@@ -2,9 +2,7 @@
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
 import type { EventProps, View } from 'react-big-calendar';
 import { useState, useMemo, useEffect } from 'react';
-import format from 'date-fns/format'
-import parse from 'date-fns/parse'
-import { addDays, addWeeks, startOfWeek, endOfWeek, startOfDay, } from 'date-fns';
+import { addDays, addWeeks, startOfWeek, endOfWeek, startOfDay, format, parse, } from 'date-fns';
 import { getDay } from 'date-fns/getDay'
 import { enUS } from 'date-fns/locale/en-US'
 import { DayPicker } from 'react-day-picker';
@@ -45,7 +43,6 @@ export default function StudyPlan() {
     const [date, setDate] = useState<Date>(new Date());
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [eventList, setEventList] = useState<EventItems[]>([]);
-    const [refresh, setRefresh] = useState<number>(0);
 
     const fetchEvent = async () => {
         const { data, error } = await supabaseClient.functions.invoke('student-study-plan-list');
@@ -68,7 +65,7 @@ export default function StudyPlan() {
 
     useEffect(() => {
         fetchEvent();
-    }, [refresh])
+    }, [])
 
     const viewOptions: View[] = ['week', 'day']
 
@@ -104,7 +101,7 @@ export default function StudyPlan() {
 
     return (
         <div>
-            {isOpen && <EventModal modalData={selectedEvent} setOpen={setIsOpen} setRefresh={setRefresh} />}
+            {isOpen && <EventModal modalData={selectedEvent} setOpen={setIsOpen}/>}
             <div className='flex justify-between p-5 flex-col-reverse md:flex-row gap-5'>
                 {/* change date */}
                 <div className='flex gap-2 items-center'>

@@ -1,21 +1,18 @@
 export type Roles = 'teacher' | 'student' | 'admin';
 export interface ColumnConfig<T> {
-    key: keyof T;
-    header: string;
+    key: keyof T; // Key of the data to display (From IdKey)
+    header: string; // Column header name
     display?: boolean; // Whether to show in table
-    sortable?: boolean;
-    islist?: boolean;
-    width?: string;
-    displayRole?: Roles[];
-    render?: (value: any, row: T) => React.ReactNode; // Custom renderer
+    width?: string; // CSS width value for the column
+    displayRole?: Roles[]; // Roles that can see this column, if undefined, all roles can see
 }
 
 export interface TableConfig<T> {
-    columns: ColumnConfig<T>[];
-    rowIdKey: string;
-    title: string;
-    navDest?: string;
-    isFile?: boolean;
+    columns: ColumnConfig<T>[]; // Configuration for each column in the table
+    rowIdKey: string; // Key in the data that uniquely identifies a row (e.g., "id")
+    title: string; // Title of the table
+    navDest?: string; // Optional base path for navigation when a row is clicked
+    isFile?: boolean; // Whether the table is displaying files, which may require special handling
 }
 
 export type IdKey = "course_id" | "topic_id" | "question_id" | "user_id"

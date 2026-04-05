@@ -68,7 +68,7 @@ export const useUppyWithSupabase = ({ bucketName, course_id }: { bucketName: str
                 file.meta = {
                     ...file.meta,
                     bucketName, // Bucket specified by the user of the hook
-                    objectName: course_id?`${course_id}/${file.name}`:`private/${file.name}`, // Use file name as object name
+                    objectName: course_id?`${course_id}/${file.name}`:`private/${file.name}`,
                     contentType: file.type, // Set content type based on file MIME type
                     metadata: JSON.stringify({ // custom metadata passed to the user_metadata column
                         yourCustomMetadata: true,

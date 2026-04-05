@@ -17,7 +17,6 @@ export default function QuestionPanel({
     const {authData} = useContext(AuthContext);
     const [answer, setAnswer] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    // const [ isCompleteOpen,setIsCompleteOpen] = useState<boolean>(false);
 
     const sendAnswer = async () => {
         if(answer.length === 0) return;

@@ -31,7 +31,6 @@ export default function RecommendedCourse() {
 
     useEffect(() => {
         fetchData();
-        // setEnrolledData(temp_course)
     }, [])
 
     const containerRef = useRef<HTMLDivElement>(null)

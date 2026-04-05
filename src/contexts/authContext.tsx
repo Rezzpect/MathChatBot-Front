@@ -8,23 +8,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [authData, setAuthData] = useState<UserAuthData | undefined>(undefined);
     const [isLoadingAuth, setIsLoadingAuth] = useState<boolean>(true);
 
-    // const sendFile = async () => {
-    //     const { data, error } = await supabaseClient.storage.from('profile_image').upload(authData?.user_id + '/' + 'profile', file[0], {
-    //         upsert:true
-    //     })
-
-    //     if (error) console.log(error);
-    //     if (data) getFile();
-    // }
-
-    // const getFile = async (user_id:string) => {
-    //     const { data } = supabaseClient.storage.from('profile_image').getPublicUrl(user_id + '/' + 'profile',)
-
-    //     if (data)
-    //         console.log(data.publicUrl); 
-    //         return data.publicUrl+ `?t=${Date.now()}`;
-    // }
-
     const login = async (email: string, password: string) => {
         setIsLoadingAuth(true);
         try {
@@ -65,7 +48,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (data && (data.data.length != 0)) {
             const user_data = data.data[0]
-            // const profile_image = await getFile(user_data.user_id);
 
             setAuthData({ ...user_data });
         } else { throw new Error('404 User not found') }

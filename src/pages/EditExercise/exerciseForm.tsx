@@ -123,6 +123,7 @@ export default function ExerciseForm() {
             if (question_data) {
                 const QuestionData: QuestionData = question_data.data[0]
                 setCourseId(QuestionData.course_id);
+                //create map of tag name and tag id for easier access when edit question tag
                 const tagMap = createTagsMap([...tag_data.data]);
 
                 const tags_id = (tagMap && QuestionData.tag_names[0])

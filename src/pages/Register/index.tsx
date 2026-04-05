@@ -39,7 +39,6 @@ export default function RegisterPage() {
                             last_name: formData.last_name,
                             role_id: formData.role_id
                         },
-                        // emailRedirectTo: 'https://example.com/welcome'
                     }
                 }
             )

@@ -41,7 +41,9 @@ function Routes() {
                 {
                     path: '/course/:courseId/planlists',
                     element:
+                    <AllowedRoles allowed_role={['teacher', 'admin']}>
                         <PlanListPage />
+                    </AllowedRoles>
                 },
                 {
                     path: '/topic/:topicId',

@@ -88,7 +88,6 @@ export default function HomeCourse() {
             fetchData();
         }
 
-        // setEnrolledData(temp_course)
     }, [currentPage])
 
     return (

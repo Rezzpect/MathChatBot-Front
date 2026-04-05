@@ -10,7 +10,7 @@ export const skeltonTableConfig: TableConfig<SkeletonRowProp> = {
 };
 
 export const topicTableConfig: TableConfig<TopicRowProp> = {
-    title: "โจทย์ปัญหา",
+    title: "หัวข้อการเรียน",
     rowIdKey: "topic_id",
     navDest: "/topic/",
     columns: [
